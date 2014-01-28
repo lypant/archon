@@ -8,7 +8,8 @@ partitionDisks()
     requiresVariable "PARTITION_PREFIX" "$FUNCNAME"
     requiresVariable "SYSTEM_HDD" "$FUNCNAME"
     requiresVariable "SWAP_PARTITION_SIZE" "$FUNCNAME"
-    requiresVariable "ROOT_PARTITION_SIZE" "$FUNCNAME"
+    # Workaround for "all remaining space" denoted as ""
+    #requiresVariable "ROOT_PARTITION_SIZE" "$FUNCNAME"
 
     log "Partition disks..."
 
