@@ -16,12 +16,16 @@ copyArchonFiles()
     requiresVariable "ARCHON_PATH" "$FUNCNAME"
     requiresVariable "ARCHON_LIVECD_PATH" "$FUNCNAME"
 
+    log "Copy archon files..."
+
     # Do not perform logging in this function to not spoil nice logs copied to new system
     mkdir $ARCHON_PATH
     terminateScriptOnError "$?" "$FUNCNAME" "failed to copy archon files"
 
     cp -R $ARCHON_LIVECD_PATH/* $ARCHON_PATH
     terminateScriptOnError "$?" "$FUNCNAME" "failed to copy archon files"
+
+    log "Copy archon files...done"
 }
 
 setupBasic()
