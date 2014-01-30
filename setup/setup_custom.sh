@@ -9,7 +9,7 @@ source "individual.sh"
 source "clone.sh"
 
 # Set log file for custom setup
-LOG_FILE="archon_setup_custom.log"
+LOG_FILE="/root/archon/logs/setup_custom.log"
 
 setupCustom()
 {

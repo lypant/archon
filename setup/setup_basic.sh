@@ -9,7 +9,7 @@ source "disks.sh"
 source "installation.sh"
 
 # Set log file for basic setup
-LOG_FILE="archon_setup_basic.log"
+LOG_FILE="/root/archon/logs/setup_basic.log"
 
 copyArchonFiles()
 {
