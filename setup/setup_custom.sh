@@ -6,6 +6,7 @@ source "setup.conf"
 source "functions.sh"
 source "common.sh"
 source "individual.sh"
+source "clone.sh"
 
 # Set log file for custom setup
 LOG_FILE="archon_setup_custom.log"
@@ -39,6 +40,11 @@ setupCustom()
     configurePacman
 
     ########################    INDIVIDUAL SETUP
+
+    ########################    REPOSITORY CLONING
+
+    cloneArchonRepo
+    checkoutCurrentBranch
 
     log "Setup custom...done"
 }
