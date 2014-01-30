@@ -104,3 +104,19 @@ configurePacman()
     log "Configure pacman...done"
 }
 
+configureGitUser()
+{
+    requiresVariable "GIT_USER_EMAIL" "$FUNCNAME"
+    requiresVariable "GIT_USER_NAME" "$FUNCNAME"
+
+    log "Configure git user..."
+
+    executeCommand "git config --global user.email \"$GIT_USER_EMAIL\""
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to configure git user email"
+
+    executeCommand "git config --global user.name \"$GIT_USER_NAME\""
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to configure git user name"
+
+    log "Configure git user...done"
+}
+

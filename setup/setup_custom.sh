@@ -38,6 +38,7 @@ setupCustom()
     # CONFIGURATION
 
     configurePacman
+    configureGitUser
 
     ########################    INDIVIDUAL SETUP
 
@@ -45,6 +46,9 @@ setupCustom()
 
     cloneArchonRepo
     checkoutCurrentBranch
+    createNewBranch
+    copyOverArchonFiles
+    commitAdjustments
 
     log "Setup custom...done"
 }
