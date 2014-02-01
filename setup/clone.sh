@@ -61,8 +61,12 @@ commitAdjustments()
 
     log "Commit adjustments..."
 
-    executeCommand "git -C $ARCHON_REPO_DST commit -a -m \"Adjustments done during archon installation\""
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to commit adjustments"
+    if [[ -n "$(git status --porcelain)" ]]; then
+        executeCommand "git -C $ARCHON_REPO_DST commit -a -m \"Adjustments done during archon installation\""
+        terminateScriptOnError "$?" "$FUNCNAME" "failed to commit adjustments"
+    else
+        log "No changes detected, no need to commit"
+    fi
 
     log "Commit adjustments...done"
 }
