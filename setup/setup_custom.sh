@@ -40,8 +40,6 @@ setupCustom()
     configurePacman
     configureGitUser
 
-    ########################    INDIVIDUAL SETUP
-
     ########################    REPOSITORY CLONING
 
     cloneArchonRepo
@@ -49,6 +47,19 @@ setupCustom()
     createNewBranch
     copyOverArchonFiles
     commitAdjustments
+
+    ########################    INDIVIDUAL SETUP
+
+    # USERS
+
+    # SYSTEM PACKAGES
+
+    # SOFTWARE PACKAGES
+
+    # CONFIGURATION
+
+    # This should be the last step (or almost last ;)
+    changeUser1HomeOwnership
 
     log "Setup custom...done"
 }
