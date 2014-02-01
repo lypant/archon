@@ -58,6 +58,9 @@ setupCustom()
 
     # CONFIGURATION
 
+    # Dotfiles
+    installBashrcDotfile
+
     # This should be the last step (or almost last ;)
     changeUser1HomeOwnership
 
