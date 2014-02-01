@@ -31,13 +31,16 @@ installDotfile()
     local dotfileName="$1"
     local dotfileHomePath="$2"
     local dotfile=""
+    local nested=0
     local now=`date +"%Y%m%d_%H%M"`
 
     # Avoid extra slash when path is empty
     if [[ -z "$dotfileHomePath" ]]; then
         dotfile="$dotfileName"
+        nested=0
     else
         dotfile="$dotfileHomePath/$dotfileName"
+        nested=1
     fi
 
     # Ensure that dotfiles backup dir exists
@@ -64,12 +67,22 @@ installDotfile()
         return 4
     fi
 
+    # Ensure that for nested dotfile the path exists
+    if [[ $nested -eq 1 ]]; then
+        executeCommand "mkdir -p $USER1_HOME/$dotfileHomePath"
+        retval="$?"
+        if [[ $retval -ne 0  ]]; then
+            log "$FUNCNAME: failed to create path for nested dotfile: $retval"
+            return 5
+        fi
+    fi
+
     # Create link to new dotfile
     createLink "$DOTFILES_SOURCE_DIR/$dotfile" "$USER1_HOME/$dotfile"
     retval="$?"
     if [[ $retval -ne 0  ]]; then
         log "$FUNCNAME: failed to create link to new dotfile $DOTFILES_SOURCE_DIR/$dotfile: $retval"
-        return 4
+        return 6
     fi
 
     return $retval
