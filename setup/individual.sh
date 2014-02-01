@@ -4,7 +4,7 @@ echo individual.sh
 
 createDotfilesBackupDir()
 {
-    requiresVariable "DOTFILES_BACKUP_DIR" "$FUNCTION"
+    requiresVariable "DOTFILES_BACKUP_DIR" "$FUNCNAME"
 
     local retval=0
 
@@ -19,9 +19,9 @@ createDotfilesBackupDir()
 
 installDotfile()
 {
-    requiresVariable "DOTFILES_BACKUP_DIR" "$FUNCTION"
-    requiresVariable "DOTFILES_SOURCE_DIR" "$FUNCTION"
-    requiresVariable "USER_HOME" "$FUNCTION"
+    requiresVariable "DOTFILES_BACKUP_DIR" "$FUNCNAME"
+    requiresVariable "DOTFILES_SOURCE_DIR" "$FUNCNAME"
+    requiresVariable "USER1_HOME" "$FUNCNAME"
 
     if [[ $# -lt 2 ]]; then
         log "$FUNCNAME: not enough parameters \($#\): $@"
@@ -49,7 +49,7 @@ installDotfile()
     fi
 
     # Backup original dotfile, if it exists
-    backupFile "$USER_HOME/$dotfile" "$DOTFILES_BACKUP_DIR/$dotfile"_"$now"
+    backupFile "$USER1_HOME/$dotfile" "$DOTFILES_BACKUP_DIR/$dotfile"_"$now"
     retval="$?"
     if [[ $retval -ne 0  ]]; then
         log "$FUNCNAME: failed to backup dotfile $dotfile: $retval"
@@ -57,15 +57,15 @@ installDotfile()
     fi
 
     # Remove original dotfile
-    executeCommand "rm -f $USER_HOME/$dotfile"
+    executeCommand "rm -f $USER1_HOME/$dotfile"
     retval="$?"
     if [[ $retval -ne 0  ]]; then
-        log "$FUNCNAME: failed to delete original dotfile $USER_HOME/$dotfile: $retval"
+        log "$FUNCNAME: failed to delete original dotfile $USER1_HOME/$dotfile: $retval"
         return 4
     fi
 
     # Create link to new dotfile
-    createLink "$DOTFILES_SOURCE_DIR/$dotfile" "$USER_HOME/$dotfile"
+    createLink "$DOTFILES_SOURCE_DIR/$dotfile" "$USER1_HOME/$dotfile"
     retval="$?"
     if [[ $retval -ne 0  ]]; then
         log "$FUNCNAME: failed to create link to new dotfile $DOTFILES_SOURCE_DIR/$dotfile: $retval"
@@ -73,6 +73,16 @@ installDotfile()
     fi
 
     return $retval
+}
+
+installBashprofileDotfile()
+{
+    log "Install bash_profile dotfile..."
+
+    installDotfile ".bash_profile" ""
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install bash_profile dotfile"
+
+    log "Install bash_profile dotfile...done"
 }
 
 installBashrcDotfile()
@@ -85,6 +95,76 @@ installBashrcDotfile()
     log "Install bashrc dotfile...done"
 }
 
+installDircolorssolarizedDotfile()
+{
+    log "Install .dir_colors_solarized dotfile..."
+
+    installDotfile ".dir_colors_solarized" ""
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install .dir_colors_solarized dotfile"
+
+    log "Install .dir_colors_solarized dotfile...done"
+}
+
+installVimrcDotfile()
+{
+    log "Install vimrc dotfile..."
+
+    installDotfile ".vimrc" ""
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install vimrc dotfile"
+
+    log "Install vimrc dotfile...done"
+}
+
+installVimsolarizedDotfile()
+{
+    log "Install solarized.vim dotfile..."
+
+    installDotfile "solarized.vim" ".vim/colors"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install solarized.vim dotfile"
+
+    log "Install solarized.vim dotfile...done"
+}
+
+installMcsolarizedDotfile()
+{
+    log "Install mc_solarized.ini dotfile..."
+
+    installDotfile "mc_solarized.ini" ".config/mc"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install mc_solarized.ini dotfile"
+
+    log "Install mc_solarized.ini dotfile...done"
+}
+
+installGitconfigDotfile()
+{
+    log "Install .gitconfig dotfile..."
+
+    installDotfile ".gitconfig" ""
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install .gitconfig dotfile"
+
+    log "Install .gitconfig dotfile...done"
+}
+
+installXinitrcDotfile()
+{
+    log "Install .xinitrc dotfile..."
+
+    installDotfile ".xinitrc" ""
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install .xinitrc dotfile"
+
+    log "Install .xinitrc dotfile...done"
+}
+
+installXresourcesDotfile()
+{
+    log "Install .Xresources dotfile..."
+
+    installDotfile ".Xresources" ""
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install .Xresources dotfile"
+
+    log "Install .Xresources dotfile...done"
+}
+
 changeHomeOwnership()
 {
     if [[ $# -lt 2 ]];then
@@ -94,10 +174,10 @@ changeHomeOwnership()
 
     log "Change home dir ownership..."
 
-    local user_name="$1"
-    local user_home="$2"
+    local userName="$1"
+    local userHome="$2"
 
-    executeCommand "chown -R $user_name:users $user_home"
+    executeCommand "chown -R $userName:users $userHome"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to change home dir ownership"
 
     log "Change home dir ownership...done"

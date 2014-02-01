@@ -1,0 +1,93 @@
+! This is a comment
+
+! -----------------------------------------------------------------------------
+! Xft settings (fonts)
+! -----------------------------------------------------------------------------
+
+Xft.dpi:        96
+Xft.antialias:  true
+Xft.rgba:       rgb
+Xft.hinting:    true
+Xft.hintstyle:  hintfull
+
+! -----------------------------------------------------------------------------
+! URxvt settings
+! -----------------------------------------------------------------------------
+
+URxvt.depth:            32
+URxvt.geometry:         90x30
+URxvt.transparent:      false
+URxvt.fading:           0
+! URxvt.urgentOnBell:   true
+! URxvt.visualBell:     true
+URxvt.loginShell:       true
+URxvt.saveLines:        50
+URxvt.internalBorder:   3
+URxvt.lineSpace:        0
+
+! Fonts
+
+URxvt.allow_bold:       false
+URxvt*font:             xft:Monospace:pixelsize=14
+URxvt*boldFont:         xft:Monospace:pixelsize=14
+
+! Scrollbar
+URxvt.scrollStyle:      rxvt
+URxvt.scrollBar:        false
+
+! -----------------------------------------------------------------------------
+! Colors
+! -----------------------------------------------------------------------------
+
+! Define colors for solarized theme
+#define COLOR_BLACK         #073642
+#define COLOR_RED           #dc322f
+#define COLOR_GREEN         #859900
+#define COLOR_YELLOW        #b58900
+#define COLOR_BLUE          #268bd2
+#define COLOR_MAGNETA       #d33682
+#define COLOR_CYAN          #2aa198
+#define COLOR_WHITE         #eee8d5
+#define COLOR_BR_BLACK      #002b36
+#define COLOR_BR_RED        #cb4b16
+#define COLOR_BR_GREEN      #586e75
+#define COLOR_BR_YELLOW     #657b83
+#define COLOR_BR_BLUE       #839496
+#define COLOR_BR_MAGNETA    #6c71c4
+#define COLOR_BR_CYAN       #93a1a1
+#define COLOR_BR_WHITE      #fdf6e3
+
+! Define colors for URxvt
+#define COLOR_BACKGROUND            COLOR_BR_BLACK
+#define COLOR_FOREGROUND            COLOR_BR_YELLOW
+#define COLOR_FADE                  COLOR_BR_BLACK
+#define COLOR_CURSOR                COLOR_BR_CYAN
+#define COLOR_POINTER_BACKGROUND    COLOR_BR_GREEN
+#define COLOR_POINTER_FOREGROUND    COLOR_BR_CYAN
+
+! Use defined colors - this should not change
+
+*background:                COLOR_BACKGROUND
+*foreground:                COLOR_FOREGROUND
+*fadeColor:                 COLOR_FADE
+*cursorColor:               COLOR_CURSOR
+*pointerColorBackground:    COLOR_POINTER_BACKGROUND
+*pointerColorForeground:    COLOR_POINTER_FOREGROUND
+
+*color0:    COLOR_BLACK     
+*color1:    COLOR_RED       
+*color2:    COLOR_GREEN     
+*color3:    COLOR_YELLOW    
+*color4:    COLOR_BLUE      
+*color5:    COLOR_MAGNETA   
+*color6:    COLOR_CYAN      
+*color7:    COLOR_WHITE     
+*color8:    COLOR_BR_BLACK  
+*color9:    COLOR_BR_RED    
+*color10:   COLOR_BR_GREEN  
+*color11:   COLOR_BR_YELLOW 
+*color12:   COLOR_BR_BLUE   
+*color13:   COLOR_BR_MAGNETA
+*color14:   COLOR_BR_CYAN   
+*color15:   COLOR_BR_WHITE  
+

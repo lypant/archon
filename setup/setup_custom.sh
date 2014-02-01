@@ -58,8 +58,24 @@ setupCustom()
 
     # CONFIGURATION
 
-    # Dotfiles
+    # Dotfiles - bash etc.
+    installBashprofileDotfile
     installBashrcDotfile
+    installDircolorssolarizedDotfile
+
+    # Dotfiles - vim
+    installVimrcDotfile
+    installVimsolarizedDotfile
+
+    # Dotfiles- mc
+    installMcsolarizedDotfile
+
+    # Dotfiles - git
+    installGitconfigDotfile
+
+    # Dotfiles - X
+    installXinitrcDotfile
+    installXresourcesDotfile
 
     # This should be the last step (or almost last ;)
     changeUser1HomeOwnership

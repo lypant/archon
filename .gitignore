@@ -1,0 +1,5 @@
+# Ignore specified files and directories
+ 
+# Do not version backups of dotfiles created on target system
+dotfiles/backup
+
