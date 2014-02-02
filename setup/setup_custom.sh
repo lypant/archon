@@ -64,7 +64,8 @@ setupCustom()
     installDvtm
     installRxvtUnicode
     installGuiFonts
-    installDwm
+    #installDwm             # Official repo version not good enough
+    installCustomizedDwm    # Use customized version instead
     installDmenu
     installVirtualboxGuestAdditions
 
@@ -97,5 +98,6 @@ setupCustom()
     log "Setup custom...done"
 }
 
-setupCustom
+clear
+time { setupCustom; }
 

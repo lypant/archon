@@ -72,5 +72,6 @@ setupBasic()
     unmountRootPartition
 }
 
-setupBasic
+clear
+time { setupBasic; }
 

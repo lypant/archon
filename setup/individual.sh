@@ -282,6 +282,44 @@ installDwm()
     log "Install dwm...done"
 }
 
+installCustomizedDwm()
+{
+    requiresVariable "DWM_BUILD_PATH" "$FUNCNAME"
+
+    log "Installing customized dwm..."
+
+    # Clone project from git
+    executeCommand "git clone http://git.suckless.org/dwm $DWM_BUILD_PATH"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to clone dwm repository"
+
+    # Newest commit was not working... use specific, working version
+    executeCommand "git -C $DWM_BUILD_PATH checkout 4fb31e0 -b dwm_installed"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to checkout older commit as a new branch"
+
+    # Configure necessary settings
+    executeCommand "sed -i 's/PREFIX = \/usr\/local/PREFIX = \/usr/g'" "$DWM_BUILD_PATH/config.mk"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to change dwm prefix"
+
+    executeCommand "sed -i 's/X11INC = \/usr\/X11R6\/include/X11INC = \/usr\/include\/X11/g'" "$DWM_BUILD_PATH/config.mk"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to change dwm x11 include path"
+
+    executeCommand "sed -i 's/X11LIB = \/usr\/X11R6\/lib/X11LIB = \/usr\/lib\/X11/g'" "$DWM_BUILD_PATH/config.mk"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to change dwm x11 lib path"
+
+    executeCommand 'sed -i "s/\"st\"/\"$TERMINAL_EMULATOR_COMMAND\"/g"' "$DWM_BUILD_PATH/config.def.h"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to change dwm terminal emulator command"
+
+    # Save configuration as new commit
+    executeCommand "git -C $DWM_BUIL_PATH commit -a -m \"Adjustments done during archon installation\""
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to commit adjustments"
+
+    # Install
+    executeCommand "make clean install"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to build and install dwm"
+
+    log "Installing customized dwm...done"
+}
+
 installDmenu()
 {
     requiresVariable "DMENU_PACKAGES" "$FUNCNAME"
