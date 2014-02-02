@@ -111,6 +111,16 @@ setLocales()
     log "Set locales...done"
 }
 
+generateLocales()
+{
+    log "Generate locales..."
+
+    archChroot "locale-gen"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to generate locales"
+
+    log "Generate locales...done"
+}
+
 setLanguage()
 {
     requiresVariable "LOCALIZATION_LANGUAGE_EN" "$FUNCNAME"

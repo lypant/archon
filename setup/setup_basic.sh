@@ -52,6 +52,7 @@ setupBasic()
     generateFstab
     setHostName
     setLocales
+    generateLocales
     setLanguage
     setTimeZone
     setHardwareClock
