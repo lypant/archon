@@ -39,6 +39,10 @@ setupCustom()
 
     configurePacman
     configureGitUser
+    setBootloaderKernelParams
+    disableSyslinuxBootMenu
+    setConsoleLoginMessage
+    setEarlyTerminalFont        # This requires linux image recreation
 
     ########################    REPOSITORY CLONING
 
@@ -77,6 +81,7 @@ setupCustom()
     installXinitrcDotfile
     installXresourcesDotfile
 
+    recreateImage               # Required by setEarlyTerminalFont
     # This should be the last step (or almost last ;)
     changeUser1HomeOwnership
 

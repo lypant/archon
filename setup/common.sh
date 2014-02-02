@@ -120,3 +120,76 @@ configureGitUser()
     log "Configure git user...done"
 }
 
+setBootloaderKernelParams()
+{
+    requiresVariable "ROOT_PARTITION_HDD" "$FUNCNAME"
+    requiresVariable "ROOT_PARTITION_NB" "$FUNCNAME"
+    requiresVariable "BOOTLOADER_KERNEL_PARAMS" "$FUNCNAME"
+
+    log "Set bootloader kernel params..."
+
+    # Not using var for /dev/ - caused sed problems interpreting / character
+    executeCommand "sed -i \"s/APPEND root=\/dev\/$ROOT_PARTITION_HDD$ROOT_PARTITION_NB rw/APPEND root=\/dev\/$ROOT_PARTITION_HDD$ROOT_PARTITION_NB $BOOTLOADER_KERNEL_PARAMS/\" /boot/syslinux/syslinux.cfg"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to set bootloader kernel params"
+
+    log "Set bootloader kernel params...done"
+}
+
+disableSyslinuxBootMenu()
+{
+    log "Disable syslinux boot menu..."
+
+    commentVar "UI" "/boot/syslinux/syslinux.cfg"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to disable syslinux boot menu"
+
+    log "Disable syslinux boot menu...done"
+}
+
+setConsoleLoginMessage()
+{
+    requiresVariable "CONSOLE_WELCOME_MSG" "$FUNCNAME"
+
+    log "Set console login message..."
+
+    # Remove welcome message
+    executeCommand "rm -f /etc/issue"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to remove /etc/issue file"
+
+    # Set new welcome message, if present
+    if [ ! -z "$CONSOLE_WELCOME_MSG" ];then
+        executeCommand "echo $CONSOLE_WELCOME_MSG > /etc/issue"
+        terminateScriptOnError "$?" "$FUNCNAME" "failed to set console login message"
+    else
+        log "Console welcome message not set, /etc/issue file deleted"
+    fi
+
+    log "Set console login message...done"
+}
+
+# This requires image recreation for changes to take effect
+setEarlyTerminalFont()
+{
+    log "Set early terminal font..."
+
+    # Add "consolefont keymap" hooks
+    # TODO - write a function for extending such lists
+    # TODO   (original list might change and we don't care about the list, we want just to add sth)
+    local originalList="base udev autodetect modconf block filesystems keyboard fsck"
+    local newList="$originalList consolefont keymap"
+
+    executeCommand "sed -i \"s/HOOKS=\\\"$originalList\\\"/HOOKS=\\\"$newList\\\"/g\" /etc/mkinitcpio.conf"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to set early terminal font"
+
+    log "Set early terminal font...done"
+}
+
+recreateImage()
+{
+    log "Recreate linux image..."
+
+    executeCommand "mkinitcpio -p linux"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to set recreate linux image"
+
+    log "Recreate linux image...done"
+}
+
