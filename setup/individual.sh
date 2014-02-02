@@ -285,6 +285,7 @@ installDwm()
 installCustomizedDwm()
 {
     requiresVariable "DWM_BUILD_PATH" "$FUNCNAME"
+    requiresVariable "TERMINAL_EMULATOR_COMMAND" "$FUNCNAME"
 
     log "Installing customized dwm..."
 
