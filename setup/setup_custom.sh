@@ -57,10 +57,19 @@ setupCustom()
     # USERS
 
     # SYSTEM PACKAGES
+    installXorgBasic
+    installXorgAdditional
 
     # SOFTWARE PACKAGES
+    installDvtm
+    installRxvtUnicode
+    installGuiFonts
+    installDwm
+    installDmenu
+    installVirtualboxGuestAdditions
 
     # CONFIGURATION
+    setVirtualboxSharedFolder
 
     # Dotfiles - bash etc.
     installBashprofileDotfile

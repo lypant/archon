@@ -255,3 +255,29 @@ createLink()
     return $retval
 }
 
+enableService()
+{
+    if [[ $# -lt 1 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
+
+    local service="$1"
+
+    executeCommand "systemctl enable $service"
+    return $?
+}
+
+startService()
+{
+    if [[ $# -lt 1 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
+
+    local service="$1"
+
+    executeCommand "systemctl start $service"
+    return $?
+}
+

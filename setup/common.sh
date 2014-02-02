@@ -147,7 +147,7 @@ disableSyslinuxBootMenu()
 
 setConsoleLoginMessage()
 {
-    requiresVariable "CONSOLE_WELCOME_MSG" "$FUNCNAME"
+    # Do not require COSNOLE_WELCOME_MSG - when empty, no message will be used
 
     log "Set console login message..."
 

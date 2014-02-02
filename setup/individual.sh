@@ -210,3 +210,149 @@ changeUser1HomeOwnership()
     log "Change user1 home ownership...done"
 }
 
+installDvtm()
+{
+    requiresVariable "DVTM_PACKAGES" "$FUNCNAME"
+    log "Install dvtm..."
+
+    installPackage $DVTM_PACKAGES
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install dvtm"
+
+    log "Install dvtm...done"
+}
+
+installXorgBasic()
+{
+    requiresVariable "XORG_BASIC_PACKAGES" "$FUNCNAME"
+
+    log "Install xorg basics..."
+
+    installPackage $XORG_BASIC_PACKAGES
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install xorg basics"
+
+    log "Install xorg basics...done"
+}
+
+installXorgAdditional()
+{
+    requiresVariable "XORG_ADDITIONAL_PACKAGES" "$FUNCNAME"
+
+    log "Install xorg additional..."
+
+    installPackage $XORG_ADDITIONAL_PACKAGES
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install xorg additional"
+
+    log "Install xorg additional...done"
+}
+
+installRxvtUnicode()
+{
+    requiresVariable "RXVTUNICODE_PACKAGES" "$FUNCNAME"
+
+    log "Install rxvt unicode..."
+
+    installPackage $RXVTUNICODE_PACKAGES
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install rxvt unicode"
+
+    log "Install rxvt unicode...done"
+}
+
+installGuiFonts()
+{
+    requiresVariable "GUI_FONT_PACKAGES" "$FUNCNAME"
+
+    log "Install gui fonts..."
+
+    installPackage $GUI_FONT_PACKAGES
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install gui fonts"
+
+    log "Install gui fonts...done"
+}
+
+# TODO - check if official repo installation works fine...
+installDwm()
+{
+    requiresVariable "DWM_PACKAGES" "$FUNCNAME"
+
+    log "Install dwm..."
+
+    installPackage $DWM_PACKAGES
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install dwm"
+
+    log "Install dwm...done"
+}
+
+installDmenu()
+{
+    requiresVariable "DMENU_PACKAGES" "$FUNCNAME"
+
+    log "Install dmenu..."
+
+    installPackage $DMENU_PACKAGES
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install dmenu"
+
+    log "Install dmenu...done"
+}
+
+installVirtualboxGuestAdditions()
+{
+    requiresVariable "VIRTUALBOX_GUEST_UTILS_PACKAGES" "$FUNCNAME"
+    requiresVariable "VIRTUALBOX_GUEST_UTILS_MODULES" "$FUNCNAME"
+    requiresVariable "VIRTUALBOX_GUEST_UTILS_MODULES_FILE" "$FUNCNAME"
+
+    log "Install virtualbox guest additions..."
+
+    # Install the packages
+    installPackage $VIRTUALBOX_GUEST_UTILS_PACKAGES
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install virtualbox package"
+
+    # Load required modules
+    executeCommand "modprobe -a $VIRTUALBOX_GUEST_UTILS_MODULES"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to load required modules"
+
+    # Setup modules to be loaded on startup
+    if [ ! -z "$VIRTUALBOX_GUEST_UTILS_MODULES" ]; then
+        for module in $VIRTUALBOX_GUEST_UTILS_MODULES
+        do
+            executeCommand "echo $module >> $VIRTUALBOX_GUEST_UTILS_MODULES_FILE"
+            terminateScriptOnError "$?" "$FUNCNAME" "failed to setup module to be loaded on startup"
+        done
+    fi
+
+    log "Install virtualbox guest additions...done"
+}
+
+setVirtualboxSharedFolder()
+{
+    requiresVariable "USER1_NAME" "$FUNCNAME"
+    requiresVariable "USER1_HOME" "$FUNCNAME"
+    requiresVariable "VIRTUALBOX_SHARED_FOLDER_NAME" "$FUNCNAME"
+
+    log "Set virtualbox shared folder..."
+
+    # Create /media folder
+    executeCommand "mkdir /media"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to create /media dir"
+
+    # Add user1 to vboxsf group
+    executeCommand "gpasswd -a $USER1_NAME vboxsf"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to add user to vboxsf group"
+
+    # Enable vboxservice service
+    enableService "vboxservice"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to enable vboxservice"
+
+    # Start vboxservice (needed for link creation)
+    startService "vboxservice"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to start vboxservice"
+
+    # Wait a moment for a started service to do its job
+    executeCommand "sleep 5"
+
+    # Create link for easy access
+    createLink "/media/sf_$VIRTUALBOX_SHARED_FOLDER_NAME" "$USER1_HOME/$VIRTUALBOX_SHARED_FOLDER_NAME"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to create link to shared folder"
+
+    log "Set virtualbox shared folder...done"
+}
+
