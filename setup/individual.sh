@@ -310,11 +310,11 @@ installCustomizedDwm()
     terminateScriptOnError "$?" "$FUNCNAME" "failed to change dwm terminal emulator command"
 
     # Save configuration as new commit
-    executeCommand "git -C $DWM_BUIL_PATH commit -a -m \"Adjustments done during archon installation\""
+    executeCommand "git -C $DWM_BUILD_PATH commit -a -m \"Adjustments done during archon installation\""
     terminateScriptOnError "$?" "$FUNCNAME" "failed to commit adjustments"
 
     # Install
-    executeCommand "make clean install"
+    executeCommand "make -C $DWM_BUILD_PATH clean install"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to build and install dwm"
 
     log "Installing customized dwm...done"
