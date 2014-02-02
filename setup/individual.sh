@@ -307,8 +307,13 @@ installCustomizedDwm()
     executeCommand "sed -i 's/X11LIB = \/usr\/X11R6\/lib/X11LIB = \/usr\/lib\/X11/g'" "$DWM_BUILD_PATH/config.mk"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to change dwm x11 lib path"
 
+    # Set terminal command to be launched on shortcut invocation
     executeCommand 'sed -i "s/\"st\"/\"$TERMINAL_EMULATOR_COMMAND\"/g"' "$DWM_BUILD_PATH/config.def.h"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to change dwm terminal emulator command"
+
+    # Change resizehints to false for better aligned terminal windows
+    executeCommand "sed -i 's/static const Bool resizehints = True/static const Bool resizehints = False/g'" "$DWM_BUILD_PATH/config.def.h"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to change resizehints"
 
     # Save configuration as new commit
     executeCommand "git -C $DWM_BUILD_PATH commit -a -m \"Adjustments done during archon installation\""
