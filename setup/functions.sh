@@ -1,7 +1,5 @@
 #!/bin/bash
 
-echo functions.sh
-
 executeCommand()
 {
     # Check if all required variables are set
