@@ -4,7 +4,7 @@ source "setup.conf"
 source "functions.sh"
 
 # Set log file for custom setup
-LOG_FILE="/root/archon/logs/setup_custom.log"
+LOG_FILE="$ARCHON_LOG_DIR/setup_custom.log"
 
 # USERS
 

@@ -1,5 +1,22 @@
 #!/bin/bash
 
+createLogDir()
+{
+    # Check if all required variables are set
+    if [[ -z "$ARCHON_LOG_DIR" ]]; then
+        echo "$FUNCNAME: variable ARCHON_LOG_DIR not set"
+        echo "Aborting script!"
+        exit 1
+    fi
+
+    mkdir -p $ARCHON_LOG_DIR
+    if [[ "$?" -ne 0 ]]; then
+        echo "Failed to create log dir $ARCHON_LOG_DIR"
+        echo "Aborting script!"
+        exit 2
+    fi
+}
+
 executeCommand()
 {
     # Check if all required variables are set

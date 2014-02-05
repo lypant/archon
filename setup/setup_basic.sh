@@ -4,7 +4,7 @@ source "setup.conf"
 source "functions.sh"
 
 # Set log file for basic setup
-LOG_FILE="/root/archon/logs/setup_basic.log"
+LOG_FILE="$ARCHON_LOG_DIR/setup_basic.log"
 
 setLivecdConsoleFont()
 {
@@ -400,6 +400,8 @@ copyArchonFiles()
 
 setupBasic()
 {
+    createLogDir
+
     log "Setup basic..."
 
     # LiveCD preparation
