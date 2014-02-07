@@ -419,7 +419,7 @@ installDvtm()
 
 installCustomizedDvtm()
 {
-    requiresVariable "DVTM_REPO" "$FUNCNAME"
+    requiresVariable "DVTM_GIT_REPO" "$FUNCNAME"
     requiresVariable "DVTM_BUILD_PATH" "$FUNCNAME"
     requiresVariable "DVTM_CUSTOM_BRANCH" "$FUNCNAME"
     requiresVariable "DVTM_ACTIVE_COLOR" "$FUNCNAME"
