@@ -417,6 +417,42 @@ installDvtm()
     log "Install dvtm...done"
 }
 
+installCustomizedDvtm()
+{
+    requiresVariable "DVTM_REPO" "$FUNCNAME"
+    requiresVariable "DVTM_BUILD_PATH" "$FUNCNAME"
+    requiresVariable "DVTM_CUSTOM_BRANCH" "$FUNCNAME"
+    requiresVariable "DVTM_ACTIVE_COLOR" "$FUNCNAME"
+    requiresVariable "DVTM_MOD_KEY" "$FUNCNAME"
+    requiresVariable "CUSTOM_COMMIT_COMMENT" "$FUNCNAME"
+
+    log "Install customized dvtm..."
+
+    executeCommand "git clone $DVTM_GIT_REPO $DVTM_BUILD_PATH"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to clone dvtm repository"
+
+    executeCommand "git -C $DVTM_BUILD_PATH checkout -b $DVTM_CUSTOM_BRANCH"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to checkout new branch"
+
+    # Change default blue color to something brighter - to make it visible on older CRT monitor
+    executeCommand "sed -i 's/BLUE/$DVTM_ACTIVE_COLOR/g'" "$DVTM_BUILD_PATH/config.def.h"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to change active color"
+
+    # Change default mod key - 'g' is not convenient to be used with CTRL key
+    executeCommand "sed -i \"s/#define MOD CTRL('g')/#define MOD CTRL('$DVTM_MOD_KEY')/g\"" "$DVTM_BUILD_PATH/config.def.h"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to change mod key"
+
+    executeCommand "git -C $DVTM_BUILD_PATH commit -a -m \"$CUSTOM_COMMIT_COMMENT\""
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to commit adjustments"
+
+    executeCommand "make -C $DVTM_BUILD_PATH"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to make dvtm"
+
+    executeCommand "make -C $DVTM_BUILD_PATH install"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install dvtm"
+
+    log "Install customized dvtm...done"
+}
 installXorgBasic()
 {
     requiresVariable "XORG_BASIC_PACKAGES" "$FUNCNAME"
@@ -480,17 +516,21 @@ installDwm()
 
 installCustomizedDwm()
 {
+    requiresVariable "DWM_GIT_REPO" "$FUNCNAME"
     requiresVariable "DWM_BUILD_PATH" "$FUNCNAME"
+    requiresVariable "DWM_CUSTOM_BRANCH" "$FUNCNAME"
+    requiresVariable "DWM_BASE_COMMIT" "$FUNCNAME"
     requiresVariable "TERMINAL_EMULATOR_COMMAND" "$FUNCNAME"
+    requiresVariable "CUSTOM_COMMIT_COMMENT" "$FUNCNAME"
 
     log "Installing customized dwm..."
 
     # Clone project from git
-    executeCommand "git clone http://git.suckless.org/dwm $DWM_BUILD_PATH"
+    executeCommand "git clone $DWM_GIT_REPO $DWM_BUILD_PATH"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to clone dwm repository"
 
     # Newest commit was not working... use specific, working version
-    executeCommand "git -C $DWM_BUILD_PATH checkout 4fb31e0 -b dwm_installed"
+    executeCommand "git -C $DWM_BUILD_PATH checkout $DWM_BASE_COMMIT -b $DWM_CUSTOM_BRANCH"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to checkout older commit as a new branch"
 
     # Configure necessary settings
@@ -512,7 +552,7 @@ installCustomizedDwm()
     terminateScriptOnError "$?" "$FUNCNAME" "failed to change resizehints"
 
     # Save configuration as new commit
-    executeCommand "git -C $DWM_BUILD_PATH commit -a -m \"Adjustments done during archon installation\""
+    executeCommand "git -C $DWM_BUILD_PATH commit -a -m \"$CUSTOM_COMMIT_COMMENT\""
     terminateScriptOnError "$?" "$FUNCNAME" "failed to commit adjustments"
 
     # Install
@@ -715,7 +755,8 @@ setupCustom()
     installXorgAdditional
 
     # SOFTWARE PACKAGES
-    installDvtm
+    #installDvtm            # Official repo version not good enough
+    installCustomizedDvtm   # Use customized version instead
     installRxvtUnicode
     installGuiFonts
     #installDwm             # Official repo version not good enough
