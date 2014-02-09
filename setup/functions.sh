@@ -1,4 +1,12 @@
 #!/bin/bash
+#==============================================================================
+# FILE:         functions.sh
+#
+# USAGE:        Include in other scripts, e.g. source functions.sh
+#
+# DESCRIPTION:  Functions used by both setup scripts.
+#               Contains only function definitions - they are not executed.
+#==============================================================================
 
 executeCommand()
 {

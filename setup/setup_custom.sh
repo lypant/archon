@@ -1,12 +1,29 @@
 #!/bin/bash
+#===============================================================================
+# FILE:         setup_custom.sh
+#
+# USAGE:        Execute from shell, e.g. ./setup_custom.sh
+#
+# DESCRIPTION:  Functions used to perform custom system setup.
+#               Executes main setup function.
+#===============================================================================
+
+#===============================================================================
+# Other scripts usage
+#===============================================================================
 
 source "setup.conf"
 source "functions.sh"
 
-# Set log file for custom setup
-LOG_FILE="$ARCHON_LOG_DIR/setup_custom.log"
+#===============================================================================
+# Log file for this script
+#===============================================================================
 
-### HELPER FUNCTIONS
+LOG_FILE="$ARCHON_SETUP_CUSTOM_LOG_FILE"
+
+#===============================================================================
+# Helper functions
+#===============================================================================
 
 addUser()
 {
@@ -241,9 +258,17 @@ changeHomeOwnership()
     log "Change home dir ownership...done"
 }
 
-###
+#===============================================================================
+# Setup functions
+#===============================================================================
 
-# USERS
+#=======================================
+# Common setup
+#=======================================
+
+#===================
+# Common users
+#===================
 
 addUser1()
 {
@@ -282,7 +307,9 @@ setUser1Sudoer()
     log "Set user1 sudoer...done"
 }
 
-# SYSTEM PACKAGES
+#===================
+# Common system packages
+#===================
 
 installAlsa()
 {
@@ -296,7 +323,9 @@ installAlsa()
     log "Install alsa...done"
 }
 
-# SOFTWARE PACKAGES
+#===================
+# Common software packages
+#===================
 
 installVim()
 {
@@ -334,7 +363,9 @@ installGit()
     log "Install git...done"
 }
 
-# CONFIGURATION
+#===================
+# Common configuration
+#===================
 
 configurePacman()
 {
@@ -425,119 +456,118 @@ setEarlyTerminalFont()
     log "Set early terminal font...done"
 }
 
-recreateImage()
+#=======================================
+# Project repository cloning
+#=======================================
+
+cloneArchonRepo()
 {
-    log "Recreate linux image..."
+    requiresVariable "ARCHON_REPO_URL" "$FUNCNAME"
+    requiresVariable "ARCHON_REPO_DST" "$FUNCNAME"
 
-    executeCommand "mkinitcpio -p linux"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to set recreate linux image"
+    log "Clone archon repo..."
 
-    log "Recreate linux image...done"
+    executeCommand "git clone $ARCHON_REPO_URL $ARCHON_REPO_DST"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to clone archon repo"
+
+    log "Clone archon repo...done"
 }
 
-installBashprofileDotfile()
+checkoutCurrentBranch()
 {
-    log "Install bash_profile dotfile..."
+    requiresVariable "ARCHON_REPO_DST" "$FUNCNAME"
+    requiresVariable "ARCHON_BRANCH" "$FUNCNAME"
 
-    installDotfile ".bash_profile" ""
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install bash_profile dotfile"
+    log "Checkout current branch..."
 
-    log "Install bash_profile dotfile...done"
+    # Execute git commands from destination path
+    executeCommand "git -C $ARCHON_REPO_DST checkout $ARCHON_BRANCH"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to checkout current branch"
+
+    log "Checkout current branch...done"
 }
 
-installBashrcDotfile()
+createNewBranch()
 {
-    log "Install bashrc dotfile..."
+    requiresVariable "ARCHON_REPO_DST" "$FUNCNAME"
+    requiresVariable "ARCHON_NEW_BRANCH_NAME" "$FUNCNAME"
 
-    installDotfile ".bashrc" ""
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install bashrc dotfile"
+    log "Create new branch..."
 
-    log "Install bashrc dotfile...done"
+    executeCommand "git -C $ARCHON_REPO_DST checkout -b \"$ARCHON_NEW_BRANCH_NAME\""
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to create new archon branch"
+
+    log "Create new branch...done"
 }
 
-installDircolorssolarizedDotfile()
+copyOverArchonFiles()
 {
-    log "Install .dir_colors_solarized dotfile..."
-
-    installDotfile ".dir_colors_solarized" ""
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install .dir_colors_solarized dotfile"
-
-    log "Install .dir_colors_solarized dotfile...done"
-}
-
-installVimrcDotfile()
-{
-    log "Install vimrc dotfile..."
-
-    installDotfile ".vimrc" ""
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install vimrc dotfile"
-
-    log "Install vimrc dotfile...done"
-}
-
-installVimsolarizedDotfile()
-{
-    log "Install solarized.vim dotfile..."
-
-    installDotfile "solarized.vim" ".vim/colors"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install solarized.vim dotfile"
-
-    log "Install solarized.vim dotfile...done"
-}
-
-installMcsolarizedDotfile()
-{
-    log "Install mc_solarized.ini dotfile..."
-
-    installDotfile "mc_solarized.ini" ".config/mc"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install mc_solarized.ini dotfile"
-
-    log "Install mc_solarized.ini dotfile...done"
-}
-
-installGitconfigDotfile()
-{
-    log "Install .gitconfig dotfile..."
-
-    installDotfile ".gitconfig" ""
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install .gitconfig dotfile"
-
-    log "Install .gitconfig dotfile...done"
-}
-
-installXinitrcDotfile()
-{
-    log "Install .xinitrc dotfile..."
-
-    installDotfile ".xinitrc" ""
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install .xinitrc dotfile"
-
-    log "Install .xinitrc dotfile...done"
-}
-
-installXresourcesDotfile()
-{
-    log "Install .Xresources dotfile..."
-
-    installDotfile ".Xresources" ""
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install .Xresources dotfile"
-
-    log "Install .Xresources dotfile...done"
-}
-
-changeUser1HomeOwnership()
-{
-    requiresVariable "USER1_NAME" "$FUNCNAME"
+    requiresVariable "ARCHON_ROOT_PATH" "$FUNCNAME"
     requiresVariable "USER1_HOME" "$FUNCNAME"
 
-    log "Change user1 home ownership..."
+    log "Copy over archon files..."
 
-    changeHomeOwnership "$USER1_NAME" "$USER1_HOME"
-    # TODO: following tSOE is redundand - function above already cheks that - improve in future
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to change user1 home dir ownership"
+    executeCommand "cp -r $ARCHON_ROOT_PATH $USER1_HOME"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to copy over archon files"
 
-    log "Change user1 home ownership...done"
+    log "Copy over archon files...done"
 }
+
+commitAdjustments()
+{
+    requiresVariable "ARCHON_REPO_DST" "$FUNCNAME"
+
+    log "Commit adjustments..."
+
+    if [[ -n "$(git -C $ARCHON_REPO_DST status --porcelain)" ]]; then
+        executeCommand "git -C $ARCHON_REPO_DST commit -a -m \"Adjustments done during archon installation\""
+        terminateScriptOnError "$?" "$FUNCNAME" "failed to commit adjustments"
+    else
+        log "No changes detected, no need to commit"
+    fi
+
+    log "Commit adjustments...done"
+}
+
+#=======================================
+# Individual setup
+#=======================================
+
+#===================
+# Individual users
+#===================
+
+#===================
+# Individual system packages
+#===================
+
+installXorgBasic()
+{
+    requiresVariable "XORG_BASIC_PACKAGES" "$FUNCNAME"
+
+    log "Install xorg basics..."
+
+    installPackage $XORG_BASIC_PACKAGES
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install xorg basics"
+
+    log "Install xorg basics...done"
+}
+
+installXorgAdditional()
+{
+    requiresVariable "XORG_ADDITIONAL_PACKAGES" "$FUNCNAME"
+
+    log "Install xorg additional..."
+
+    installPackage $XORG_ADDITIONAL_PACKAGES
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install xorg additional"
+
+    log "Install xorg additional...done"
+}
+
+#===================
+# Individual software packages
+#===================
 
 installDvtm()
 {
@@ -585,30 +615,6 @@ installCustomizedDvtm()
     terminateScriptOnError "$?" "$FUNCNAME" "failed to install dvtm"
 
     log "Install customized dvtm...done"
-}
-
-installXorgBasic()
-{
-    requiresVariable "XORG_BASIC_PACKAGES" "$FUNCNAME"
-
-    log "Install xorg basics..."
-
-    installPackage $XORG_BASIC_PACKAGES
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install xorg basics"
-
-    log "Install xorg basics...done"
-}
-
-installXorgAdditional()
-{
-    requiresVariable "XORG_ADDITIONAL_PACKAGES" "$FUNCNAME"
-
-    log "Install xorg additional..."
-
-    installPackage $XORG_ADDITIONAL_PACKAGES
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install xorg additional"
-
-    log "Install xorg additional...done"
 }
 
 installRxvtUnicode()
@@ -735,6 +741,10 @@ installVirtualboxGuestAdditions()
     log "Install virtualbox guest additions...done"
 }
 
+#===================
+# Individual configuration
+#===================
+
 setVirtualboxSharedFolder()
 {
     requiresVariable "USER1_NAME" "$FUNCNAME"
@@ -769,109 +779,187 @@ setVirtualboxSharedFolder()
     log "Set virtualbox shared folder...done"
 }
 
-cloneArchonRepo()
+#=========
+# Dotfiles
+#=========
+
+# Bash etc.
+
+installBashprofileDotfile()
 {
-    requiresVariable "ARCHON_REPO_URL" "$FUNCNAME"
-    requiresVariable "ARCHON_REPO_DST" "$FUNCNAME"
+    log "Install bash_profile dotfile..."
 
-    log "Clone archon repo..."
+    installDotfile ".bash_profile" ""
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install bash_profile dotfile"
 
-    executeCommand "git clone $ARCHON_REPO_URL $ARCHON_REPO_DST"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to clone archon repo"
-
-    log "Clone archon repo...done"
+    log "Install bash_profile dotfile...done"
 }
 
-checkoutCurrentBranch()
+installBashrcDotfile()
 {
-    requiresVariable "ARCHON_REPO_DST" "$FUNCNAME"
-    requiresVariable "ARCHON_BRANCH" "$FUNCNAME"
+    log "Install bashrc dotfile..."
 
-    log "Checkout current branch..."
+    installDotfile ".bashrc" ""
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install bashrc dotfile"
 
-    # Execute git commands from destination path
-    executeCommand "git -C $ARCHON_REPO_DST checkout $ARCHON_BRANCH"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to checkout current branch"
-
-    log "Checkout current branch...done"
+    log "Install bashrc dotfile...done"
 }
 
-createNewBranch()
+installDircolorssolarizedDotfile()
 {
-    requiresVariable "ARCHON_REPO_DST" "$FUNCNAME"
-    requiresVariable "ARCHON_NEW_BRANCH_NAME" "$FUNCNAME"
+    log "Install .dir_colors_solarized dotfile..."
 
-    log "Create new branch..."
+    installDotfile ".dir_colors_solarized" ""
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install .dir_colors_solarized dotfile"
 
-    executeCommand "git -C $ARCHON_REPO_DST checkout -b \"$ARCHON_NEW_BRANCH_NAME\""
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to create new archon branch"
-
-    log "Create new branch...done"
+    log "Install .dir_colors_solarized dotfile...done"
 }
 
-copyOverArchonFiles()
+# vim
+
+installVimrcDotfile()
 {
-    requiresVariable "ARCHON_ROOT_PATH" "$FUNCNAME"
+    log "Install vimrc dotfile..."
+
+    installDotfile ".vimrc" ""
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install vimrc dotfile"
+
+    log "Install vimrc dotfile...done"
+}
+
+installVimsolarizedDotfile()
+{
+    log "Install solarized.vim dotfile..."
+
+    installDotfile "solarized.vim" ".vim/colors"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install solarized.vim dotfile"
+
+    log "Install solarized.vim dotfile...done"
+}
+
+# mc
+
+installMcsolarizedDotfile()
+{
+    log "Install mc_solarized.ini dotfile..."
+
+    installDotfile "mc_solarized.ini" ".config/mc"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install mc_solarized.ini dotfile"
+
+    log "Install mc_solarized.ini dotfile...done"
+}
+
+# git
+
+installGitconfigDotfile()
+{
+    log "Install .gitconfig dotfile..."
+
+    installDotfile ".gitconfig" ""
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install .gitconfig dotfile"
+
+    log "Install .gitconfig dotfile...done"
+}
+
+# X
+
+installXinitrcDotfile()
+{
+    log "Install .xinitrc dotfile..."
+
+    installDotfile ".xinitrc" ""
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install .xinitrc dotfile"
+
+    log "Install .xinitrc dotfile...done"
+}
+
+installXresourcesDotfile()
+{
+    log "Install .Xresources dotfile..."
+
+    installDotfile ".Xresources" ""
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to install .Xresources dotfile"
+
+    log "Install .Xresources dotfile...done"
+}
+
+#===================
+# Other
+#===================
+
+recreateImage()
+{
+    log "Recreate linux image..."
+
+    executeCommand "mkinitcpio -p linux"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to set recreate linux image"
+
+    log "Recreate linux image...done"
+}
+
+changeUser1HomeOwnership()
+{
+    requiresVariable "USER1_NAME" "$FUNCNAME"
     requiresVariable "USER1_HOME" "$FUNCNAME"
 
-    log "Copy over archon files..."
+    log "Change user1 home ownership..."
 
-    executeCommand "cp -r $ARCHON_ROOT_PATH $USER1_HOME"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to copy over archon files"
+    changeHomeOwnership "$USER1_NAME" "$USER1_HOME"
+    # TODO: following tSOE is redundand - function above already cheks that - improve in future
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to change user1 home dir ownership"
 
-    log "Copy over archon files...done"
+    log "Change user1 home ownership...done"
 }
 
-commitAdjustments()
-{
-    requiresVariable "ARCHON_REPO_DST" "$FUNCNAME"
-
-    log "Commit adjustments..."
-
-    if [[ -n "$(git -C $ARCHON_REPO_DST status --porcelain)" ]]; then
-        executeCommand "git -C $ARCHON_REPO_DST commit -a -m \"Adjustments done during archon installation\""
-        terminateScriptOnError "$?" "$FUNCNAME" "failed to commit adjustments"
-    else
-        log "No changes detected, no need to commit"
-    fi
-
-    log "Commit adjustments...done"
-}
+#===============================================================================
+# Main setup function
+#===============================================================================
 
 setupCustom()
 {
     log "Setup custom..."
 
-    ########################    COMMON SETUP
+    #=======================================
+    # Common setup
+    #=======================================
 
-    # USERS
+    #===================
+    # Common users
+    #===================
 
-    # User1
     addUser1
     setUser1Password
     setUser1Sudoer
 
-    # SYSTEM PACKAGES
+    #===================
+    # Common system packages
+    #===================
 
     updatePackageList
     installAlsa
 
-    # SOFTWARE PACKAGES
+    #===================
+    # Common software packages
+    #===================
 
     installVim
     installMc
     installGit
 
-    # CONFIGURATION
+    #===================
+    # Common configuration
+    #===================
 
     configurePacman
     configureGitUser
     setBootloaderKernelParams
     disableSyslinuxBootMenu
     setConsoleLoginMessage
-    setEarlyTerminalFont        # This requires linux image recreation
+    setEarlyTerminalFont    # Requires linux image recreation
 
-    ########################    REPOSITORY CLONING
+    #=======================================
+    # Project repository cloning
+    #=======================================
 
     cloneArchonRepo
     checkoutCurrentBranch
@@ -879,15 +967,25 @@ setupCustom()
     copyOverArchonFiles
     commitAdjustments
 
-    ########################    INDIVIDUAL SETUP
+    #=======================================
+    # Individual setup
+    #=======================================
 
-    # USERS
+    #===================
+    # Individual users
+    #===================
 
-    # SYSTEM PACKAGES
+    #===================
+    # Individual system packages
+    #===================
+
     installXorgBasic
     installXorgAdditional
 
-    # SOFTWARE PACKAGES
+    #===================
+    # Individual software packages
+    #===================
+
     #installDvtm            # Official repo version not good enough
     installCustomizedDvtm   # Use customized version instead
     installRxvtUnicode
@@ -897,34 +995,48 @@ setupCustom()
     installDmenu
     installVirtualboxGuestAdditions
 
-    # CONFIGURATION
+    #===================
+    # Individual configuration
+    #===================
+
     setVirtualboxSharedFolder
 
-    # Dotfiles - bash etc.
+    #=========
+    # Dotfiles
+    #=========
+
+    # Bash etc.
     installBashprofileDotfile
     installBashrcDotfile
     installDircolorssolarizedDotfile
 
-    # Dotfiles - vim
+    # vim
     installVimrcDotfile
     installVimsolarizedDotfile
 
-    # Dotfiles- mc
+    # mc
     installMcsolarizedDotfile
 
-    # Dotfiles - git
+    # git
     installGitconfigDotfile
 
-    # Dotfiles - X
+    # X
     installXinitrcDotfile
     installXresourcesDotfile
 
-    recreateImage               # Required by setEarlyTerminalFont
-    # This should be the last step (or almost last ;)
+    #===================
+    # Other
+    #===================
+
+    recreateImage   # Required by setEarlyTerminalFont
     changeUser1HomeOwnership
 
     log "Setup custom...done"
 }
+
+#===============================================================================
+# Main setup function execution
+#===============================================================================
 
 setupCustom
 

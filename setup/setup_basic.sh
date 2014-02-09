@@ -1,12 +1,29 @@
 #!/bin/bash
+#===============================================================================
+# FILE:         setup_basic.sh
+#
+# USAGE:        Execute from shell, e.g. ./setup_basic.sh
+#
+# DESCRIPTION:  Functions used to perform basic system setup.
+#               Executes main setup function.
+#===============================================================================
+
+#===============================================================================
+# Other scripts usage
+#===============================================================================
 
 source "setup.conf"
 source "functions.sh"
 
-# Set log file for basic setup
-LOG_FILE="$ARCHON_LOG_DIR/setup_basic.log"
+#===============================================================================
+# Log file for this script
+#===============================================================================
 
-### HELPER FUNCTIONS
+LOG_FILE="$ARCHON_SETUP_BASIC_LOG_FILE"
+
+#===============================================================================
+# Helper functions
+#===============================================================================
 
 createLogDir()
 {
@@ -67,7 +84,13 @@ setLocale()
     log "Set locale for $1...done"
 }
 
-###
+#===============================================================================
+# Setup functions
+#===============================================================================
+
+#=======================================
+# LiveCD preparation
+#=======================================
 
 setLivecdConsoleFont()
 {
@@ -99,6 +122,10 @@ installLivecdVim()
 
     log "Install livecd vim...done"
 }
+
+#=======================================
+# Partitions and file systems
+#=======================================
 
 # TODO: Try to separate fdisk commands for each partition, as they may occupy different disks
 partitionDisks()
@@ -204,6 +231,10 @@ unmountRootPartition()
 
     log "Unmount root partition...done"
 }
+
+#=======================================
+# Installation
+#=======================================
 
 # Note: rankMirrors takes longer time but might provide faster servers than downloadMirrorList
 rankMirrors()
@@ -429,6 +460,10 @@ setRootPassword()
     log "Set root password...done"
 }
 
+#=======================================
+# Post installation actions
+#=======================================
+
 copyArchonFiles()
 {
     requiresVariable "ARCHON_MNT_PATH" "$FUNCNAME"
@@ -446,28 +481,42 @@ copyArchonFiles()
     log "Copy archon files...done"
 }
 
+#===============================================================================
+# Main setup function
+#===============================================================================
+
 setupBasic()
 {
     createLogDir
 
     log "Setup basic..."
 
+    #=======================================
     # LiveCD preparation
+    #=======================================
+
     setLivecdConsoleFont
     setLivecdPacmanTotalDownload
     updatePackageList
     installLivecdVim
 
-    # Prepare partitions and file systems
+    #=======================================
+    # Partitions and file systems
+    #=======================================
+
     partitionDisks
     createSwap
     activateSwap
     createRootFileSystem
     mountRootPartition
 
-    # Install
-    #rankMirrors        # Use only one of alternatives - rankMirrors or downloadMirrorList
-    downloadMirrorList  # Use only one of alternatives - rankMirrors or downloadMirrorList
+    #=======================================
+    # Installation
+    #=======================================
+
+    # Use only one of alternatives - rankMirrors or downloadMirrorList
+    #rankMirrors
+    downloadMirrorList
     installBaseSystem
     generateFstab
     setHostName
@@ -485,12 +534,17 @@ setupBasic()
 
     log "Setup basic...done"
 
-    # Copy config files, scripts and logs to newly installed system
-    copyArchonFiles
+    #=======================================
+    # Post installation actions
+    #=======================================
 
-    # Unmount partitions
+    copyArchonFiles
     unmountRootPartition
 }
+
+#===============================================================================
+# Main setup function execution
+#===============================================================================
 
 setupBasic
 
