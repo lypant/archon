@@ -6,6 +6,69 @@ source "functions.sh"
 # Set log file for basic setup
 LOG_FILE="$ARCHON_LOG_DIR/setup_basic.log"
 
+### HELPER FUNCTIONS
+
+createLogDir()
+{
+    # Check if all required variables are set
+    if [[ -z "$ARCHON_LOG_DIR" ]]; then
+        echo "$FUNCNAME: variable ARCHON_LOG_DIR not set"
+        echo "Aborting script!"
+        exit 1
+    fi
+
+    mkdir -p $ARCHON_LOG_DIR
+    if [[ "$?" -ne 0 ]]; then
+        echo "Failed to create log dir $ARCHON_LOG_DIR"
+        echo "Aborting script!"
+        exit 2
+    fi
+}
+
+downloadFile()
+{
+    if [[ $# -lt 2 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
+
+    local src=$1
+    local dst=$2
+
+    executeCommand "curl -so $dst --create-dirs $src"
+    return $?
+}
+
+archChroot()
+{
+    requiresVariable "ROOT_PARTITION_MOUNT_POINT" "$FUNCNAME"
+
+    if [[ $# -lt 1 ]];then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
+
+    executeCommand arch-chroot $ROOT_PARTITION_MOUNT_POINT /bin/bash -c \""$@"\"
+    return $?
+}
+
+setLocale()
+{
+    if [[ $# -lt 1 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        terminateScriptOnError "1" "$FUNCNAME" "failed to set locale"
+    fi
+
+    log "Set locale for  $1..."
+
+    archChroot "sed -i \\\"s/^#\\\\\(${1}.*\\\\\)$/\\\\\1/\\\" /etc/locale.gen"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to set locale"
+
+    log "Set locale for $1...done"
+}
+
+###
+
 setLivecdConsoleFont()
 {
     requiresVariable "CONSOLE_FONT" "$FUNCNAME"
@@ -218,21 +281,6 @@ setHostName()
     terminateScriptOnError "$?" "$FUNCNAME" "failed to set host name"
 
     log "Set host name...done"
-}
-
-setLocale()
-{
-    if [[ $# -lt 1 ]]; then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        terminateScriptOnError "1" "$FUNCNAME" "failed to set locale"
-    fi
-
-    log "Set locale for  $1..."
-
-    archChroot "sed -i \\\"s/^#\\\\\(${1}.*\\\\\)$/\\\\\1/\\\" /etc/locale.gen"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to set locale"
-
-    log "Set locale for $1...done"
 }
 
 setLocales()

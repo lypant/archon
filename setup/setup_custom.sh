@@ -6,6 +6,243 @@ source "functions.sh"
 # Set log file for custom setup
 LOG_FILE="$ARCHON_LOG_DIR/setup_custom.log"
 
+### HELPER FUNCTIONS
+
+addUser()
+{
+    if [[ $# -lt 4 ]];then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        terminateScriptOnError "1" "$FUNCNAME" "failed to add user"
+    fi
+
+    local mainGroup="$1"
+    local additionalGroups="$2"
+    local shell="$3"
+    local name="$4"
+
+    log "Add user..."
+
+    executeCommand "useradd -m -g $mainGroup -G $additionalGroups -s $shell $name"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to add user"
+
+    log "Add user...done"
+}
+
+setUserPassword()
+{
+    if [[ $# -lt 1 ]];then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        terminateScriptOnError "1" "$FUNCNAME" "failed to set user password"
+    fi
+
+    log "Set user password..."
+
+    local ask=1
+    local name="$1"
+
+    while [ $ask -ne 0 ]; do
+        log "Provide password for user $name"
+        executeCommand "passwd $name"
+        ask=$?
+    done
+
+    log "Set user password...done"
+}
+
+setSudoer()
+{
+    if [[ $# -lt 1 ]];then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        terminateScriptOnError "1" "$FUNCNAME" "failed to set sudoer"
+    fi
+
+    log "Set sudoer..."
+
+    local name="$1"
+
+    # TODO - do it in a safer way... Here just for experiments
+    executeCommand "echo \"$name ALL=(ALL) ALL\" >> /etc/sudoers"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to set sudoer"
+
+    log "Set sudoer...done"
+}
+
+backupFile()
+{
+    if [[ $# -lt 2 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
+
+    local original=$1
+    local backup=$2
+    local retval=0
+
+    # If original file exists, move it to backup dir
+    if [[ -e $original ]]; then
+        executeCommand "cp $original $backup"
+        retval=$?
+    fi
+    return $retval
+}
+
+createLink()
+{
+    if [[ $# -lt 2 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
+
+    local linkTarget=$1
+    local linkName=$2
+    local retval=0
+
+    # Check if target exists
+    if [[ -e $linkTarget ]]; then
+        # File exists
+        # create symlink
+        executeCommand "ln -s $linkTarget $linkName"
+        retval=$?
+    else
+        log "Link target does not exist!"
+        retval=2
+    fi
+
+    return $retval
+}
+
+enableService()
+{
+    if [[ $# -lt 1 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
+
+    local service="$1"
+
+    executeCommand "systemctl enable $service"
+    return $?
+}
+
+startService()
+{
+    if [[ $# -lt 1 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
+
+    local service="$1"
+
+    executeCommand "systemctl start $service"
+    return $?
+}
+
+createDotfilesBackupDir()
+{
+    requiresVariable "DOTFILES_BACKUP_DIR" "$FUNCNAME"
+
+    local retval=0
+
+    # Check if backup dir exists
+    if [[ ! -d $DOTFILES_BACKUP_DIR ]]; then
+        executeCommand "mkdir -p $DOTFILES_BACKUP_DIR"
+        retval="$?"
+    fi
+
+    return $retval
+}
+
+installDotfile()
+{
+    requiresVariable "DOTFILES_BACKUP_DIR" "$FUNCNAME"
+    requiresVariable "DOTFILES_SOURCE_DIR" "$FUNCNAME"
+    requiresVariable "USER1_HOME" "$FUNCNAME"
+
+    if [[ $# -lt 2 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
+
+    local dotfileName="$1"
+    local dotfileHomePath="$2"
+    local dotfile=""
+    local nested=0
+    local now=`date +"%Y%m%d_%H%M"`
+
+    # Avoid extra slash when path is empty
+    if [[ -z "$dotfileHomePath" ]]; then
+        dotfile="$dotfileName"
+        nested=0
+    else
+        dotfile="$dotfileHomePath/$dotfileName"
+        nested=1
+    fi
+
+    # Ensure that dotfiles backup dir exists
+    createDotfilesBackupDir
+    retval="$?"
+    if [[ $retval -ne 0  ]]; then
+        log "$FUNCNAME: failed to create dotfiles backup dir: $retval"
+        return 2
+    fi
+
+    # Backup original dotfile, if it exists
+    backupFile "$USER1_HOME/$dotfile" "$DOTFILES_BACKUP_DIR/$dotfile"_"$now"
+    retval="$?"
+    if [[ $retval -ne 0  ]]; then
+        log "$FUNCNAME: failed to backup dotfile $dotfile: $retval"
+        return 3
+    fi
+
+    # Remove original dotfile
+    executeCommand "rm -f $USER1_HOME/$dotfile"
+    retval="$?"
+    if [[ $retval -ne 0  ]]; then
+        log "$FUNCNAME: failed to delete original dotfile $USER1_HOME/$dotfile: $retval"
+        return 4
+    fi
+
+    # Ensure that for nested dotfile the path exists
+    if [[ $nested -eq 1 ]]; then
+        executeCommand "mkdir -p $USER1_HOME/$dotfileHomePath"
+        retval="$?"
+        if [[ $retval -ne 0  ]]; then
+            log "$FUNCNAME: failed to create path for nested dotfile: $retval"
+            return 5
+        fi
+    fi
+
+    # Create link to new dotfile
+    createLink "$DOTFILES_SOURCE_DIR/$dotfile" "$USER1_HOME/$dotfile"
+    retval="$?"
+    if [[ $retval -ne 0  ]]; then
+        log "$FUNCNAME: failed to create link to new dotfile $DOTFILES_SOURCE_DIR/$dotfile: $retval"
+        return 6
+    fi
+
+    return $retval
+}
+
+changeHomeOwnership()
+{
+    if [[ $# -lt 2 ]];then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
+
+    log "Change home dir ownership..."
+
+    local userName="$1"
+    local userHome="$2"
+
+    executeCommand "chown -R $userName:users $userHome"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to change home dir ownership"
+
+    log "Change home dir ownership...done"
+}
+
+###
+
 # USERS
 
 addUser1()
@@ -198,92 +435,6 @@ recreateImage()
     log "Recreate linux image...done"
 }
 
-createDotfilesBackupDir()
-{
-    requiresVariable "DOTFILES_BACKUP_DIR" "$FUNCNAME"
-
-    local retval=0
-
-    # Check if backup dir exists
-    if [[ ! -d $DOTFILES_BACKUP_DIR ]]; then
-        executeCommand "mkdir -p $DOTFILES_BACKUP_DIR"
-        retval="$?"
-    fi
-
-    return $retval
-}
-
-installDotfile()
-{
-    requiresVariable "DOTFILES_BACKUP_DIR" "$FUNCNAME"
-    requiresVariable "DOTFILES_SOURCE_DIR" "$FUNCNAME"
-    requiresVariable "USER1_HOME" "$FUNCNAME"
-
-    if [[ $# -lt 2 ]]; then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        return 1
-    fi
-
-    local dotfileName="$1"
-    local dotfileHomePath="$2"
-    local dotfile=""
-    local nested=0
-    local now=`date +"%Y%m%d_%H%M"`
-
-    # Avoid extra slash when path is empty
-    if [[ -z "$dotfileHomePath" ]]; then
-        dotfile="$dotfileName"
-        nested=0
-    else
-        dotfile="$dotfileHomePath/$dotfileName"
-        nested=1
-    fi
-
-    # Ensure that dotfiles backup dir exists
-    createDotfilesBackupDir
-    retval="$?"
-    if [[ $retval -ne 0  ]]; then
-        log "$FUNCNAME: failed to create dotfiles backup dir: $retval"
-        return 2
-    fi
-
-    # Backup original dotfile, if it exists
-    backupFile "$USER1_HOME/$dotfile" "$DOTFILES_BACKUP_DIR/$dotfile"_"$now"
-    retval="$?"
-    if [[ $retval -ne 0  ]]; then
-        log "$FUNCNAME: failed to backup dotfile $dotfile: $retval"
-        return 3
-    fi
-
-    # Remove original dotfile
-    executeCommand "rm -f $USER1_HOME/$dotfile"
-    retval="$?"
-    if [[ $retval -ne 0  ]]; then
-        log "$FUNCNAME: failed to delete original dotfile $USER1_HOME/$dotfile: $retval"
-        return 4
-    fi
-
-    # Ensure that for nested dotfile the path exists
-    if [[ $nested -eq 1 ]]; then
-        executeCommand "mkdir -p $USER1_HOME/$dotfileHomePath"
-        retval="$?"
-        if [[ $retval -ne 0  ]]; then
-            log "$FUNCNAME: failed to create path for nested dotfile: $retval"
-            return 5
-        fi
-    fi
-
-    # Create link to new dotfile
-    createLink "$DOTFILES_SOURCE_DIR/$dotfile" "$USER1_HOME/$dotfile"
-    retval="$?"
-    if [[ $retval -ne 0  ]]; then
-        log "$FUNCNAME: failed to create link to new dotfile $DOTFILES_SOURCE_DIR/$dotfile: $retval"
-        return 6
-    fi
-
-    return $retval
-}
-
 installBashprofileDotfile()
 {
     log "Install bash_profile dotfile..."
@@ -374,24 +525,6 @@ installXresourcesDotfile()
     log "Install .Xresources dotfile...done"
 }
 
-changeHomeOwnership()
-{
-    if [[ $# -lt 2 ]];then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        return 1
-    fi
-
-    log "Change home dir ownership..."
-
-    local userName="$1"
-    local userHome="$2"
-
-    executeCommand "chown -R $userName:users $userHome"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to change home dir ownership"
-
-    log "Change home dir ownership...done"
-}
-
 changeUser1HomeOwnership()
 {
     requiresVariable "USER1_NAME" "$FUNCNAME"
@@ -453,6 +586,7 @@ installCustomizedDvtm()
 
     log "Install customized dvtm...done"
 }
+
 installXorgBasic()
 {
     requiresVariable "XORG_BASIC_PACKAGES" "$FUNCNAME"
@@ -501,7 +635,6 @@ installGuiFonts()
     log "Install gui fonts...done"
 }
 
-# TODO - check if official repo installation works fine...
 installDwm()
 {
     requiresVariable "DWM_PACKAGES" "$FUNCNAME"

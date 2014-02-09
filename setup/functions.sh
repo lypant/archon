@@ -1,22 +1,5 @@
 #!/bin/bash
 
-createLogDir()
-{
-    # Check if all required variables are set
-    if [[ -z "$ARCHON_LOG_DIR" ]]; then
-        echo "$FUNCNAME: variable ARCHON_LOG_DIR not set"
-        echo "Aborting script!"
-        exit 1
-    fi
-
-    mkdir -p $ARCHON_LOG_DIR
-    if [[ "$?" -ne 0 ]]; then
-        echo "Failed to create log dir $ARCHON_LOG_DIR"
-        echo "Aborting script!"
-        exit 2
-    fi
-}
-
 executeCommand()
 {
     # Check if all required variables are set
@@ -120,33 +103,6 @@ commentVar ()
     return $?
 }
 
-downloadFile()
-{
-    if [[ $# -lt 2 ]]; then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        return 1
-    fi
-
-    local src=$1
-    local dst=$2
-
-    executeCommand "curl -so $dst --create-dirs $src"
-    return $?
-}
-
-archChroot()
-{
-    requiresVariable "ROOT_PARTITION_MOUNT_POINT" "$FUNCNAME"
-
-    if [[ $# -lt 1 ]];then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        return 1
-    fi
-
-    executeCommand arch-chroot $ROOT_PARTITION_MOUNT_POINT /bin/bash -c \""$@"\"
-    return $?
-}
-
 installPackage()
 {
     log "Installing package $@..."
@@ -157,65 +113,6 @@ installPackage()
     log "Installing package $@...done"
 }
 
-addUser()
-{
-    if [[ $# -lt 4 ]];then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        terminateScriptOnError "1" "$FUNCNAME" "failed to add regular user"
-    fi
-
-    local mainGroup="$1"
-    local additionalGroups="$2"
-    local shell="$3"
-    local name="$4"
-
-    log "Add user..."
-
-    executeCommand "useradd -m -g $mainGroup -G $additionalGroups -s $shell $name"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to add user"
-
-    log "Add user...done"
-}
-
-setUserPassword()
-{
-    if [[ $# -lt 1 ]];then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        terminateScriptOnError "1" "$FUNCNAME" "failed to set user password"
-    fi
-
-    log "Set user password..."
-
-    local ask=1
-    local name="$1"
-
-    while [ $ask -ne 0 ]; do
-        log "Provide password for user $name"
-        executeCommand "passwd $name"
-        ask=$?
-    done
-
-    log "Set user password...done"
-}
-
-setSudoer()
-{
-    if [[ $# -lt 1 ]];then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        terminateScriptOnError "1" "$FUNCNAME" "failed to set sudoer"
-    fi
-
-    log "Set sudoer..."
-
-    local name="$1"
-
-    # TODO - do it in a safer way... Here just for experiments
-    executeCommand "echo \"$name ALL=(ALL) ALL\" >> /etc/sudoers"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to set sudoer"
-
-    log "Set sudoer...done"
-}
-
 updatePackageList()
 {
     log "Update package list..."
@@ -224,75 +121,5 @@ updatePackageList()
     terminateScriptOnError "$?" "$FUNCNAME" "failed to update package list"
 
     log "Update package list...done"
-}
-
-backupFile()
-{
-    if [[ $# -lt 2 ]]; then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        return 1
-    fi
-
-    local original=$1
-    local backup=$2
-    local retval=0
-
-    # If original file exists, move it to backup dir
-    if [[ -e $original ]]; then
-        executeCommand "cp $original $backup"
-        retval=$?
-    fi
-    return $retval
-}
-
-createLink()
-{
-    if [[ $# -lt 2 ]]; then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        return 1
-    fi
-
-    local linkTarget=$1
-    local linkName=$2
-    local retval=0
-
-    # Check if target exists
-    if [[ -e $linkTarget ]]; then
-        # File exists
-        # create symlink
-        executeCommand "ln -s $linkTarget $linkName"
-        retval=$?
-    else
-        log "Link target does not exist!"
-        retval=2
-    fi
-
-    return $retval
-}
-
-enableService()
-{
-    if [[ $# -lt 1 ]]; then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        return 1
-    fi
-
-    local service="$1"
-
-    executeCommand "systemctl enable $service"
-    return $?
-}
-
-startService()
-{
-    if [[ $# -lt 1 ]]; then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        return 1
-    fi
-
-    local service="$1"
-
-    executeCommand "systemctl start $service"
-    return $?
 }
 
