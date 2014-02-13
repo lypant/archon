@@ -1,8 +1,8 @@
 #!/bin/bash
 #===============================================================================
-# FILE:         setup_basic.sh
+# FILE:         basic_setup.sh
 #
-# USAGE:        Execute from shell, e.g. ./setup_basic.sh
+# USAGE:        Execute from shell, e.g. ./basic_setup.sh
 #
 # DESCRIPTION:  Functions used to perform basic system setup.
 #               Executes main setup function.
@@ -12,7 +12,7 @@
 # Other scripts usage
 #===============================================================================
 
-source "setup.conf"
+source "settings.conf"
 source "functions.sh"
 
 #===============================================================================

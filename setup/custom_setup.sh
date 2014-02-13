@@ -1,8 +1,8 @@
 #!/bin/bash
 #===============================================================================
-# FILE:         setup_custom.sh
+# FILE:         custom_setup.sh
 #
-# USAGE:        Execute from shell, e.g. ./setup_custom.sh
+# USAGE:        Execute from shell, e.g. ./custom_setup.sh
 #
 # DESCRIPTION:  Functions used to perform custom system setup.
 #               Executes main setup function.
@@ -12,7 +12,7 @@
 # Other scripts usage
 #===============================================================================
 
-source "setup.conf"
+source "settings.conf"
 source "functions.sh"
 
 #===============================================================================
