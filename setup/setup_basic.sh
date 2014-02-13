@@ -19,7 +19,7 @@ source "functions.sh"
 # Log file for this script
 #===============================================================================
 
-LOG_FILE="$ARCHON_SETUP_BASIC_LOG_FILE"
+LOG_FILE="$PROJECT_SETUP_BASIC_LOG_FILE"
 
 #===============================================================================
 # Helper functions
@@ -28,15 +28,15 @@ LOG_FILE="$ARCHON_SETUP_BASIC_LOG_FILE"
 createLogDir()
 {
     # Check if all required variables are set
-    if [[ -z "$ARCHON_LOG_DIR" ]]; then
-        echo "$FUNCNAME: variable ARCHON_LOG_DIR not set"
+    if [[ -z "$PROJECT_LOG_DIR" ]]; then
+        echo "$FUNCNAME: variable PROJECT_LOG_DIR not set"
         echo "Aborting script!"
         exit 1
     fi
 
-    mkdir -p $ARCHON_LOG_DIR
+    mkdir -p $PROJECT_LOG_DIR
     if [[ "$?" -ne 0 ]]; then
-        echo "Failed to create log dir $ARCHON_LOG_DIR"
+        echo "Failed to create log dir $PROJECT_LOG_DIR"
         echo "Aborting script!"
         exit 2
     fi
@@ -466,19 +466,19 @@ setRootPassword()
 
 copyArchonFiles()
 {
-    requiresVariable "ARCHON_MNT_PATH" "$FUNCNAME"
-    requiresVariable "ARCHON_LIVECD_PATH" "$FUNCNAME"
+    requiresVariable "PROJECT_MNT_PATH" "$FUNCNAME"
+    requiresVariable "PROJECT_LIVECD_PATH" "$FUNCNAME"
 
-    log "Copy archon files..."
+    log "Copy $PROJECT_NAME files..."
 
     # Do not perform logging in this function to not spoil nice logs copied to new system
-    mkdir $ARCHON_MNT_PATH
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to copy archon files"
+    mkdir $PROJECT_MNT_PATH
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to copy $PROJECT_NAME files"
 
-    cp -R $ARCHON_LIVECD_PATH/* $ARCHON_MNT_PATH
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to copy archon files"
+    cp -R $PROJECT_LIVECD_PATH/* $PROJECT_MNT_PATH
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to copy $PROJECT_NAME files"
 
-    log "Copy archon files...done"
+    log "Copy $PROJECT_NAME files...done"
 }
 
 #===============================================================================

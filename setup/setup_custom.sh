@@ -19,7 +19,7 @@ source "functions.sh"
 # Log file for this script
 #===============================================================================
 
-LOG_FILE="$ARCHON_SETUP_CUSTOM_LOG_FILE"
+LOG_FILE="$PROJECT_SETUP_CUSTOM_LOG_FILE"
 
 #===============================================================================
 # Helper functions
@@ -420,7 +420,7 @@ disableSyslinuxBootMenu()
 
 setConsoleLoginMessage()
 {
-    # Do not require COSNOLE_WELCOME_MSG - when empty, no message will be used
+    # Do not require COSNOLE_LOGIN_MSG - when empty, no message will be used
 
     log "Set console login message..."
 
@@ -429,8 +429,8 @@ setConsoleLoginMessage()
     terminateScriptOnError "$?" "$FUNCNAME" "failed to remove /etc/issue file"
 
     # Set new welcome message, if present
-    if [ ! -z "$CONSOLE_WELCOME_MSG" ];then
-        executeCommand "echo $CONSOLE_WELCOME_MSG > /etc/issue"
+    if [ ! -z "$CONSOLE_LOGIN_MSG" ];then
+        executeCommand "echo $CONSOLE_LOGIN_MSG > /etc/issue"
         terminateScriptOnError "$?" "$FUNCNAME" "failed to set console login message"
     else
         log "Console welcome message not set, /etc/issue file deleted"
@@ -462,26 +462,26 @@ setEarlyTerminalFont()
 
 cloneArchonRepo()
 {
-    requiresVariable "ARCHON_REPO_URL" "$FUNCNAME"
-    requiresVariable "ARCHON_REPO_DST" "$FUNCNAME"
+    requiresVariable "PROJECT_REPO_URL" "$FUNCNAME"
+    requiresVariable "PROJECT_REPO_DST" "$FUNCNAME"
 
-    log "Clone archon repo..."
+    log "Clone $PROJECT_NAME repo..."
 
-    executeCommand "git clone $ARCHON_REPO_URL $ARCHON_REPO_DST"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to clone archon repo"
+    executeCommand "git clone $PROJECT_REPO_URL $PROJECT_REPO_DST"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to clone $PROJECT_NAME repo"
 
-    log "Clone archon repo...done"
+    log "Clone $PROJECT_NAME repo...done"
 }
 
 checkoutCurrentBranch()
 {
-    requiresVariable "ARCHON_REPO_DST" "$FUNCNAME"
-    requiresVariable "ARCHON_BRANCH" "$FUNCNAME"
+    requiresVariable "PROJECT_REPO_DST" "$FUNCNAME"
+    requiresVariable "PROJECT_BRANCH" "$FUNCNAME"
 
     log "Checkout current branch..."
 
     # Execute git commands from destination path
-    executeCommand "git -C $ARCHON_REPO_DST checkout $ARCHON_BRANCH"
+    executeCommand "git -C $PROJECT_REPO_DST checkout $PROJECT_BRANCH"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to checkout current branch"
 
     log "Checkout current branch...done"
@@ -489,38 +489,38 @@ checkoutCurrentBranch()
 
 createNewBranch()
 {
-    requiresVariable "ARCHON_REPO_DST" "$FUNCNAME"
-    requiresVariable "ARCHON_NEW_BRANCH_NAME" "$FUNCNAME"
+    requiresVariable "PROJECT_REPO_DST" "$FUNCNAME"
+    requiresVariable "PROJECT_NEW_BRANCH_NAME" "$FUNCNAME"
 
     log "Create new branch..."
 
-    executeCommand "git -C $ARCHON_REPO_DST checkout -b \"$ARCHON_NEW_BRANCH_NAME\""
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to create new archon branch"
+    executeCommand "git -C $PROJECT_REPO_DST checkout -b \"$PROJECT_NEW_BRANCH_NAME\""
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to create new $PROJECT_NAME branch"
 
     log "Create new branch...done"
 }
 
 copyOverArchonFiles()
 {
-    requiresVariable "ARCHON_ROOT_PATH" "$FUNCNAME"
+    requiresVariable "PROJECT_ROOT_PATH" "$FUNCNAME"
     requiresVariable "USER1_HOME" "$FUNCNAME"
 
-    log "Copy over archon files..."
+    log "Copy over $PROJECT_NAME files..."
 
-    executeCommand "cp -r $ARCHON_ROOT_PATH $USER1_HOME"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to copy over archon files"
+    executeCommand "cp -r $PROJECT_ROOT_PATH $USER1_HOME"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to copy over $PROJECT_NAME files"
 
-    log "Copy over archon files...done"
+    log "Copy over $PROJECT_NAME files...done"
 }
 
 commitAdjustments()
 {
-    requiresVariable "ARCHON_REPO_DST" "$FUNCNAME"
+    requiresVariable "PROJECT_REPO_DST" "$FUNCNAME"
 
     log "Commit adjustments..."
 
-    if [[ -n "$(git -C $ARCHON_REPO_DST status --porcelain)" ]]; then
-        executeCommand "git -C $ARCHON_REPO_DST commit -a -m \"Adjustments done during archon installation\""
+    if [[ -n "$(git -C $PROJECT_REPO_DST status --porcelain)" ]]; then
+        executeCommand "git -C $PROJECT_REPO_DST commit -a -m \"Adjustments done during $PROJECT_NAME installation\""
         terminateScriptOnError "$?" "$FUNCNAME" "failed to commit adjustments"
     else
         log "No changes detected, no need to commit"
@@ -659,7 +659,7 @@ installCustomizedDwm()
     requiresVariable "DWM_BUILD_PATH" "$FUNCNAME"
     requiresVariable "DWM_CUSTOM_BRANCH" "$FUNCNAME"
     requiresVariable "DWM_BASE_COMMIT" "$FUNCNAME"
-    requiresVariable "TERMINAL_EMULATOR_COMMAND" "$FUNCNAME"
+    requiresVariable "DWM_TERMINAL_EMULATOR_COMMAND" "$FUNCNAME"
     requiresVariable "CUSTOM_COMMIT_COMMENT" "$FUNCNAME"
 
     log "Installing customized dwm..."
@@ -683,7 +683,7 @@ installCustomizedDwm()
     terminateScriptOnError "$?" "$FUNCNAME" "failed to change dwm x11 lib path"
 
     # Set terminal command to be launched on shortcut invocation
-    executeCommand 'sed -i "s/\"st\"/\"$TERMINAL_EMULATOR_COMMAND\"/g"' "$DWM_BUILD_PATH/config.def.h"
+    executeCommand 'sed -i "s/\"st\"/\"$DWM_TERMINAL_EMULATOR_COMMAND\"/g"' "$DWM_BUILD_PATH/config.def.h"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to change dwm terminal emulator command"
 
     # Change resizehints to false for better aligned terminal windows

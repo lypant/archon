@@ -16,13 +16,13 @@ executeCommand()
         return 1
     fi
 
-    if [[ -z "$ARCHON_CMD_PREFIX" ]]; then
-        echo "$FUNCNAME: variable ARCHON_CMD_PREFIX not set"
+    if [[ -z "$PROJECT_CMD_PREFIX" ]]; then
+        echo "$FUNCNAME: variable PROJECT_CMD_PREFIX not set"
         return 2
     fi
 
     # Record command to be executed to the log file
-    echo "$ARCHON_CMD_PREFIX$@" >> $LOG_FILE
+    echo "$PROJECT_CMD_PREFIX$@" >> $LOG_FILE
 
     # Execute command
     # Redirect stdout and stderr to screen and log file
@@ -38,13 +38,13 @@ log()
         return 1
     fi
 
-    if [[ -z "$ARCHON_LOG_PREFIX" ]]; then
-        echo "$FUNCNAME: variable ARCHON_LOG_PREFIX not set"
+    if [[ -z "$PROJECT_LOG_PREFIX" ]]; then
+        echo "$FUNCNAME: variable PROJECT_LOG_PREFIX not set"
         return 2
     fi
 
     # Use msg with prefix to distinguish Archconfig logs
-    local msg="$ARCHON_LOG_PREFIX$@"
+    local msg="$PROJECT_LOG_PREFIX$@"
 
     # Write message to screen and log file
     (echo "$msg" 2>&1) | tee -a $LOG_FILE
