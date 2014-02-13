@@ -460,7 +460,7 @@ setEarlyTerminalFont()
 # Project repository cloning
 #=======================================
 
-cloneArchonRepo()
+cloneProjectRepo()
 {
     requiresVariable "PROJECT_REPO_URL" "$FUNCNAME"
     requiresVariable "PROJECT_REPO_DST" "$FUNCNAME"
@@ -500,7 +500,7 @@ createNewBranch()
     log "Create new branch...done"
 }
 
-copyOverArchonFiles()
+copyOverProjectFiles()
 {
     requiresVariable "PROJECT_ROOT_PATH" "$FUNCNAME"
     requiresVariable "USER1_HOME" "$FUNCNAME"
@@ -911,6 +911,22 @@ changeUser1HomeOwnership()
     log "Change user1 home ownership...done"
 }
 
+#=======================================
+# Post setup actions
+#=======================================
+
+copyProjectLogFiles()
+{
+    requiresVariable "PROJECT_LOG_DIR" "$FUNCNAME"
+    requiresVariable "PROJECT_REPO_DST" "$FUNCNAME"
+
+    # Do not perform typical logging in this function...
+    # This would spoil nice logs copied to user's dir
+
+    cp -r $PROJECT_LOG_DIR $PROJECT_REPO_DST
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to copy project log files"
+}
+
 #===============================================================================
 # Main setup function
 #===============================================================================
@@ -961,10 +977,10 @@ setupCustom()
     # Project repository cloning
     #=======================================
 
-    cloneArchonRepo
+    cloneProjectRepo
     checkoutCurrentBranch
     createNewBranch
-    copyOverArchonFiles
+    copyOverProjectFiles
     commitAdjustments
 
     #=======================================
@@ -1032,6 +1048,12 @@ setupCustom()
     changeUser1HomeOwnership
 
     log "Setup custom...done"
+
+    #=======================================
+    # Post setup actions
+    #=======================================
+
+    copyProjectLogFiles
 }
 
 #===============================================================================

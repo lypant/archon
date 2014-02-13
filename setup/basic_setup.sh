@@ -464,20 +464,22 @@ setRootPassword()
 # Post installation actions
 #=======================================
 
-copyArchonFiles()
+copyProjectFiles()
 {
     requiresVariable "PROJECT_MNT_PATH" "$FUNCNAME"
-    requiresVariable "PROJECT_LIVECD_PATH" "$FUNCNAME"
+    requiresVariable "PROJECT_ROOT_PATH" "$FUNCNAME"
 
+    # Do not perform typical logging in this function...
+    # This would spoil nice logs copied to new system
+
+    mkdir -p $PROJECT_MNT_PATH
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to copy $PROJECT_NAME files"
+
+    cp -R $PROJECT_ROOT_PATH/* $PROJECT_MNT_PATH
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to copy $PROJECT_NAME files"
+
+    # This is only for livecd output and logs consistency
     log "Copy $PROJECT_NAME files..."
-
-    # Do not perform logging in this function to not spoil nice logs copied to new system
-    mkdir $PROJECT_MNT_PATH
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to copy $PROJECT_NAME files"
-
-    cp -R $PROJECT_LIVECD_PATH/* $PROJECT_MNT_PATH
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to copy $PROJECT_NAME files"
-
     log "Copy $PROJECT_NAME files...done"
 }
 
@@ -538,7 +540,7 @@ setupBasic()
     # Post installation actions
     #=======================================
 
-    copyArchonFiles
+    copyProjectFiles
     unmountRootPartition
 }
 
