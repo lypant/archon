@@ -39,7 +39,8 @@ addUser()
 
     log "Add user..."
 
-    executeCommand "useradd -m -g $mainGroup -G $additionalGroups -s $shell $name"
+    executeCommand \
+        "useradd -m -g $mainGroup -G $additionalGroups -s $shell $name"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to add user"
 
     log "Add user...done"
@@ -215,7 +216,8 @@ installDotfile()
     executeCommand "rm -f $USER1_HOME/$dotfile"
     retval="$?"
     if [[ $retval -ne 0  ]]; then
-        log "$FUNCNAME: failed to delete original dotfile $USER1_HOME/$dotfile: $retval"
+        log "$FUNCNAME: failed to delete original dotfile "\
+            "$USER1_HOME/$dotfile: $retval"
         return 4
     fi
 
@@ -233,7 +235,8 @@ installDotfile()
     createLink "$DOTFILES_SOURCE_DIR/$dotfile" "$USER1_HOME/$dotfile"
     retval="$?"
     if [[ $retval -ne 0  ]]; then
-        log "$FUNCNAME: failed to create link to new dotfile $DOTFILES_SOURCE_DIR/$dotfile: $retval"
+        log "$FUNCNAME: failed to create link to new dotfile "\
+            "$DOTFILES_SOURCE_DIR/$dotfile: $retval"
         return 6
     fi
 
@@ -253,7 +256,8 @@ changeHomeOwnership()
     local userHome="$2"
 
     executeCommand "chown -R $userName:users $userHome"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to change home dir ownership"
+    terminateScriptOnError \
+        "$?" "$FUNCNAME" "failed to change home dir ownership"
 
     log "Change home dir ownership...done"
 }
@@ -279,7 +283,9 @@ addUser1()
 
     log "Add user1..."
 
-    executeCommand "useradd -m -g $USER1_MAIN_GROUP -G $USER1_ADDITIONAL_GROUPS -s $USER1_SHELL $USER1_NAME"
+    executeCommand \
+        "useradd -m -g $USER1_MAIN_GROUP -G $USER1_ADDITIONAL_GROUPS "\
+        "-s $USER1_SHELL $USER1_NAME"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to add user 1"
 
     log "Add user1...done"
@@ -402,8 +408,12 @@ setBootloaderKernelParams()
     log "Set bootloader kernel params..."
 
     # Not using var for /dev/ - caused sed problems interpreting / character
-    executeCommand "sed -i \"s/APPEND root=\/dev\/$ROOT_PARTITION_HDD$ROOT_PARTITION_NB rw/APPEND root=\/dev\/$ROOT_PARTITION_HDD$ROOT_PARTITION_NB $BOOTLOADER_KERNEL_PARAMS/\" /boot/syslinux/syslinux.cfg"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to set bootloader kernel params"
+    executeCommand \
+        "sed -i \"s/APPEND root=\/dev\/$ROOT_PARTITION_HDD$ROOT_PARTITION_NB "\
+        "rw/APPEND root=\/dev\/$ROOT_PARTITION_HDD$ROOT_PARTITION_NB "\
+        "$BOOTLOADER_KERNEL_PARAMS/\" /boot/syslinux/syslinux.cfg"
+    terminateScriptOnError \
+        "$?" "$FUNCNAME" "failed to set bootloader kernel params"
 
     log "Set bootloader kernel params...done"
 }
@@ -413,7 +423,8 @@ disableSyslinuxBootMenu()
     log "Disable syslinux boot menu..."
 
     commentVar "UI" "/boot/syslinux/syslinux.cfg"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to disable syslinux boot menu"
+    terminateScriptOnError \
+        "$?" "$FUNCNAME" "failed to disable syslinux boot menu"
 
     log "Disable syslinux boot menu...done"
 }
@@ -431,7 +442,8 @@ setConsoleLoginMessage()
     # Set new welcome message, if present
     if [ ! -z "$CONSOLE_LOGIN_MSG" ];then
         executeCommand "echo $CONSOLE_LOGIN_MSG > /etc/issue"
-        terminateScriptOnError "$?" "$FUNCNAME" "failed to set console login message"
+        terminateScriptOnError \
+            "$?" "$FUNCNAME" "failed to set console login message"
     else
         log "Console welcome message not set, /etc/issue file deleted"
     fi
@@ -446,11 +458,15 @@ setEarlyTerminalFont()
 
     # Add "consolefont keymap" hooks
     # TODO - write a function for extending such lists
-    # TODO   (original list might change and we don't care about the list, we want just to add sth)
-    local originalList="base udev autodetect modconf block filesystems keyboard fsck"
+    # TODO   (original list might change and we don't care about the list,
+    # we want just to add sth)
+    local originalList="base udev autodetect modconf block filesystems "\
+        "keyboard fsck"
     local newList="$originalList consolefont keymap"
 
-    executeCommand "sed -i \"s/HOOKS=\\\"$originalList\\\"/HOOKS=\\\"$newList\\\"/g\" /etc/mkinitcpio.conf"
+    executeCommand \
+        "sed -i \"s/HOOKS=\\\"$originalList\\\"/HOOKS=\\\"$newList\\\"/g\" "\
+        "/etc/mkinitcpio.conf"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to set early terminal font"
 
     log "Set early terminal font...done"
@@ -494,8 +510,10 @@ createNewBranch()
 
     log "Create new branch..."
 
-    executeCommand "git -C $PROJECT_REPO_DST checkout -b \"$PROJECT_NEW_BRANCH_NAME\""
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to create new $PROJECT_NAME branch"
+    executeCommand \
+        "git -C $PROJECT_REPO_DST checkout -b \"$PROJECT_NEW_BRANCH_NAME\""
+    terminateScriptOnError \
+        "$?" "$FUNCNAME" "failed to create new $PROJECT_NAME branch"
 
     log "Create new branch...done"
 }
@@ -508,7 +526,8 @@ copyOverProjectFiles()
     log "Copy over $PROJECT_NAME files..."
 
     executeCommand "cp -r $PROJECT_ROOT_PATH $USER1_HOME"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to copy over $PROJECT_NAME files"
+    terminateScriptOnError \
+        "$?" "$FUNCNAME" "failed to copy over $PROJECT_NAME files"
 
     log "Copy over $PROJECT_NAME files...done"
 }
@@ -520,7 +539,9 @@ commitAdjustments()
     log "Commit adjustments..."
 
     if [[ -n "$(git -C $PROJECT_REPO_DST status --porcelain)" ]]; then
-        executeCommand "git -C $PROJECT_REPO_DST commit -a -m \"Adjustments done during $PROJECT_NAME installation\""
+        executeCommand \
+            "git -C $PROJECT_REPO_DST commit -a -m "\
+            "\"Adjustments done during $PROJECT_NAME installation\""
         terminateScriptOnError "$?" "$FUNCNAME" "failed to commit adjustments"
     else
         log "No changes detected, no need to commit"
@@ -597,15 +618,20 @@ installCustomizedDvtm()
     executeCommand "git -C $DVTM_BUILD_PATH checkout -b $DVTM_CUSTOM_BRANCH"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to checkout new branch"
 
-    # Change default blue color to something brighter - to make it visible on older CRT monitor
-    executeCommand "sed -i 's/BLUE/$DVTM_ACTIVE_COLOR/g'" "$DVTM_BUILD_PATH/config.def.h"
+    # Change default blue color to something brighter - to make it
+    # visible on older CRT monitor
+    executeCommand \
+        "sed -i 's/BLUE/$DVTM_ACTIVE_COLOR/g'" "$DVTM_BUILD_PATH/config.def.h"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to change active color"
 
     # Change default mod key - 'g' is not convenient to be used with CTRL key
-    executeCommand "sed -i \"s/#define MOD CTRL('g')/#define MOD CTRL('$DVTM_MOD_KEY')/g\"" "$DVTM_BUILD_PATH/config.def.h"
+    executeCommand \
+        "sed -i \"s/#define MOD CTRL('g')/#define "\
+        "MOD CTRL('$DVTM_MOD_KEY')/g\"" "$DVTM_BUILD_PATH/config.def.h"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to change mod key"
 
-    executeCommand "git -C $DVTM_BUILD_PATH commit -a -m \"$CUSTOM_COMMIT_COMMENT\""
+    executeCommand \
+        "git -C $DVTM_BUILD_PATH commit -a -m \"$CUSTOM_COMMIT_COMMENT\""
     terminateScriptOnError "$?" "$FUNCNAME" "failed to commit adjustments"
 
     executeCommand "make -C $DVTM_BUILD_PATH"
@@ -669,29 +695,45 @@ installCustomizedDwm()
     terminateScriptOnError "$?" "$FUNCNAME" "failed to clone dwm repository"
 
     # Newest commit was not working... use specific, working version
-    executeCommand "git -C $DWM_BUILD_PATH checkout $DWM_BASE_COMMIT -b $DWM_CUSTOM_BRANCH"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to checkout older commit as a new branch"
+    executeCommand \
+        "git -C $DWM_BUILD_PATH checkout $DWM_BASE_COMMIT -b $DWM_CUSTOM_BRANCH"
+    terminateScriptOnError \
+        "$?" "$FUNCNAME" "failed to checkout older commit as a new branch"
 
     # Configure necessary settings
-    executeCommand "sed -i 's/PREFIX = \/usr\/local/PREFIX = \/usr/g'" "$DWM_BUILD_PATH/config.mk"
+    executeCommand \
+        "sed -i 's/PREFIX = \/usr\/local/PREFIX = \/usr/g'" \
+        "$DWM_BUILD_PATH/config.mk"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to change dwm prefix"
 
-    executeCommand "sed -i 's/X11INC = \/usr\/X11R6\/include/X11INC = \/usr\/include\/X11/g'" "$DWM_BUILD_PATH/config.mk"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to change dwm x11 include path"
+    executeCommand \
+        "sed -i 's/X11INC = \/usr\/X11R6\/include/X11INC = "\
+        "\/usr\/include\/X11/g'" "$DWM_BUILD_PATH/config.mk"
+    terminateScriptOnError \
+        "$?" "$FUNCNAME" "failed to change dwm x11 include path"
 
-    executeCommand "sed -i 's/X11LIB = \/usr\/X11R6\/lib/X11LIB = \/usr\/lib\/X11/g'" "$DWM_BUILD_PATH/config.mk"
+    executeCommand \
+        "sed -i 's/X11LIB = \/usr\/X11R6\/lib/X11LIB = \/usr\/lib\/X11/g'" \
+        "$DWM_BUILD_PATH/config.mk"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to change dwm x11 lib path"
 
     # Set terminal command to be launched on shortcut invocation
-    executeCommand 'sed -i "s/\"st\"/\"$DWM_TERMINAL_EMULATOR_COMMAND\"/g"' "$DWM_BUILD_PATH/config.def.h"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to change dwm terminal emulator command"
+    executeCommand \
+        'sed -i "s/\"st\"/\"$DWM_TERMINAL_EMULATOR_COMMAND\"/g"' \
+        "$DWM_BUILD_PATH/config.def.h"
+    terminateScriptOnError \
+        "$?" "$FUNCNAME" "failed to change dwm terminal emulator command"
 
     # Change resizehints to false for better aligned terminal windows
-    executeCommand "sed -i 's/static const Bool resizehints = True/static const Bool resizehints = False/g'" "$DWM_BUILD_PATH/config.def.h"
+    executeCommand \
+        "sed -i 's/static const Bool resizehints = True"\
+        "/static const Bool resizehints = False/g'" \
+        "$DWM_BUILD_PATH/config.def.h"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to change resizehints"
 
     # Save configuration as new commit
-    executeCommand "git -C $DWM_BUILD_PATH commit -a -m \"$CUSTOM_COMMIT_COMMENT\""
+    executeCommand \
+        "git -C $DWM_BUILD_PATH commit -a -m \"$CUSTOM_COMMIT_COMMENT\""
     terminateScriptOnError "$?" "$FUNCNAME" "failed to commit adjustments"
 
     # Install
@@ -723,7 +765,8 @@ installVirtualboxGuestAdditions()
 
     # Install the packages
     installPackage $VIRTUALBOX_GUEST_UTILS_PACKAGES
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install virtualbox package"
+    terminateScriptOnError \
+        "$?" "$FUNCNAME" "failed to install virtualbox package"
 
     # Load required modules
     executeCommand "modprobe -a $VIRTUALBOX_GUEST_UTILS_MODULES"
@@ -733,8 +776,11 @@ installVirtualboxGuestAdditions()
     if [ ! -z "$VIRTUALBOX_GUEST_UTILS_MODULES" ]; then
         for module in $VIRTUALBOX_GUEST_UTILS_MODULES
         do
-            executeCommand "echo $module >> $VIRTUALBOX_GUEST_UTILS_MODULES_FILE"
-            terminateScriptOnError "$?" "$FUNCNAME" "failed to setup module to be loaded on startup"
+            executeCommand \
+                "echo $module >> $VIRTUALBOX_GUEST_UTILS_MODULES_FILE"
+            terminateScriptOnError \
+                "$?" "$FUNCNAME" \
+                "failed to setup module to be loaded on startup"
         done
     fi
 
@@ -773,8 +819,11 @@ setVirtualboxSharedFolder()
     executeCommand "sleep 5"
 
     # Create link for easy access
-    createLink "/media/sf_$VIRTUALBOX_SHARED_FOLDER_NAME" "$USER1_HOME/$VIRTUALBOX_SHARED_FOLDER_NAME"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to create link to shared folder"
+    createLink \
+        "/media/sf_$VIRTUALBOX_SHARED_FOLDER_NAME" \
+        "$USER1_HOME/$VIRTUALBOX_SHARED_FOLDER_NAME"
+    terminateScriptOnError \
+        "$?" "$FUNCNAME" "failed to create link to shared folder"
 
     log "Set virtualbox shared folder...done"
 }
@@ -790,7 +839,8 @@ installBashprofileDotfile()
     log "Install bash_profile dotfile..."
 
     installDotfile ".bash_profile" ""
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install bash_profile dotfile"
+    terminateScriptOnError \
+        "$?" "$FUNCNAME" "failed to install bash_profile dotfile"
 
     log "Install bash_profile dotfile...done"
 }
@@ -810,7 +860,8 @@ installDircolorssolarizedDotfile()
     log "Install .dir_colors_solarized dotfile..."
 
     installDotfile ".dir_colors_solarized" ""
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install .dir_colors_solarized dotfile"
+    terminateScriptOnError \
+        "$?" "$FUNCNAME" "failed to install .dir_colors_solarized dotfile"
 
     log "Install .dir_colors_solarized dotfile...done"
 }
@@ -832,7 +883,8 @@ installVimsolarizedDotfile()
     log "Install solarized.vim dotfile..."
 
     installDotfile "solarized.vim" ".vim/colors"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install solarized.vim dotfile"
+    terminateScriptOnError \
+        "$?" "$FUNCNAME" "failed to install solarized.vim dotfile"
 
     log "Install solarized.vim dotfile...done"
 }
@@ -844,7 +896,8 @@ installMcsolarizedDotfile()
     log "Install mc_solarized.ini dotfile..."
 
     installDotfile "mc_solarized.ini" ".config/mc"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install mc_solarized.ini dotfile"
+    terminateScriptOnError \
+        "$?" "$FUNCNAME" "failed to install mc_solarized.ini dotfile"
 
     log "Install mc_solarized.ini dotfile...done"
 }
@@ -856,7 +909,8 @@ installGitconfigDotfile()
     log "Install .gitconfig dotfile..."
 
     installDotfile ".gitconfig" ""
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install .gitconfig dotfile"
+    terminateScriptOnError \
+        "$?" "$FUNCNAME" "failed to install .gitconfig dotfile"
 
     log "Install .gitconfig dotfile...done"
 }
@@ -878,7 +932,8 @@ installXresourcesDotfile()
     log "Install .Xresources dotfile..."
 
     installDotfile ".Xresources" ""
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install .Xresources dotfile"
+    terminateScriptOnError \
+        "$?" "$FUNCNAME" "failed to install .Xresources dotfile"
 
     log "Install .Xresources dotfile...done"
 }
@@ -905,8 +960,10 @@ changeUser1HomeOwnership()
     log "Change user1 home ownership..."
 
     changeHomeOwnership "$USER1_NAME" "$USER1_HOME"
-    # TODO: following tSOE is redundand - function above already cheks that - improve in future
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to change user1 home dir ownership"
+    # TODO: following tSOE is redundand
+    # function above already cheks that - improve in future
+    terminateScriptOnError \
+        "$?" "$FUNCNAME" "failed to change user1 home dir ownership"
 
     log "Change user1 home ownership...done"
 }
