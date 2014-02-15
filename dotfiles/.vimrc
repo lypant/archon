@@ -1,5 +1,8 @@
 " This is a vimrc comment
 
+" Show line numbers
+set number
+
 " Ignore case when searching
 set ignorecase
 
