@@ -28,9 +28,6 @@ set expandtab
 set shiftwidth=4
 set tabstop=4
 
-" Show 80th column
-set colorcolumn=80
-
 " Set color scheme
 colorscheme solarized
 " Temporarily working only with linux consloe - looks better with 16 colors
