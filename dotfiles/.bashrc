@@ -2,19 +2,30 @@
 # ~/.bashrc
 #
 
+#===============================================================================
 # If not running interactively, don't do anything
+#===============================================================================
 [[ $- != *i* ]] && return
 
+#===============================================================================
 # Prompt(s)
+#===============================================================================
 PS1='[\u@\h \W]\$'
 
+#===============================================================================
 # Aliases
+#===============================================================================
 
+#=======================================
 # ls
+#=======================================
 alias ls='ls --color=auto'
 alias la='ls -a'
 alias ll='ls -al'
 
+#=======================================
+# mc
+#=======================================
 if [ -z "$DISPLAY" ]; then
     # Aliases for console
 
@@ -30,20 +41,33 @@ else
     alias mc='EDITOR=vim VIEWER=$HOME/archon/scripts/mc_viewer.sh mc'
 fi
 
+#=======================================
+# X
+#=======================================
+alias startx='startx &> ~/.xlog'
+
+#===============================================================================
 # Exported variables
+#===============================================================================
 
 # Add more dirs to path
 export PATH=$PATH:/$HOME/archon/scripts
 
-# Color themes for linux console
+#===============================================================================
+# Color themes
+#===============================================================================
 
-# Chose color theme here
+#=======================================
+# Choice
+#=======================================
 if [ "$TERM" = "linux" ]; then
     #Set desired theme here
     CONSOLE_THEME="solarized"
 fi
 
-# Define colors for themes here
+#=======================================
+# Definition
+#=======================================
 if [ "$CONSOLE_THEME" = "solarized" ]; then
     # Set console colors
     CONSOLE_COLOR_BLACK="073642"      # S_base02
@@ -70,7 +94,9 @@ if [ "$CONSOLE_THEME" = "solarized" ]; then
     MC_COLORS_FILE="$HOME/.config/mc/mc_solarized.ini"
 fi
 
-# Set console solors, if console theme is defined
+#=======================================
+# Setting
+#=======================================
 if [ -n "$CONSOLE_THEME" ]; then
     # Set console colors
     echo -en "\e]P0$CONSOLE_COLOR_BLACK"
