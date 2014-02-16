@@ -510,11 +510,12 @@ copyOverProjectFiles()
 commitAdjustments()
 {
     requiresVariable "PROJECT_REPO_DST" "$FUNCNAME"
+    requiresVariable "CUSTOM_COMMIT_COMMENT" "$FUNCNAME"
 
     log "Commit adjustments..."
 
     if [[ -n "$(git -C $PROJECT_REPO_DST status --porcelain)" ]]; then
-        executeCommand "git -C $PROJECT_REPO_DST commit -a -m \"Adjustments done during $PROJECT_NAME installation\""
+        executeCommand "git -C $PROJECT_REPO_DST commit -a -m \"$CUSTOM_COMMIT_COMMENT\""
         terminateScriptOnError "$?" "$FUNCNAME" "failed to commit adjustments"
     else
         log "No changes detected, no need to commit"
