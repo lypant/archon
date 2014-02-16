@@ -440,7 +440,7 @@ configureSyslinux()
     archChroot "syslinux-install_update -i -a -m"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to update syslinux"
 
-    archChroot "sed -i \"s|sda3|$BOOT_PARTITION_HDD$BOOT_PARTITION_NB|g\" /boot/syslinux/syslinux.cfg"
+    archChroot "sed -i \\\"s|sda3|$BOOT_PARTITION_HDD$BOOT_PARTITION_NB|g\\\" /boot/syslinux/syslinux.cfg"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to change partition name in syslinux"
 
     log "Configure syslinux...done"
