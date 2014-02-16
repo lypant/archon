@@ -139,26 +139,27 @@ partitionDisks()
 
     log "Partition disks..."
 
-cat << EOF | fdisk $PARTITION_PREFIX$SYSTEM_HDD
-n
-p
-1
-
-$SWAP_PARTITION_SIZE
-t
-82
-n
-p
-2
-
-$ROOT_PARTITION_SIZE
-t
-2
-83
-a
-2
-w
-EOF
+    # Real tabs are necessary to remove indentation when executing
+    cat <<-EOF | fdisk $PARTITION_PREFIX$SYSTEM_HDD
+	n
+	p
+	1
+	
+	$SWAP_PARTITION_SIZE
+	t
+	82
+	n
+	p
+	2
+	
+	$ROOT_PARTITION_SIZE
+	t
+	2
+	83
+	a
+	2
+	w
+	EOF
 
     log "Partition disks...done"
 }
