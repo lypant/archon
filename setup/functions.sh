@@ -93,7 +93,7 @@ uncommentVar()
 	local var="$1"
 	local file="$2"
 
-    executeCommand "sed -i \"s/^#\(${var}.*\)$/\1/\" ${file}"
+    executeCommand "sed -i \"s|^#\(${var}.*\)$|\1|\" ${file}"
     return $?
 }
 
@@ -107,7 +107,7 @@ commentVar ()
 	local var="$1"
 	local file="$2"
 
-    executeCommand "sed -i \"s/^\(${var}.*\)$/#\1/\" ${file}"
+    executeCommand "sed -i \"s|^\(${var}.*\)$|#\1|\" ${file}"
     return $?
 }
 
