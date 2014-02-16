@@ -78,7 +78,11 @@ setLocale()
 
     log "Set locale for  $1..."
 
-    archChroot "sed -i \\\"s|^#\\\\\(${1}.*\\\\\)$|\\\\\1|\\\" /etc/locale.gen"
+    #archChroot "sed -i \\\"s|^#\\\\\(${1}.*\\\\\)$|\\\\\1|\\\" /etc/locale.gen"
+
+    local subst="s|^#\\\\\(${1}.*\\\\\)$|\1|"
+    local file="/etc/locale.gen"
+    archChroot "sed -i \\\"$subst\\\" $file"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to set locale"
 
     log "Set locale for $1...done"
@@ -439,7 +443,13 @@ configureSyslinux()
     archChroot "syslinux-install_update -i -a -m"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to update syslinux"
 
-    archChroot "sed -i \\\"s|sda3|$BOOT_PARTITION_HDD$BOOT_PARTITION_NB|g\\\" /boot/syslinux/syslinux.cfg"
+    #archChroot "sed -i \\\"s|sda3|$BOOT_PARTITION_HDD$BOOT_PARTITION_NB|g\\\" /boot/syslinux/syslinux.cfg"
+
+    local src="sda3"
+    local dst="$BOOT_PARTITION_HDD$BOOT_PARTITION_NB"
+    local subst="s|$src|$dst|g"
+    local file="/boot/syslinux/syslinux.cfg"
+    archChroot "sed -i \\\"$subst\\\" $file"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to change partition name in syslinux"
 
     log "Configure syslinux...done"

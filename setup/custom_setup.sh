@@ -401,7 +401,14 @@ setBootloaderKernelParams()
 
     log "Set bootloader kernel params..."
 
-    executeCommand "sed -i \"s|APPEND root.*$|APPEND root=$PARTITION_PREFIX$ROOT_PARTITION_HDD$ROOT_PARTITION_NB $BOOTLOADER_KERNEL_PARAMS|\" /boot/syslinux/syslinux.cfg"
+    local src="APPEND root.*$"
+    local path="$PARTITION_PREFIX$ROOT_PARTITION_HDD$ROOT_PARTITION_NB"
+    local bkp="$BOOTLOADER_KERNEL_PARAMS"
+    local params="$path $bkp"
+    local dst="APPEND root=$params"
+    local subst="s|$src|$dst|"
+    local file="/boot/syslinux/syslinux.cfg"
+    executeCommand "sed -i \"$subst\" $file"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to set bootloader kernel params"
 
     log "Set bootloader kernel params...done"
@@ -443,8 +450,12 @@ setEarlyTerminalFont()
 {
     log "Set early terminal font..."
 
-    # Add "consolefont keymap" hooks
-    executeCommand "sed -i \"s|^HOOKS.*$|HOOKS=\\\"$HOOKS\\\"|\" /etc/mkinitcpio.conf"
+    # Set hooks
+    local src="^HOOKS.*$"
+    local dst="HOOKS=\\\"$HOOKS\\\""
+    local subst="s|$src|$dst|"
+    local file="/etc/mkinitcpio.conf"
+    executeCommand "sed -i \"$subst\" $file"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to set early terminal font"
 
     log "Set early terminal font...done"
@@ -594,11 +605,23 @@ installCustomizedDvtm()
 
     # Change default blue color to something brighter
     # to make it visible on older CRT monitor
-    executeCommand "sed -i 's|BLUE|$DVTM_ACTIVE_COLOR|g'" "$DVTM_BUILD_PATH/config.def.h"
+    #executeCommand "sed -i 's|BLUE|$DVTM_ACTIVE_COLOR|g'" "$DVTM_BUILD_PATH/config.def.h"
+
+    local src="BLUE"
+    local dst="$DVTM_ACTIVE_COLOR"
+    local subst="s|$src|$dst|g"
+    local file="$DVTM_BUILD_PATH/config.def.h"
+    executeCommand "sed -i \"$subst\" $file"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to change active color"
 
     # Change default mod key - 'g' is not convenient to be used with CTRL key
-    executeCommand "sed -i \"s|#define MOD CTRL('g')|#define MOD CTRL('$DVTM_MOD_KEY')|g\"" "$DVTM_BUILD_PATH/config.def.h"
+    #executeCommand "sed -i \"s|#define MOD CTRL('g')|#define MOD CTRL('$DVTM_MOD_KEY')|g\"" "$DVTM_BUILD_PATH/config.def.h"
+
+    src="#define MOD CTRL('g')"
+    dst="#define MOD CTRL('$DVTM_MOD_KEY')"
+    subst="s|$src|$dst|g"
+    file="$DVTM_BUILD_PATH/config/def.h"
+    executeCommand "sed -i \"$subst\" $file"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to change mod key"
 
     executeCommand "git -C $DVTM_BUILD_PATH commit -a -m \"$CUSTOM_COMMIT_COMMENT\""
@@ -669,21 +692,52 @@ installCustomizedDwm()
     terminateScriptOnError "$?" "$FUNCNAME" "failed to checkout older commit as a new branch"
 
     # Configure necessary settings
-    executeCommand "sed -i 's|PREFIX = /usr/local|PREFIX = /usr|g'" "$DWM_BUILD_PATH/config.mk"
+    #executeCommand "sed -i 's|PREFIX = /usr/local|PREFIX = /usr|g'" "$DWM_BUILD_PATH/config.mk"
+
+    local src="PREFIX = /usr/local"
+    local dst="PREFIX = /usr"
+    local subst="s|$src|$dst|g"
+    local file="$DWM_BUILD_PATH/config.mk"
+    executeCommand "sed -i \"$subst\" $file"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to change dwm prefix"
 
-    executeCommand "sed -i 's|X11INC = /usr/X11R6/include|X11INC = /usr/include/X11|g'" "$DWM_BUILD_PATH/config.mk"
+    #executeCommand "sed -i 's|X11INC = /usr/X11R6/include|X11INC = /usr/include/X11|g'" "$DWM_BUILD_PATH/config.mk"
+
+    src="X11INC = /usr/X11R6/incude"
+    dst="X11INC = /usr/include/X11"
+    subst="s|$src|$dst|g"
+    file="$DWM_BUILD_PATH/config.mk"
+    executeCommand "sed -i \"$subst\" $file"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to change dwm x11 include path"
 
-    executeCommand "sed -i 's|X11LIB = /usr/X11R6/lib|X11LIB = /usr/lib/X11|g'" "$DWM_BUILD_PATH/config.mk"
+    #executeCommand "sed -i 's|X11LIB = /usr/X11R6/lib|X11LIB = /usr/lib/X11|g'" "$DWM_BUILD_PATH/config.mk"
+
+    src="X11LIB = /usr/X11R6/lib"
+    dst="X11LIB = /usr/lib/X11"
+    subst="s|$src|$dst|g"
+    file="$DWM_BUILD_PATH/config.mk"
+    executeCommand "sed -i \"$subst\" $file"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to change dwm x11 lib path"
 
     # Set terminal command to be launched on shortcut invocation
-    executeCommand 'sed -i "s|\"st\"|\"$DWM_TERMINAL_EMULATOR_COMMAND\"|g"' "$DWM_BUILD_PATH/config.def.h"
+    #executeCommand 'sed -i "s|\"st\"|\"$DWM_TERMINAL_EMULATOR_COMMAND\"|g"' "$DWM_BUILD_PATH/config.def.h"
+    #executeCommand 'sed -i "s|\"st\"|\"$DWM_TERMINAL_EMULATOR_COMMAND\"|g"' "$DWM_BUILD_PATH/config.def.h"
+
+    src="\\\"st\\\""
+    dst="\\\"$DWM_TERMINAL_EMULATOR_COMMAND\\\""
+    subst="s|$src|$dst|g"
+    file="$DWM_BUILD_PATH/config.def.h"
+    executeCommand "sed -i \"$subst\" $file"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to change dwm terminal emulator command"
 
     # Change resizehints to false for better aligned terminal windows
-    executeCommand "sed -i 's|static const Bool resizehints = True|static const Bool resizehints = False|g'" "$DWM_BUILD_PATH/config.def.h"
+    #executeCommand "sed -i 's|static const Bool resizehints = True|static const Bool resizehints = False|g'" "$DWM_BUILD_PATH/config.def.h"
+
+    src="static const Bool resizehints = True"
+    dst="static const Bool resizehints = False"
+    subst="s|$src|$dst|g"
+    file="$DWM_BUILD_PATH/config.def.h"
+    executeCommand "sed -i \"$subst\" $file"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to change resizehints"
 
     # Save configuration as new commit
