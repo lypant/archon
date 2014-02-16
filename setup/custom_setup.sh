@@ -591,7 +591,8 @@ installCustomizedDvtm()
     executeCommand "git -C $DVTM_BUILD_PATH checkout -b $DVTM_CUSTOM_BRANCH"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to checkout new branch"
 
-    # Change default blue color to something brighter - to make it visible on older CRT monitor
+    # Change default blue color to something brighter
+    # to make it visible on older CRT monitor
     executeCommand "sed -i 's|BLUE|$DVTM_ACTIVE_COLOR|g'" "$DVTM_BUILD_PATH/config.def.h"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to change active color"
 
@@ -899,7 +900,8 @@ changeUser1HomeOwnership()
     log "Change user1 home ownership..."
 
     changeHomeOwnership "$USER1_NAME" "$USER1_HOME"
-    # TODO: following tSOE is redundand - function above already cheks that - improve in future
+    # TODO: following tSOE is redundand
+    # function above already cheks that - improve in future
     terminateScriptOnError "$?" "$FUNCNAME" "failed to change user1 home dir ownership"
 
     log "Change user1 home ownership...done"
