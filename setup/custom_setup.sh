@@ -620,7 +620,7 @@ installCustomizedDvtm()
     src="#define MOD CTRL('g')"
     dst="#define MOD CTRL('$DVTM_MOD_KEY')"
     subst="s|$src|$dst|g"
-    file="$DVTM_BUILD_PATH/config/def.h"
+    file="$DVTM_BUILD_PATH/config.def.h"
     executeCommand "sed -i \"$subst\" $file"
     terminateScriptOnError "$?" "$FUNCNAME" "failed to change mod key"
 
