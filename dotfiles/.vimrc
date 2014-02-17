@@ -36,3 +36,6 @@ colorscheme solarized
 " Set dark backgound
 set background=dark
 
+" Mark 80th column
+set colorcolumn=80
+

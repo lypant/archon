@@ -1,8 +1,8 @@
 ! This is a comment
 
-! -----------------------------------------------------------------------------
+!===============================================================================
 ! Xft settings (fonts)
-! -----------------------------------------------------------------------------
+!===============================================================================
 
 Xft.dpi:        96
 Xft.antialias:  true
@@ -10,9 +10,9 @@ Xft.rgba:       rgb
 Xft.hinting:    true
 Xft.hintstyle:  hintfull
 
-! -----------------------------------------------------------------------------
+!===============================================================================
 ! URxvt settings
-! -----------------------------------------------------------------------------
+!===============================================================================
 
 URxvt.depth:            32
 URxvt.geometry:         90x30
@@ -25,21 +25,32 @@ URxvt.saveLines:        50
 URxvt.internalBorder:   3
 URxvt.lineSpace:        0
 
+!=======================================
 ! Fonts
+!=======================================
 
 URxvt.allow_bold:       false
-URxvt*font:             xft:Monospace:pixelsize=14
-URxvt*boldFont:         xft:Monospace:pixelsize=14
+URxvt*font:             xft:Monospace:pixelsize=13
+URxvt*boldFont:         xft:Monospace:pixelsize=13
 
+!=======================================
 ! Scrollbar
+!=======================================
 URxvt.scrollStyle:      rxvt
 URxvt.scrollBar:        false
 
-! -----------------------------------------------------------------------------
+!===============================================================================
 ! Colors
-! -----------------------------------------------------------------------------
+!===============================================================================
 
-! Define colors for solarized theme
+!=======================================
+! Color theme definition
+!=======================================
+
+!===================
+! Solarized theme
+!===================
+
 #define COLOR_BLACK         #073642
 #define COLOR_RED           #dc322f
 #define COLOR_GREEN         #859900
@@ -57,7 +68,10 @@ URxvt.scrollBar:        false
 #define COLOR_BR_CYAN       #93a1a1
 #define COLOR_BR_WHITE      #fdf6e3
 
-! Define colors for URxvt
+!===================
+! URxvt colors definition
+!===================
+
 #define COLOR_BACKGROUND            COLOR_BR_BLACK
 #define COLOR_FOREGROUND            COLOR_BR_YELLOW
 #define COLOR_FADE                  COLOR_BR_BLACK
@@ -65,7 +79,9 @@ URxvt.scrollBar:        false
 #define COLOR_POINTER_BACKGROUND    COLOR_BR_GREEN
 #define COLOR_POINTER_FOREGROUND    COLOR_BR_CYAN
 
-! Use defined colors - this should not change
+!=======================================
+! Color theme usage - this should not change
+!=======================================
 
 *background:                COLOR_BACKGROUND
 *foreground:                COLOR_FOREGROUND
