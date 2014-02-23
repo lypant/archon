@@ -138,7 +138,14 @@ partitionDisks()
 {
     requiresVariable "PARTITION_PREFIX" "$FUNCNAME"
     requiresVariable "SYSTEM_HDD" "$FUNCNAME"
+    requiresVariable "SWAP_PARTITION_NB" "$FUNCNAME"
     requiresVariable "SWAP_PARTITION_SIZE" "$FUNCNAME"
+    requiresVariable "SWAP_PARTITION_TYPE" "$FUNCNAME"
+    requiresVariable "BOOT_PARTITION_NB" "$FUNCNAME"
+    requiresVariable "BOOT_PARTITION_SIZE" "$FUNCNAME"
+    requiresVariable "BOOT_PARTITION_TYPE" "$FUNCNAME"
+    requiresVariable "ROOT_PARTITION_NB" "$FUNCNAME"
+    requiresVariable "ROOT_PARTITION_TYPE" "$FUNCNAME"
     # Workaround for "all remaining space" denoted as ""
     #requiresVariable "ROOT_PARTITION_SIZE" "$FUNCNAME"
 
@@ -148,21 +155,29 @@ partitionDisks()
     cat <<-EOF | fdisk $PARTITION_PREFIX$SYSTEM_HDD
 	n
 	p
-	1
+	$SWAP_PARTITION_NB
 	
 	$SWAP_PARTITION_SIZE
 	t
-	82
+	$SWAP_PARTITION_TYPE
 	n
 	p
-	2
+	$BOOT_PARTITION_NB
+	
+	$BOOT_PARTITION_SIZE
+	t
+	$BOOT_PARTITION_NB
+	$BOOT_PARTITION_TYPE
+	n
+	p
+	$ROOT_PARTITION_NB
 	
 	$ROOT_PARTITION_SIZE
 	t
-	2
-	83
+	$ROOT_PARTITION_NB
+	$ROOT_PARTITION_TYPE
 	a
-	2
+	$BOOT_PARTITION_NB
 	w
 	EOF
 
@@ -199,6 +214,22 @@ activateSwap()
     log "Activate swap...done"
 }
 
+createBootFileSystem()
+{
+    requiresVariable "BOOT_PARTITION_FS" "$FUNCNAME"
+    requiresVariable "BOOT_PARTITION_HDD" "$FUNCNAME"
+    requiresVariable "BOOT_PARTITION_NB" "$FUNCNAME"
+
+    log "Create boot file system..."
+
+    executeCommand\
+        "mkfs.$BOOT_PARTITION_FS"\
+        "$PARTITION_PREFIX$BOOT_PARTITION_HDD$BOOT_PARTITION_NB"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to create boot file system"
+
+    log "Create boot file system...done"
+}
+
 createRootFileSystem()
 {
     requiresVariable "ROOT_PARTITION_FS" "$FUNCNAME"
@@ -214,6 +245,27 @@ createRootFileSystem()
     terminateScriptOnError "$?" "$FUNCNAME" "failed to create root file system"
 
     log "Create root file system...done"
+}
+
+mountBootPartition()
+{
+    requiresVariable "PARTITION_PREFIX" "$FUNCNAME"
+    requiresVariable "BOOT_PARTITION_HDD" "$FUNCNAME"
+    requiresVariable "BOOT_PARTITION_NB" "$FUNCNAME"
+    requiresVariable "BOOT_PARTITION_MOUNT_POINT" "$FUNCNAME"
+
+    log "Mount boot partition..."
+
+    executeCommand "mkdir $BOOT_PARTITION_MOUNT_POINT"
+    terminateScriptOnError\
+        "$?" "$FUNCNAME" "failed to create boot partition mount point"
+
+    executeCommand\
+        "mount $PARTITION_PREFIX$BOOT_PARTITION_HDD$BOOT_PARTITION_NB"\
+        " $BOOT_PARTITION_MOUNT_POINT"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to mount boot partition"
+
+    log "Mount boot partition...done"
 }
 
 mountRootPartition()
@@ -233,16 +285,28 @@ mountRootPartition()
     log "Mount root partition...done"
 }
 
-unmountRootPartition()
+#unmountRootPartition()
+#{
+#    requiresVariable "ROOT_PARTITION_MOUNT_POINT" "$FUNCNAME"
+#
+#    log "Unmount root partition..."
+#
+#    executeCommand "umount $ROOT_PARTITION_MOUNT_POINT"
+#    terminateScriptOnError "$?" "$FUNCNAME" "failed to unmount root partition"
+#
+#    log "Unmount root partition...done"
+#}
+
+unmountPartitions()
 {
-    requiresVariable "ROOT_PARTITION_MOUNT_POINT" "$FUNCNAME"
+    requiresVariable "LIVECD_MOUNT_POINT" "$FUNCNAME"
 
-    log "Unmount root partition..."
+    log "Unmount partitions..."
 
-    executeCommand "umount $ROOT_PARTITION_MOUNT_POINT"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to unmount root partition"
+    executeCommand "umount -R $LIVECD_MOUNT_POINT"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to unmount partitions"
 
-    log "Unmount root partition...done"
+    log "Unmount partitions...done"
 }
 
 #=======================================
@@ -531,8 +595,11 @@ setupBasic()
     partitionDisks
     createSwap
     activateSwap
+    createBootFileSystem
     createRootFileSystem
+    # Root partition has to be mounted first
     mountRootPartition
+    mountBootPartition
 
     #=======================================
     # Installation
@@ -563,7 +630,8 @@ setupBasic()
     #=======================================
 
     copyProjectFiles
-    unmountRootPartition
+    #unmountRootPartition
+    unmountPartitions
 }
 
 #===============================================================================
