@@ -513,8 +513,8 @@ installBootloader()
 
 configureSyslinux()
 {
-    requiresVariable "BOOT_PARTITION_HDD" "$FUNCNAME"
-    requiresVariable "BOOT_PARTITION_NB" "$FUNCNAME"
+    requiresVariable "ROOT_PARTITION_HDD" "$FUNCNAME"
+    requiresVariable "ROOT_PARTITION_NB" "$FUNCNAME"
 
     log "Configure syslinux..."
 
@@ -522,7 +522,7 @@ configureSyslinux()
     terminateScriptOnError "$?" "$FUNCNAME" "failed to update syslinux"
 
     local src="sda3"
-    local dst="$BOOT_PARTITION_HDD$BOOT_PARTITION_NB"
+    local dst="$ROOT_PARTITION_HDD$ROOT_PARTITION_NB"
     local subst="s|$src|$dst|g"
     local file="/boot/syslinux/syslinux.cfg"
     archChroot "sed -i \\\"$subst\\\" $file"
