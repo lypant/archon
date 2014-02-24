@@ -42,6 +42,59 @@ createLogDir()
     fi
 }
 
+createPartition()
+{
+    if [[ $# -lt 5 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        log "Aborting script!"
+        exit 1
+    fi
+
+    local disk="$1"         # e.g. /dev/sda
+    local partType="$2"     # "p" for prtimary, "e" for extented
+    local partNb="$3"       # e.g. "1" for "/dev/sda1"
+    local partSize="$4"     # e.g. "+1G" for 1GiB, "" for remaining space
+    local partCode="$5"     # e.g. "82" for swap, "83" for Linux, etc.
+    local partCodeNb=""     # No partition nb for code setting for 1st partition
+
+    # For first partition, provide partition number when entering
+    # partition code
+    if [[ $partNb -ne 1 ]]; then
+        partCodeNb=$partNb
+    fi
+
+    cat <<-EOF | fdisk $disk
+	n
+	$partType
+	$partNb
+	
+	$partSize
+	t
+	$partCodeNb
+	$partCode
+	w
+	EOF
+}
+
+# Best executed when all (at least two) partitions are created
+setPartitionBootable()
+{
+    if [[ $# -lt 2 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        log "Aborting script!"
+        exit 1
+    fi
+
+    local disk="$1"     # e.g. /dev/sda
+    local partNb="$2"   # e.g. "1" for "/dev/sda1"
+
+    cat <<-EOF | fdisk $disk
+	a
+	$partNb
+	w
+	EOF
+}
+
 downloadFile()
 {
     if [[ $# -lt 2 ]]; then
@@ -132,56 +185,91 @@ installLivecdVim()
 # Partitions and file systems
 #=======================================
 
-# TODO: Try to separate fdisk commands for each partition,
-# as they may occupy different disks
-partitionDisks()
+createSwapPartition()
 {
     requiresVariable "PARTITION_PREFIX" "$FUNCNAME"
-    requiresVariable "SYSTEM_HDD" "$FUNCNAME"
+    requiresVariable "SWAP_PARTITION_HDD" "$FUNCNAME"
+    requiresVariable "SWAP_PARTITION_TYPE" "$FUNCNAME"
     requiresVariable "SWAP_PARTITION_NB" "$FUNCNAME"
     requiresVariable "SWAP_PARTITION_SIZE" "$FUNCNAME"
-    requiresVariable "SWAP_PARTITION_TYPE" "$FUNCNAME"
+    requiresVariable "SWAP_PARTITION_CODE" "$FUNCNAME"
+
+    log "Create swap partition..."
+
+    createPartition\
+        "$PARTITION_PREFIX$SWAP_PARTITION_HDD"\
+        "$SWAP_PARTITION_TYPE"\
+        "$SWAP_PARTITION_NB"\
+        "$SWAP_PARTITION_SIZE"\
+        "$SWAP_PARTITION_CODE"
+    terminateScriptOnError\
+        "$?" "$FUNCNAME" "failed to create swap partition"
+
+    log "Create swap partition...done"
+}
+
+createBootPartition()
+{
+    requiresVariable "PARTITION_PREFIX" "$FUNCNAME"
+    requiresVariable "BOOT_PARTITION_HDD" "$FUNCNAME"
+    requiresVariable "BOOT_PARTITION_TYPE" "$FUNCNAME"
     requiresVariable "BOOT_PARTITION_NB" "$FUNCNAME"
     requiresVariable "BOOT_PARTITION_SIZE" "$FUNCNAME"
-    requiresVariable "BOOT_PARTITION_TYPE" "$FUNCNAME"
-    requiresVariable "ROOT_PARTITION_NB" "$FUNCNAME"
+    requiresVariable "BOOT_PARTITION_CODE" "$FUNCNAME"
+
+    log "Create boot partition..."
+
+    createPartition\
+        "$PARTITION_PREFIX$BOOT_PARTITION_HDD"\
+        "$BOOT_PARTITION_TYPE"\
+        "$BOOT_PARTITION_NB"\
+        "$BOOT_PARTITION_SIZE"\
+        "$BOOT_PARTITION_CODE"
+    terminateScriptOnError\
+        "$?" "$FUNCNAME" "failed to create boot partition"
+
+    log "Create boot partition...done"
+}
+
+createRootPartition()
+{
+    requiresVariable "PARTITION_PREFIX" "$FUNCNAME"
+    requiresVariable "ROOT_PARTITION_HDD" "$FUNCNAME"
     requiresVariable "ROOT_PARTITION_TYPE" "$FUNCNAME"
-    # Workaround for "all remaining space" denoted as ""
-    #requiresVariable "ROOT_PARTITION_SIZE" "$FUNCNAME"
+    requiresVariable "ROOT_PARTITION_NB" "$FUNCNAME"
+    requiresVariable "ROOT_PARTITION_SIZE" "$FUNCNAME"
+    requiresVariable "ROOT_PARTITION_CODE" "$FUNCNAME"
 
-    log "Partition disks..."
+    log "Create root partition..."
 
-    # Real tabs are necessary to remove indentation when executing
-    cat <<-EOF | fdisk $PARTITION_PREFIX$SYSTEM_HDD
-	n
-	p
-	$SWAP_PARTITION_NB
-	
-	$SWAP_PARTITION_SIZE
-	t
-	$SWAP_PARTITION_TYPE
-	n
-	p
-	$BOOT_PARTITION_NB
-	
-	$BOOT_PARTITION_SIZE
-	t
-	$BOOT_PARTITION_NB
-	$BOOT_PARTITION_TYPE
-	n
-	p
-	$ROOT_PARTITION_NB
-	
-	$ROOT_PARTITION_SIZE
-	t
-	$ROOT_PARTITION_NB
-	$ROOT_PARTITION_TYPE
-	a
-	$BOOT_PARTITION_NB
-	w
-	EOF
+    createPartition\
+        "$PARTITION_PREFIX$ROOT_PARTITION_HDD"\
+        "$ROOT_PARTITION_TYPE"\
+        "$ROOT_PARTITION_NB"\
+        "$ROOT_PARTITION_SIZE"\
+        "$ROOT_PARTITION_CODE"
+    terminateScriptOnError\
+        "$?" "$FUNCNAME" "failed to create root partition"
 
-    log "Partition disks...done"
+    log "Create root partition...done"
+}
+
+setBootPartitionBootable()
+{
+    requiresVariable "PARTITION_PREFIX" "$FUNCNAME"
+    requiresVariable "BOOT_PARTITION_HDD" "$FUNCNAME"
+    requiresVariable "BOOT_PARTITION_NB" "$FUNCNAME"
+
+    log "Set boot partition bootable..."
+
+    setPartitionBootable\
+        "$PARTITION_PREFIX$BOOT_PARTITION_HDD"\
+        "$BOOT_PARTITION_NB"
+
+    terminateScriptOnError\
+        "$?" "$FUNCNAME" "failed to set boot partition bootable"
+
+    log "Set boot partition bootable...done"
 }
 
 createSwap()
@@ -592,7 +680,10 @@ setupBasic()
     # Partitions and file systems
     #=======================================
 
-    partitionDisks
+    createSwapPartition
+    createBootPartition
+    createRootPartition
+    setBootPartitionBootable
     createSwap
     activateSwap
     createBootFileSystem
