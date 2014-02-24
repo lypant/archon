@@ -237,7 +237,7 @@ createRootPartition()
     requiresVariable "ROOT_PARTITION_HDD" "$FUNCNAME"
     requiresVariable "ROOT_PARTITION_TYPE" "$FUNCNAME"
     requiresVariable "ROOT_PARTITION_NB" "$FUNCNAME"
-    requiresVariable "ROOT_PARTITION_SIZE" "$FUNCNAME"
+    #requiresVariable "ROOT_PARTITION_SIZE" "$FUNCNAME" # Use remaining space
     requiresVariable "ROOT_PARTITION_CODE" "$FUNCNAME"
 
     log "Create root partition..."
