@@ -475,9 +475,19 @@ initAlsa()
     log "Init alsa..."
 
     executeCommand "alsactl init"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to init alsa"
+    # May return error 99 - ignore it
 
     log "Init alsa...done"
+}
+
+unmuteAlsa()
+{
+    log "Unmute alsa..."
+
+    executeCommand "amixer sset Master unmute"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to unmute alsa"
+
+    log "Unmute alsa...done"
 }
 
 #=======================================
@@ -1038,6 +1048,7 @@ setupCustom()
     setConsoleLoginMessage
     setEarlyTerminalFont    # Requires linux image recreation
     initAlsa                # Initialize all devices to a default state
+    unmuteAlsa              # This should be enough on real HW
 
     #=======================================
     # Project repository cloning
