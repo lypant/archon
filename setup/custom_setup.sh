@@ -501,21 +501,6 @@ checkoutCurrentBranch()
     log "Checkout current branch...done"
 }
 
-createNewBranch()
-{
-    requiresVariable "PROJECT_REPO_DST" "$FUNCNAME"
-    requiresVariable "PROJECT_NEW_BRANCH_NAME" "$FUNCNAME"
-
-    log "Create new branch..."
-
-    executeCommand\
-        "git -C $PROJECT_REPO_DST checkout -b \"$PROJECT_NEW_BRANCH_NAME\""
-    terminateScriptOnError\
-        "$?" "$FUNCNAME" "failed to create new $PROJECT_NAME branch"
-
-    log "Create new branch...done"
-}
-
 copyOverProjectFiles()
 {
     requiresVariable "PROJECT_ROOT_PATH" "$FUNCNAME"
@@ -1047,7 +1032,6 @@ setupCustom()
 
     cloneProjectRepo
     checkoutCurrentBranch
-    createNewBranch
     copyOverProjectFiles
     commitAdjustments
 
