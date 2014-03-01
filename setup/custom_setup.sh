@@ -470,6 +470,16 @@ setEarlyTerminalFont()
     log "Set early terminal font...done"
 }
 
+initAlsa()
+{
+    log "Init alsa..."
+
+    executeCommand "alsactl init"
+    terminateScriptOnError "$?" "$FUNCNAME" "failed to init alsa"
+
+    log "Init alsa...done"
+}
+
 #=======================================
 # Project repository cloning
 #=======================================
@@ -1025,6 +1035,7 @@ setupCustom()
     disableSyslinuxBootMenu
     setConsoleLoginMessage
     setEarlyTerminalFont    # Requires linux image recreation
+    initAlsa                # Initialize all devices to a default state
 
     #=======================================
     # Project repository cloning
