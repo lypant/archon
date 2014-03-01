@@ -25,23 +25,6 @@ LOG_FILE="$PROJECT_SETUP_BASIC_LOG_FILE"
 # Helper functions
 #===============================================================================
 
-createLogDir()
-{
-    # Check if all required variables are set
-    if [[ -z "$PROJECT_LOG_DIR" ]]; then
-        echo "$FUNCNAME: variable PROJECT_LOG_DIR not set"
-        echo "Aborting script!"
-        exit 1
-    fi
-
-    mkdir -p $PROJECT_LOG_DIR
-    if [[ "$?" -ne 0 ]]; then
-        echo "Failed to create log dir $PROJECT_LOG_DIR"
-        echo "Aborting script!"
-        exit 2
-    fi
-}
-
 createPartition()
 {
     if [[ $# -lt 5 ]]; then

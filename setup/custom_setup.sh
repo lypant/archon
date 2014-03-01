@@ -996,6 +996,8 @@ copyProjectLogFiles()
 
 setupCustom()
 {
+    createLogDir    # Should be created by basic setup; just to be sure
+
     log "Setup custom..."
 
     #=======================================
