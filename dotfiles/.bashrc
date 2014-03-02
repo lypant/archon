@@ -34,7 +34,7 @@ alias lz='ll -rS'               # sort by size
 #===================
 # mc
 #===================
-if [ -z "$DISPLAY" ]; then
+if [[ -z "$DISPLAY" ]]; then
     # Aliases for console
 
     # Do not use fancy characters to draw outline
@@ -83,7 +83,7 @@ export PATH=$PATH:/$HOME/archon/scripts
 #=======================================
 # Choice
 #=======================================
-if [ "$TERM" = "linux" ]; then
+if [[ "$TERM" = "linux" ]]; then
     #Set desired theme here
     CONSOLE_THEME="solarized"
 fi
@@ -91,7 +91,7 @@ fi
 #=======================================
 # Definition
 #=======================================
-if [ "$CONSOLE_THEME" = "solarized" ]; then
+if [[ "$CONSOLE_THEME" = "solarized" ]]; then
     # Set console colors
     CONSOLE_COLOR_BLACK="073642"      # S_base02
     CONSOLE_COLOR_RED="dc322f"        # S_red
@@ -120,7 +120,7 @@ fi
 #=======================================
 # Setting
 #=======================================
-if [ -n "$CONSOLE_THEME" ]; then
+if [[ -n "$CONSOLE_THEME" ]]; then
     # Set console colors
     echo -en "\e]P0$CONSOLE_COLOR_BLACK"
     echo -en "\e]P1$CONSOLE_COLOR_RED"
