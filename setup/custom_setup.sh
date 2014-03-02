@@ -1094,7 +1094,7 @@ setupCustom()
     #installDvtm            # Official repo version not good enough
     installCustomizedDvtm   # Use customized version instead
     installElinks
-    installVirtualboxGuestAdditionsl
+    installVirtualboxGuestAdditions
 
     #=========
     # GUI-based
