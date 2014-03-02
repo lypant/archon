@@ -585,6 +585,11 @@ installXorgAdditional()
 # Individual software packages
 #===================
 
+#=========
+# Console-based
+#=========
+
+
 installDvtm()
 {
     reqVar "DVTM_PACKAGES" "$FUNCNAME"
@@ -641,6 +646,51 @@ installCustomizedDvtm()
 
     log "Install customized dvtm...done"
 }
+
+installElinks()
+{
+    reqVar "ELINKS_PACKAGES" "$FUNCNAME"
+
+    log "Install elinks..."
+
+    installPackage $ELINKS_PACKAGES
+    err "$?" "$FUNCNAME" "failed to install elinks"
+
+    log "Install elinks...done"
+}
+
+installVirtualboxGuestAdditions()
+{
+    reqVar "VIRTUALBOX_GUEST_UTILS_PACKAGES" "$FUNCNAME"
+    reqVar "VIRTUALBOX_GUEST_UTILS_MODULES" "$FUNCNAME"
+    reqVar "VIRTUALBOX_GUEST_UTILS_MODULES_FILE" "$FUNCNAME"
+
+    log "Install virtualbox guest additions..."
+
+    # Install the packages
+    installPackage $VIRTUALBOX_GUEST_UTILS_PACKAGES
+    err "$?" "$FUNCNAME" "failed to install virtualbox package"
+
+    # Load required modules
+    cmd "modprobe -a $VIRTUALBOX_GUEST_UTILS_MODULES"
+    err "$?" "$FUNCNAME" "failed to load required modules"
+
+    # Setup modules to be loaded on startup
+    if [ ! -z "$VIRTUALBOX_GUEST_UTILS_MODULES" ]; then
+        for module in $VIRTUALBOX_GUEST_UTILS_MODULES
+        do
+            cmd "echo $module >> $VIRTUALBOX_GUEST_UTILS_MODULES_FILE"
+            err "$?" "$FUNCNAME"\
+                "failed to setup module to be loaded on startup"
+        done
+    fi
+
+    log "Install virtualbox guest additions...done"
+}
+
+#=========
+# GUI-based
+#=========
 
 installRxvtUnicode()
 {
@@ -758,33 +808,16 @@ installDmenu()
     log "Install dmenu...done"
 }
 
-installVirtualboxGuestAdditions()
+installOpera()
 {
-    reqVar "VIRTUALBOX_GUEST_UTILS_PACKAGES" "$FUNCNAME"
-    reqVar "VIRTUALBOX_GUEST_UTILS_MODULES" "$FUNCNAME"
-    reqVar "VIRTUALBOX_GUEST_UTILS_MODULES_FILE" "$FUNCNAME"
+    reqVar "OPERA_PACKAGES" "$FUNCNAME"
 
-    log "Install virtualbox guest additions..."
+    log "Install opera..."
 
-    # Install the packages
-    installPackage $VIRTUALBOX_GUEST_UTILS_PACKAGES
-    err "$?" "$FUNCNAME" "failed to install virtualbox package"
+    installPackage $OPERA_PACKAGES
+    err "$?" "$FUNCNAME" "failed to install opera"
 
-    # Load required modules
-    cmd "modprobe -a $VIRTUALBOX_GUEST_UTILS_MODULES"
-    err "$?" "$FUNCNAME" "failed to load required modules"
-
-    # Setup modules to be loaded on startup
-    if [ ! -z "$VIRTUALBOX_GUEST_UTILS_MODULES" ]; then
-        for module in $VIRTUALBOX_GUEST_UTILS_MODULES
-        do
-            cmd "echo $module >> $VIRTUALBOX_GUEST_UTILS_MODULES_FILE"
-            err "$?" "$FUNCNAME"\
-                "failed to setup module to be loaded on startup"
-        done
-    fi
-
-    log "Install virtualbox guest additions...done"
+    log "Install opera...done"
 }
 
 #===================
@@ -1054,14 +1087,25 @@ setupCustom()
     # Individual software packages
     #===================
 
+    #=========
+    # Console-based
+    #=========
+
     #installDvtm            # Official repo version not good enough
     installCustomizedDvtm   # Use customized version instead
+    installElinks
+    installVirtualboxGuestAdditionsl
+
+    #=========
+    # GUI-based
+    #=========
+
     installRxvtUnicode
     installGuiFonts
     #installDwm             # Official repo version not good enough
     installCustomizedDwm    # Use customized version instead
     installDmenu
-    installVirtualboxGuestAdditions
+    installOpera
 
     #===================
     # Individual configuration
