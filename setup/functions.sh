@@ -25,7 +25,7 @@ createLogDir()
     fi
 }
 
-executeCommand()
+cmd()
 {
     # Check if all required variables are set
     if [[ -z "$LOG_FILE" ]]; then
@@ -68,8 +68,9 @@ log()
     return ${PIPESTATUS[0]}
 }
 
-# Usage: checkVariable "MY_VAR" "$FUNCNAME"
-requiresVariable()
+# Requires variable
+# Usage: reqVar "MY_VAR" "$FUNCNAME"
+reqVar()
 {
     local var="$1"
     local function="$2"
@@ -81,7 +82,9 @@ requiresVariable()
     fi
 }
 
-terminateScriptOnError()
+# Checks provided error code. Terminates script when it is nonzero.
+# Usage: err "$?" "$FUNCNAME" "message to be shown and logged"
+err()
 {
     # Check number of required params
     if [[ $# -lt 3 ]]; then
@@ -110,11 +113,11 @@ uncommentVar()
 	local var="$1"
 	local file="$2"
 
-    executeCommand "sed -i \"s|^#\(${var}.*\)$|\1|\" ${file}"
+    cmd "sed -i \"s|^#\(${var}.*\)$|\1|\" ${file}"
     return $?
 }
 
-commentVar ()
+commentVar()
 {
     if [[ $# -lt 2 ]]; then
         log "$FUNCNAME: not enough parameters \($#\): $@"
@@ -124,7 +127,7 @@ commentVar ()
 	local var="$1"
 	local file="$2"
 
-    executeCommand "sed -i \"s|^\(${var}.*\)$|#\1|\" ${file}"
+    cmd "sed -i \"s|^\(${var}.*\)$|#\1|\" ${file}"
     return $?
 }
 
@@ -132,8 +135,8 @@ installPackage()
 {
     log "Installing package $@..."
 
-    executeCommand "pacman -S $@ --noconfirm"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install package $@"
+    cmd "pacman -S $@ --noconfirm"
+    err "$?" "$FUNCNAME" "failed to install package $@"
 
     log "Installing package $@...done"
 }
@@ -142,8 +145,8 @@ updatePackageList()
 {
     log "Update package list..."
 
-    executeCommand "pacman -Syy"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to update package list"
+    cmd "pacman -Syy"
+    err "$?" "$FUNCNAME" "failed to update package list"
 
     log "Update package list...done"
 }

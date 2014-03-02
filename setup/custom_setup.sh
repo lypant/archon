@@ -29,7 +29,7 @@ addUser()
 {
     if [[ $# -lt 4 ]];then
         log "$FUNCNAME: not enough parameters \($#\): $@"
-        terminateScriptOnError "1" "$FUNCNAME" "failed to add user"
+        err "1" "$FUNCNAME" "failed to add user"
     fi
 
     local mainGroup="$1"
@@ -39,9 +39,8 @@ addUser()
 
     log "Add user..."
 
-    executeCommand\
-        "useradd -m -g $mainGroup -G $additionalGroups -s $shell $name"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to add user"
+    cmd "useradd -m -g $mainGroup -G $additionalGroups -s $shell $name"
+    err "$?" "$FUNCNAME" "failed to add user"
 
     log "Add user...done"
 }
@@ -50,7 +49,7 @@ setUserPassword()
 {
     if [[ $# -lt 1 ]];then
         log "$FUNCNAME: not enough parameters \($#\): $@"
-        terminateScriptOnError "1" "$FUNCNAME" "failed to set user password"
+        err "1" "$FUNCNAME" "failed to set user password"
     fi
 
     log "Set user password..."
@@ -60,7 +59,7 @@ setUserPassword()
 
     while [ $ask -ne 0 ]; do
         log "Provide password for user $name"
-        executeCommand "passwd $name"
+        cmd "passwd $name"
         ask=$?
     done
 
@@ -71,7 +70,7 @@ setSudoer()
 {
     if [[ $# -lt 1 ]];then
         log "$FUNCNAME: not enough parameters \($#\): $@"
-        terminateScriptOnError "1" "$FUNCNAME" "failed to set sudoer"
+        err "1" "$FUNCNAME" "failed to set sudoer"
     fi
 
     log "Set sudoer..."
@@ -79,8 +78,8 @@ setSudoer()
     local name="$1"
 
     # TODO - do it in a safer way... Here just for experiments
-    executeCommand "echo \"$name ALL=(ALL) ALL\" >> /etc/sudoers"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to set sudoer"
+    cmd "echo \"$name ALL=(ALL) ALL\" >> /etc/sudoers"
+    err "$?" "$FUNCNAME" "failed to set sudoer"
 
     log "Set sudoer...done"
 }
@@ -98,7 +97,7 @@ backupFile()
 
     # If original file exists, move it to backup dir
     if [[ -e $original ]]; then
-        executeCommand "cp $original $backup"
+        cmd "cp $original $backup"
         retval=$?
     fi
     return $retval
@@ -119,7 +118,7 @@ createLink()
     if [[ -e $linkTarget ]]; then
         # File exists
         # create symlink
-        executeCommand "ln -s $linkTarget $linkName"
+        cmd "ln -s $linkTarget $linkName"
         retval=$?
     else
         log "Link target does not exist!"
@@ -138,7 +137,7 @@ enableService()
 
     local service="$1"
 
-    executeCommand "systemctl enable $service"
+    cmd "systemctl enable $service"
     return $?
 }
 
@@ -151,19 +150,19 @@ startService()
 
     local service="$1"
 
-    executeCommand "systemctl start $service"
+    cmd "systemctl start $service"
     return $?
 }
 
 createDotfilesBackupDir()
 {
-    requiresVariable "DOTFILES_BACKUP_DIR" "$FUNCNAME"
+    reqVar "DOTFILES_BACKUP_DIR" "$FUNCNAME"
 
     local retval=0
 
     # Check if backup dir exists
     if [[ ! -d $DOTFILES_BACKUP_DIR ]]; then
-        executeCommand "mkdir -p $DOTFILES_BACKUP_DIR"
+        cmd "mkdir -p $DOTFILES_BACKUP_DIR"
         retval="$?"
     fi
 
@@ -172,9 +171,9 @@ createDotfilesBackupDir()
 
 installDotfile()
 {
-    requiresVariable "DOTFILES_BACKUP_DIR" "$FUNCNAME"
-    requiresVariable "DOTFILES_SOURCE_DIR" "$FUNCNAME"
-    requiresVariable "USER1_HOME" "$FUNCNAME"
+    reqVar "DOTFILES_BACKUP_DIR" "$FUNCNAME"
+    reqVar "DOTFILES_SOURCE_DIR" "$FUNCNAME"
+    reqVar "USER1_HOME" "$FUNCNAME"
 
     if [[ $# -lt 2 ]]; then
         log "$FUNCNAME: not enough parameters \($#\): $@"
@@ -213,7 +212,7 @@ installDotfile()
     fi
 
     # Remove original dotfile
-    executeCommand "rm -f $USER1_HOME/$dotfile"
+    cmd "rm -f $USER1_HOME/$dotfile"
     retval="$?"
     if [[ $retval -ne 0  ]]; then
         log "$FUNCNAME: failed to delete original dotfile"\
@@ -223,7 +222,7 @@ installDotfile()
 
     # Ensure that for nested dotfile the path exists
     if [[ $nested -eq 1 ]]; then
-        executeCommand "mkdir -p $USER1_HOME/$dotfileHomePath"
+        cmd "mkdir -p $USER1_HOME/$dotfileHomePath"
         retval="$?"
         if [[ $retval -ne 0  ]]; then
             log "$FUNCNAME: failed to create path for nested dotfile: $retval"
@@ -255,9 +254,8 @@ changeHomeOwnership()
     local userName="$1"
     local userHome="$2"
 
-    executeCommand "chown -R $userName:users $userHome"
-    terminateScriptOnError\
-        "$?" "$FUNCNAME" "failed to change home dir ownership"
+    cmd "chown -R $userName:users $userHome"
+    err "$?" "$FUNCNAME" "failed to change home dir ownership"
 
     log "Change home dir ownership...done"
 }
@@ -276,24 +274,23 @@ changeHomeOwnership()
 
 addUser1()
 {
-    requiresVariable "USER1_MAIN_GROUP" "$FUNCTION"
-    requiresVariable "USER1_ADDITIONAL_GROUPS" "$FUNCTION"
-    requiresVariable "USER1_SHELL" "$FUNCTION"
-    requiresVariable "USER1_NAME" "$FUNCTION"
+    reqVar "USER1_MAIN_GROUP" "$FUNCTION"
+    reqVar "USER1_ADDITIONAL_GROUPS" "$FUNCTION"
+    reqVar "USER1_SHELL" "$FUNCTION"
+    reqVar "USER1_NAME" "$FUNCTION"
 
     log "Add user1..."
 
-    executeCommand\
-        "useradd -m -g $USER1_MAIN_GROUP -G $USER1_ADDITIONAL_GROUPS -s"\
+    cmd "useradd -m -g $USER1_MAIN_GROUP -G $USER1_ADDITIONAL_GROUPS -s"\
         "$USER1_SHELL $USER1_NAME"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to add user 1"
+    err "$?" "$FUNCNAME" "failed to add user 1"
 
     log "Add user1...done"
 }
 
 setUser1Password()
 {
-    requiresVariable "USER1_NAME" "$FUNCTION"
+    reqVar "USER1_NAME" "$FUNCTION"
 
     log "Set user 1 password..."
 
@@ -304,7 +301,7 @@ setUser1Password()
 
 setUser1Sudoer()
 {
-    requiresVariable "USER1_NAME" "$FUNCTION"
+    reqVar "USER1_NAME" "$FUNCTION"
 
     log "Set user1 sudoer..."
 
@@ -319,12 +316,12 @@ setUser1Sudoer()
 
 installAlsa()
 {
-    requiresVariable "ALSA_PACKAGES" "$FUNCTION"
+    reqVar "ALSA_PACKAGES" "$FUNCTION"
 
     log "Install alsa..."
 
     installPackage $ALSA_PACKAGES
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install alsa"
+    err "$?" "$FUNCNAME" "failed to install alsa"
 
     log "Install alsa...done"
 }
@@ -335,36 +332,36 @@ installAlsa()
 
 installVim()
 {
-    requiresVariable "VIM_PACKAGES" "$FUNCTION"
+    reqVar "VIM_PACKAGES" "$FUNCTION"
 
     log "Install vim..."
 
     installPackage $VIM_PACKAGES
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install vim"
+    err "$?" "$FUNCNAME" "failed to install vim"
 
     log "Install vim...done"
 }
 
 installMc()
 {
-    requiresVariable "MC_PACKAGES" "$FUNCTION"
+    reqVar "MC_PACKAGES" "$FUNCTION"
 
     log "Install mc..."
 
     installPackage $MC_PACKAGES
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install mc"
+    err "$?" "$FUNCNAME" "failed to install mc"
 
     log "Install mc...done"
 }
 
 installGit()
 {
-    requiresVariable "GIT_PACKAGES" "$FUNCTION"
+    reqVar "GIT_PACKAGES" "$FUNCTION"
 
     log "Install git..."
 
     installPackage $GIT_PACKAGES
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install git"
+    err "$?" "$FUNCNAME" "failed to install git"
 
     log "Install git...done"
 }
@@ -378,32 +375,32 @@ configurePacman()
     log "Configure pacman..."
 
     uncommentVar "TotalDownload" "/etc/pacman.conf"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to configure pacman"
+    err "$?" "$FUNCNAME" "failed to configure pacman"
 
     log "Configure pacman...done"
 }
 
 configureGitUser()
 {
-    requiresVariable "GIT_USER_EMAIL" "$FUNCNAME"
-    requiresVariable "GIT_USER_NAME" "$FUNCNAME"
+    reqVar "GIT_USER_EMAIL" "$FUNCNAME"
+    reqVar "GIT_USER_NAME" "$FUNCNAME"
 
     log "Configure git user..."
 
-    executeCommand "git config --global user.email \"$GIT_USER_EMAIL\""
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to configure git user email"
+    cmd "git config --global user.email \"$GIT_USER_EMAIL\""
+    err "$?" "$FUNCNAME" "failed to configure git user email"
 
-    executeCommand "git config --global user.name \"$GIT_USER_NAME\""
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to configure git user name"
+    cmd "git config --global user.name \"$GIT_USER_NAME\""
+    err "$?" "$FUNCNAME" "failed to configure git user name"
 
     log "Configure git user...done"
 }
 
 setBootloaderKernelParams()
 {
-    requiresVariable "ROOT_PARTITION_HDD" "$FUNCNAME"
-    requiresVariable "ROOT_PARTITION_NB" "$FUNCNAME"
-    requiresVariable "BOOTLOADER_KERNEL_PARAMS" "$FUNCNAME"
+    reqVar "ROOT_PARTITION_HDD" "$FUNCNAME"
+    reqVar "ROOT_PARTITION_NB" "$FUNCNAME"
+    reqVar "BOOTLOADER_KERNEL_PARAMS" "$FUNCNAME"
 
     log "Set bootloader kernel params..."
 
@@ -414,9 +411,8 @@ setBootloaderKernelParams()
     local dst="APPEND root=$params"
     local subst="s|$src|$dst|"
     local file="/boot/syslinux/syslinux.cfg"
-    executeCommand "sed -i \"$subst\" $file"
-    terminateScriptOnError\
-        "$?" "$FUNCNAME" "failed to set bootloader kernel params"
+    cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to set bootloader kernel params"
 
     log "Set bootloader kernel params...done"
 }
@@ -426,8 +422,7 @@ disableSyslinuxBootMenu()
     log "Disable syslinux boot menu..."
 
     commentVar "UI" "/boot/syslinux/syslinux.cfg"
-    terminateScriptOnError\
-        "$?" "$FUNCNAME" "failed to disable syslinux boot menu"
+    err "$?" "$FUNCNAME" "failed to disable syslinux boot menu"
 
     log "Disable syslinux boot menu...done"
 }
@@ -439,14 +434,13 @@ setConsoleLoginMessage()
     log "Set console login message..."
 
     # Remove welcome message
-    executeCommand "rm -f /etc/issue"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to remove /etc/issue file"
+    cmd "rm -f /etc/issue"
+    err "$?" "$FUNCNAME" "failed to remove /etc/issue file"
 
     # Set new welcome message, if present
     if [ ! -z "$CONSOLE_LOGIN_MSG" ];then
-        executeCommand "echo $CONSOLE_LOGIN_MSG > /etc/issue"
-        terminateScriptOnError\
-            "$?" "$FUNCNAME" "failed to set console login message"
+        cmd "echo $CONSOLE_LOGIN_MSG > /etc/issue"
+        err "$?" "$FUNCNAME" "failed to set console login message"
     else
         log "Console welcome message not set, /etc/issue file deleted"
     fi
@@ -464,8 +458,8 @@ setEarlyTerminalFont()
     local dst="HOOKS=\\\"$HOOKS\\\""
     local subst="s|$src|$dst|"
     local file="/etc/mkinitcpio.conf"
-    executeCommand "sed -i \"$subst\" $file"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to set early terminal font"
+    cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to set early terminal font"
 
     log "Set early terminal font...done"
 }
@@ -474,7 +468,7 @@ initAlsa()
 {
     log "Init alsa..."
 
-    executeCommand "alsactl init"
+    cmd "alsactl init"
     # May return error 99 - ignore it
 
     log "Init alsa...done"
@@ -484,8 +478,8 @@ unmuteAlsa()
 {
     log "Unmute alsa..."
 
-    executeCommand "amixer sset Master unmute"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to unmute alsa"
+    cmd "amixer sset Master unmute"
+    err "$?" "$FUNCNAME" "failed to unmute alsa"
 
     log "Unmute alsa...done"
 }
@@ -496,56 +490,54 @@ unmuteAlsa()
 
 cloneProjectRepo()
 {
-    requiresVariable "PROJECT_REPO_URL" "$FUNCNAME"
-    requiresVariable "PROJECT_REPO_DST" "$FUNCNAME"
+    reqVar "PROJECT_REPO_URL" "$FUNCNAME"
+    reqVar "PROJECT_REPO_DST" "$FUNCNAME"
 
     log "Clone $PROJECT_NAME repo..."
 
-    executeCommand "git clone $PROJECT_REPO_URL $PROJECT_REPO_DST"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to clone $PROJECT_NAME repo"
+    cmd "git clone $PROJECT_REPO_URL $PROJECT_REPO_DST"
+    err "$?" "$FUNCNAME" "failed to clone $PROJECT_NAME repo"
 
     log "Clone $PROJECT_NAME repo...done"
 }
 
 checkoutCurrentBranch()
 {
-    requiresVariable "PROJECT_REPO_DST" "$FUNCNAME"
-    requiresVariable "PROJECT_BRANCH" "$FUNCNAME"
+    reqVar "PROJECT_REPO_DST" "$FUNCNAME"
+    reqVar "PROJECT_BRANCH" "$FUNCNAME"
 
     log "Checkout current branch..."
 
     # Execute git commands from destination path
-    executeCommand "git -C $PROJECT_REPO_DST checkout $PROJECT_BRANCH"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to checkout current branch"
+    cmd "git -C $PROJECT_REPO_DST checkout $PROJECT_BRANCH"
+    err "$?" "$FUNCNAME" "failed to checkout current branch"
 
     log "Checkout current branch...done"
 }
 
 copyOverProjectFiles()
 {
-    requiresVariable "PROJECT_ROOT_PATH" "$FUNCNAME"
-    requiresVariable "USER1_HOME" "$FUNCNAME"
+    reqVar "PROJECT_ROOT_PATH" "$FUNCNAME"
+    reqVar "USER1_HOME" "$FUNCNAME"
 
     log "Copy over $PROJECT_NAME files..."
 
-    executeCommand "cp -r $PROJECT_ROOT_PATH $USER1_HOME"
-    terminateScriptOnError\
-        "$?" "$FUNCNAME" "failed to copy over $PROJECT_NAME files"
+    cmd "cp -r $PROJECT_ROOT_PATH $USER1_HOME"
+    err "$?" "$FUNCNAME" "failed to copy over $PROJECT_NAME files"
 
     log "Copy over $PROJECT_NAME files...done"
 }
 
 commitAdjustments()
 {
-    requiresVariable "PROJECT_REPO_DST" "$FUNCNAME"
-    requiresVariable "CUSTOM_COMMIT_COMMENT" "$FUNCNAME"
+    reqVar "PROJECT_REPO_DST" "$FUNCNAME"
+    reqVar "CUSTOM_COMMIT_COMMENT" "$FUNCNAME"
 
     log "Commit adjustments..."
 
     if [[ -n "$(git -C $PROJECT_REPO_DST status --porcelain)" ]]; then
-        executeCommand\
-            "git -C $PROJECT_REPO_DST commit -a -m \"$CUSTOM_COMMIT_COMMENT\""
-        terminateScriptOnError "$?" "$FUNCNAME" "failed to commit adjustments"
+        cmd "git -C $PROJECT_REPO_DST commit -a -m \"$CUSTOM_COMMIT_COMMENT\""
+        err "$?" "$FUNCNAME" "failed to commit adjustments"
     else
         log "No changes detected, no need to commit"
     fi
@@ -567,24 +559,24 @@ commitAdjustments()
 
 installXorgBasic()
 {
-    requiresVariable "XORG_BASIC_PACKAGES" "$FUNCNAME"
+    reqVar "XORG_BASIC_PACKAGES" "$FUNCNAME"
 
     log "Install xorg basics..."
 
     installPackage $XORG_BASIC_PACKAGES
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install xorg basics"
+    err "$?" "$FUNCNAME" "failed to install xorg basics"
 
     log "Install xorg basics...done"
 }
 
 installXorgAdditional()
 {
-    requiresVariable "XORG_ADDITIONAL_PACKAGES" "$FUNCNAME"
+    reqVar "XORG_ADDITIONAL_PACKAGES" "$FUNCNAME"
 
     log "Install xorg additional..."
 
     installPackage $XORG_ADDITIONAL_PACKAGES
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install xorg additional"
+    err "$?" "$FUNCNAME" "failed to install xorg additional"
 
     log "Install xorg additional...done"
 }
@@ -595,31 +587,31 @@ installXorgAdditional()
 
 installDvtm()
 {
-    requiresVariable "DVTM_PACKAGES" "$FUNCNAME"
+    reqVar "DVTM_PACKAGES" "$FUNCNAME"
     log "Install dvtm..."
 
     installPackage $DVTM_PACKAGES
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install dvtm"
+    err "$?" "$FUNCNAME" "failed to install dvtm"
 
     log "Install dvtm...done"
 }
 
 installCustomizedDvtm()
 {
-    requiresVariable "DVTM_GIT_REPO" "$FUNCNAME"
-    requiresVariable "DVTM_BUILD_PATH" "$FUNCNAME"
-    requiresVariable "DVTM_CUSTOM_BRANCH" "$FUNCNAME"
-    requiresVariable "DVTM_ACTIVE_COLOR" "$FUNCNAME"
-    requiresVariable "DVTM_MOD_KEY" "$FUNCNAME"
-    requiresVariable "CUSTOM_COMMIT_COMMENT" "$FUNCNAME"
+    reqVar "DVTM_GIT_REPO" "$FUNCNAME"
+    reqVar "DVTM_BUILD_PATH" "$FUNCNAME"
+    reqVar "DVTM_CUSTOM_BRANCH" "$FUNCNAME"
+    reqVar "DVTM_ACTIVE_COLOR" "$FUNCNAME"
+    reqVar "DVTM_MOD_KEY" "$FUNCNAME"
+    reqVar "CUSTOM_COMMIT_COMMENT" "$FUNCNAME"
 
     log "Install customized dvtm..."
 
-    executeCommand "git clone $DVTM_GIT_REPO $DVTM_BUILD_PATH"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to clone dvtm repository"
+    cmd "git clone $DVTM_GIT_REPO $DVTM_BUILD_PATH"
+    err "$?" "$FUNCNAME" "failed to clone dvtm repository"
 
-    executeCommand "git -C $DVTM_BUILD_PATH checkout -b $DVTM_CUSTOM_BRANCH"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to checkout new branch"
+    cmd "git -C $DVTM_BUILD_PATH checkout -b $DVTM_CUSTOM_BRANCH"
+    err "$?" "$FUNCNAME" "failed to checkout new branch"
 
     # Change default blue color to something brighter
     # to make it visible on older CRT monitor
@@ -627,175 +619,167 @@ installCustomizedDvtm()
     local dst="$DVTM_ACTIVE_COLOR"
     local subst="s|$src|$dst|g"
     local file="$DVTM_BUILD_PATH/config.def.h"
-    executeCommand "sed -i \"$subst\" $file"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to change active color"
+    cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to change active color"
 
     # Change default mod key - 'g' is not convenient to be used with CTRL key
     src="#define MOD CTRL('g')"
     dst="#define MOD CTRL('$DVTM_MOD_KEY')"
     subst="s|$src|$dst|g"
     file="$DVTM_BUILD_PATH/config.def.h"
-    executeCommand "sed -i \"$subst\" $file"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to change mod key"
+    cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to change mod key"
 
-    executeCommand\
-        "git -C $DVTM_BUILD_PATH commit -a -m \"$CUSTOM_COMMIT_COMMENT\""
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to commit adjustments"
+    cmd "git -C $DVTM_BUILD_PATH commit -a -m \"$CUSTOM_COMMIT_COMMENT\""
+    err "$?" "$FUNCNAME" "failed to commit adjustments"
 
-    executeCommand "make -C $DVTM_BUILD_PATH"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to make dvtm"
+    cmd "make -C $DVTM_BUILD_PATH"
+    err "$?" "$FUNCNAME" "failed to make dvtm"
 
-    executeCommand "make -C $DVTM_BUILD_PATH install"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install dvtm"
+    cmd "make -C $DVTM_BUILD_PATH install"
+    err "$?" "$FUNCNAME" "failed to install dvtm"
 
     log "Install customized dvtm...done"
 }
 
 installRxvtUnicode()
 {
-    requiresVariable "RXVTUNICODE_PACKAGES" "$FUNCNAME"
+    reqVar "RXVTUNICODE_PACKAGES" "$FUNCNAME"
 
     log "Install rxvt unicode..."
 
     installPackage $RXVTUNICODE_PACKAGES
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install rxvt unicode"
+    err "$?" "$FUNCNAME" "failed to install rxvt unicode"
 
     log "Install rxvt unicode...done"
 }
 
 installGuiFonts()
 {
-    requiresVariable "GUI_FONT_PACKAGES" "$FUNCNAME"
+    reqVar "GUI_FONT_PACKAGES" "$FUNCNAME"
 
     log "Install gui fonts..."
 
     installPackage $GUI_FONT_PACKAGES
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install gui fonts"
+    err "$?" "$FUNCNAME" "failed to install gui fonts"
 
     log "Install gui fonts...done"
 }
 
 installDwm()
 {
-    requiresVariable "DWM_PACKAGES" "$FUNCNAME"
+    reqVar "DWM_PACKAGES" "$FUNCNAME"
 
     log "Install dwm..."
 
     installPackage $DWM_PACKAGES
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install dwm"
+    err "$?" "$FUNCNAME" "failed to install dwm"
 
     log "Install dwm...done"
 }
 
 installCustomizedDwm()
 {
-    requiresVariable "DWM_GIT_REPO" "$FUNCNAME"
-    requiresVariable "DWM_BUILD_PATH" "$FUNCNAME"
-    requiresVariable "DWM_CUSTOM_BRANCH" "$FUNCNAME"
-    requiresVariable "DWM_BASE_COMMIT" "$FUNCNAME"
-    requiresVariable "DWM_TERMINAL_EMULATOR_COMMAND" "$FUNCNAME"
-    requiresVariable "CUSTOM_COMMIT_COMMENT" "$FUNCNAME"
+    reqVar "DWM_GIT_REPO" "$FUNCNAME"
+    reqVar "DWM_BUILD_PATH" "$FUNCNAME"
+    reqVar "DWM_CUSTOM_BRANCH" "$FUNCNAME"
+    reqVar "DWM_BASE_COMMIT" "$FUNCNAME"
+    reqVar "DWM_TERMINAL_EMULATOR_COMMAND" "$FUNCNAME"
+    reqVar "CUSTOM_COMMIT_COMMENT" "$FUNCNAME"
 
     log "Installing customized dwm..."
 
     # Clone project from git
-    executeCommand "git clone $DWM_GIT_REPO $DWM_BUILD_PATH"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to clone dwm repository"
+    cmd "git clone $DWM_GIT_REPO $DWM_BUILD_PATH"
+    err "$?" "$FUNCNAME" "failed to clone dwm repository"
 
     # Newest commit was not working... use specific, working version
-    executeCommand\
-        "git -C $DWM_BUILD_PATH checkout $DWM_BASE_COMMIT -b $DWM_CUSTOM_BRANCH"
-    terminateScriptOnError\
-        "$?" "$FUNCNAME" "failed to checkout older commit as a new branch"
+    cmd "git -C $DWM_BUILD_PATH checkout $DWM_BASE_COMMIT -b $DWM_CUSTOM_BRANCH"
+    err "$?" "$FUNCNAME" "failed to checkout older commit as a new branch"
 
     # Configure necessary settings
     local src="PREFIX = /usr/local"
     local dst="PREFIX = /usr"
     local subst="s|$src|$dst|g"
     local file="$DWM_BUILD_PATH/config.mk"
-    executeCommand "sed -i \"$subst\" $file"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to change dwm prefix"
+    cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to change dwm prefix"
 
     src="X11INC = /usr/X11R6/incude"
     dst="X11INC = /usr/include/X11"
     subst="s|$src|$dst|g"
     file="$DWM_BUILD_PATH/config.mk"
-    executeCommand "sed -i \"$subst\" $file"
-    terminateScriptOnError\
-        "$?" "$FUNCNAME" "failed to change dwm x11 include path"
+    cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to change dwm x11 include path"
 
     src="X11LIB = /usr/X11R6/lib"
     dst="X11LIB = /usr/lib/X11"
     subst="s|$src|$dst|g"
     file="$DWM_BUILD_PATH/config.mk"
-    executeCommand "sed -i \"$subst\" $file"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to change dwm x11 lib path"
+    cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to change dwm x11 lib path"
 
     # Set terminal command to be launched on shortcut invocation
     src="\\\"st\\\""
     dst="\\\"$DWM_TERMINAL_EMULATOR_COMMAND\\\""
     subst="s|$src|$dst|g"
     file="$DWM_BUILD_PATH/config.def.h"
-    executeCommand "sed -i \"$subst\" $file"
-    terminateScriptOnError\
-        "$?" "$FUNCNAME" "failed to change dwm terminal emulator command"
+    cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to change dwm terminal emulator command"
 
     # Change resizehints to false for better aligned terminal windows
     src="static const Bool resizehints = True"
     dst="static const Bool resizehints = False"
     subst="s|$src|$dst|g"
     file="$DWM_BUILD_PATH/config.def.h"
-    executeCommand "sed -i \"$subst\" $file"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to change resizehints"
+    cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to change resizehints"
 
     # Save configuration as new commit
-    executeCommand\
-        "git -C $DWM_BUILD_PATH commit -a -m \"$CUSTOM_COMMIT_COMMENT\""
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to commit adjustments"
+    cmd "git -C $DWM_BUILD_PATH commit -a -m \"$CUSTOM_COMMIT_COMMENT\""
+    err "$?" "$FUNCNAME" "failed to commit adjustments"
 
     # Install
-    executeCommand "make -C $DWM_BUILD_PATH clean install"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to build and install dwm"
+    cmd "make -C $DWM_BUILD_PATH clean install"
+    err "$?" "$FUNCNAME" "failed to build and install dwm"
 
     log "Installing customized dwm...done"
 }
 
 installDmenu()
 {
-    requiresVariable "DMENU_PACKAGES" "$FUNCNAME"
+    reqVar "DMENU_PACKAGES" "$FUNCNAME"
 
     log "Install dmenu..."
 
     installPackage $DMENU_PACKAGES
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install dmenu"
+    err "$?" "$FUNCNAME" "failed to install dmenu"
 
     log "Install dmenu...done"
 }
 
 installVirtualboxGuestAdditions()
 {
-    requiresVariable "VIRTUALBOX_GUEST_UTILS_PACKAGES" "$FUNCNAME"
-    requiresVariable "VIRTUALBOX_GUEST_UTILS_MODULES" "$FUNCNAME"
-    requiresVariable "VIRTUALBOX_GUEST_UTILS_MODULES_FILE" "$FUNCNAME"
+    reqVar "VIRTUALBOX_GUEST_UTILS_PACKAGES" "$FUNCNAME"
+    reqVar "VIRTUALBOX_GUEST_UTILS_MODULES" "$FUNCNAME"
+    reqVar "VIRTUALBOX_GUEST_UTILS_MODULES_FILE" "$FUNCNAME"
 
     log "Install virtualbox guest additions..."
 
     # Install the packages
     installPackage $VIRTUALBOX_GUEST_UTILS_PACKAGES
-    terminateScriptOnError\
-        "$?" "$FUNCNAME" "failed to install virtualbox package"
+    err "$?" "$FUNCNAME" "failed to install virtualbox package"
 
     # Load required modules
-    executeCommand "modprobe -a $VIRTUALBOX_GUEST_UTILS_MODULES"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to load required modules"
+    cmd "modprobe -a $VIRTUALBOX_GUEST_UTILS_MODULES"
+    err "$?" "$FUNCNAME" "failed to load required modules"
 
     # Setup modules to be loaded on startup
     if [ ! -z "$VIRTUALBOX_GUEST_UTILS_MODULES" ]; then
         for module in $VIRTUALBOX_GUEST_UTILS_MODULES
         do
-            executeCommand\
-                "echo $module >> $VIRTUALBOX_GUEST_UTILS_MODULES_FILE"
-            terminateScriptOnError "$?" "$FUNCNAME"\
+            cmd "echo $module >> $VIRTUALBOX_GUEST_UTILS_MODULES_FILE"
+            err "$?" "$FUNCNAME"\
                 "failed to setup module to be loaded on startup"
         done
     fi
@@ -809,37 +793,36 @@ installVirtualboxGuestAdditions()
 
 setVirtualboxSharedFolder()
 {
-    requiresVariable "USER1_NAME" "$FUNCNAME"
-    requiresVariable "USER1_HOME" "$FUNCNAME"
-    requiresVariable "VIRTUALBOX_SHARED_FOLDER_NAME" "$FUNCNAME"
+    reqVar "USER1_NAME" "$FUNCNAME"
+    reqVar "USER1_HOME" "$FUNCNAME"
+    reqVar "VIRTUALBOX_SHARED_FOLDER_NAME" "$FUNCNAME"
 
     log "Set virtualbox shared folder..."
 
     # Create /media folder
-    executeCommand "mkdir /media"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to create /media dir"
+    cmd "mkdir /media"
+    err "$?" "$FUNCNAME" "failed to create /media dir"
 
     # Add user1 to vboxsf group
-    executeCommand "gpasswd -a $USER1_NAME vboxsf"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to add user to vboxsf group"
+    cmd "gpasswd -a $USER1_NAME vboxsf"
+    err "$?" "$FUNCNAME" "failed to add user to vboxsf group"
 
     # Enable vboxservice service
     enableService "vboxservice"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to enable vboxservice"
+    err "$?" "$FUNCNAME" "failed to enable vboxservice"
 
     # Start vboxservice (needed for link creation)
     startService "vboxservice"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to start vboxservice"
+    err "$?" "$FUNCNAME" "failed to start vboxservice"
 
     # Wait a moment for a started service to do its job
-    executeCommand "sleep 5"
+    cmd "sleep 5"
 
     # Create link for easy access
     createLink\
         "/media/sf_$VIRTUALBOX_SHARED_FOLDER_NAME"\
         "$USER1_HOME/$VIRTUALBOX_SHARED_FOLDER_NAME"
-    terminateScriptOnError\
-        "$?" "$FUNCNAME" "failed to create link to shared folder"
+    err "$?" "$FUNCNAME" "failed to create link to shared folder"
 
     log "Set virtualbox shared folder...done"
 }
@@ -855,8 +838,7 @@ installBashprofileDotfile()
     log "Install bash_profile dotfile..."
 
     installDotfile ".bash_profile" ""
-    terminateScriptOnError\
-        "$?" "$FUNCNAME" "failed to install bash_profile dotfile"
+    err "$?" "$FUNCNAME" "failed to install bash_profile dotfile"
 
     log "Install bash_profile dotfile...done"
 }
@@ -866,7 +848,7 @@ installBashrcDotfile()
     log "Install bashrc dotfile..."
 
     installDotfile ".bashrc" ""
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install bashrc dotfile"
+    err "$?" "$FUNCNAME" "failed to install bashrc dotfile"
 
     log "Install bashrc dotfile...done"
 }
@@ -876,8 +858,7 @@ installDircolorssolarizedDotfile()
     log "Install .dir_colors_solarized dotfile..."
 
     installDotfile ".dir_colors_solarized" ""
-    terminateScriptOnError\
-        "$?" "$FUNCNAME" "failed to install .dir_colors_solarized dotfile"
+    err "$?" "$FUNCNAME" "failed to install .dir_colors_solarized dotfile"
 
     log "Install .dir_colors_solarized dotfile...done"
 }
@@ -889,7 +870,7 @@ installVimrcDotfile()
     log "Install vimrc dotfile..."
 
     installDotfile ".vimrc" ""
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install vimrc dotfile"
+    err "$?" "$FUNCNAME" "failed to install vimrc dotfile"
 
     log "Install vimrc dotfile...done"
 }
@@ -899,8 +880,7 @@ installVimsolarizedDotfile()
     log "Install solarized.vim dotfile..."
 
     installDotfile "solarized.vim" ".vim/colors"
-    terminateScriptOnError\
-        "$?" "$FUNCNAME" "failed to install solarized.vim dotfile"
+    err "$?" "$FUNCNAME" "failed to install solarized.vim dotfile"
 
     log "Install solarized.vim dotfile...done"
 }
@@ -912,8 +892,7 @@ installMcsolarizedDotfile()
     log "Install mc_solarized.ini dotfile..."
 
     installDotfile "mc_solarized.ini" ".config/mc"
-    terminateScriptOnError\
-        "$?" "$FUNCNAME" "failed to install mc_solarized.ini dotfile"
+    err "$?" "$FUNCNAME" "failed to install mc_solarized.ini dotfile"
 
     log "Install mc_solarized.ini dotfile...done"
 }
@@ -925,8 +904,7 @@ installGitconfigDotfile()
     log "Install .gitconfig dotfile..."
 
     installDotfile ".gitconfig" ""
-    terminateScriptOnError\
-        "$?" "$FUNCNAME" "failed to install .gitconfig dotfile"
+    err "$?" "$FUNCNAME" "failed to install .gitconfig dotfile"
 
     log "Install .gitconfig dotfile...done"
 }
@@ -938,7 +916,7 @@ installXinitrcDotfile()
     log "Install .xinitrc dotfile..."
 
     installDotfile ".xinitrc" ""
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to install .xinitrc dotfile"
+    err "$?" "$FUNCNAME" "failed to install .xinitrc dotfile"
 
     log "Install .xinitrc dotfile...done"
 }
@@ -948,8 +926,7 @@ installXresourcesDotfile()
     log "Install .Xresources dotfile..."
 
     installDotfile ".Xresources" ""
-    terminateScriptOnError\
-        "$?" "$FUNCNAME" "failed to install .Xresources dotfile"
+    err "$?" "$FUNCNAME" "failed to install .Xresources dotfile"
 
     log "Install .Xresources dotfile...done"
 }
@@ -962,24 +939,23 @@ recreateImage()
 {
     log "Recreate linux image..."
 
-    executeCommand "mkinitcpio -p linux"
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to set recreate linux image"
+    cmd "mkinitcpio -p linux"
+    err "$?" "$FUNCNAME" "failed to set recreate linux image"
 
     log "Recreate linux image...done"
 }
 
 changeUser1HomeOwnership()
 {
-    requiresVariable "USER1_NAME" "$FUNCNAME"
-    requiresVariable "USER1_HOME" "$FUNCNAME"
+    reqVar "USER1_NAME" "$FUNCNAME"
+    reqVar "USER1_HOME" "$FUNCNAME"
 
     log "Change user1 home ownership..."
 
     changeHomeOwnership "$USER1_NAME" "$USER1_HOME"
     # TODO: following tSOE is redundand
     # function above already cheks that - improve in future
-    terminateScriptOnError\
-        "$?" "$FUNCNAME" "failed to change user1 home dir ownership"
+    err "$?" "$FUNCNAME" "failed to change user1 home dir ownership"
 
     log "Change user1 home ownership...done"
 }
@@ -990,14 +966,14 @@ changeUser1HomeOwnership()
 
 copyProjectLogFiles()
 {
-    requiresVariable "PROJECT_LOG_DIR" "$FUNCNAME"
-    requiresVariable "PROJECT_REPO_DST" "$FUNCNAME"
+    reqVar "PROJECT_LOG_DIR" "$FUNCNAME"
+    reqVar "PROJECT_REPO_DST" "$FUNCNAME"
 
     # Do not perform typical logging in this function...
     # This would spoil nice logs copied to user's dir
 
     cp -r $PROJECT_LOG_DIR $PROJECT_REPO_DST
-    terminateScriptOnError "$?" "$FUNCNAME" "failed to copy project log files"
+    err "$?" "$FUNCNAME" "failed to copy project log files"
 }
 
 #===============================================================================
