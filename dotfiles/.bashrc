@@ -67,7 +67,11 @@ alias startx='startx &> ~/.xlog'
 # Command completion
 #=======================================
 
+# sudo
 complete -cf sudo
+
+# git
+source "/usr/share/git/completion/git-completion.bash"
 
 #=======================================
 # Exported variables
