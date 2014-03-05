@@ -728,13 +728,82 @@ installDwm()
     log "Install dwm...done"
 }
 
+#installCustomizedDwm()
+#{
+#    reqVar "DWM_GIT_REPO" "$FUNCNAME"
+#    reqVar "DWM_BUILD_PATH" "$FUNCNAME"
+#    reqVar "DWM_CUSTOM_BRANCH" "$FUNCNAME"
+#    reqVar "DWM_BASE_COMMIT" "$FUNCNAME"
+#    reqVar "DWM_TERMINAL_EMULATOR_COMMAND" "$FUNCNAME"
+#    reqVar "CUSTOM_COMMIT_COMMENT" "$FUNCNAME"
+#
+#    log "Installing customized dwm..."
+#
+#    # Clone project from git
+#    cmd "git clone $DWM_GIT_REPO $DWM_BUILD_PATH"
+#    err "$?" "$FUNCNAME" "failed to clone dwm repository"
+#
+#    # Newest commit was not working... use specific, working version
+#    cmd "git -C $DWM_BUILD_PATH checkout $DWM_BASE_COMMIT -b $DWM_CUSTOM_BRANCH"
+#    err "$?" "$FUNCNAME" "failed to checkout older commit as a new branch"
+#
+#    # Configure necessary settings
+#    local src="PREFIX = /usr/local"
+#    local dst="PREFIX = /usr"
+#    local subst="s|$src|$dst|g"
+#    local file="$DWM_BUILD_PATH/config.mk"
+#    cmd "sed -i \"$subst\" $file"
+#    err "$?" "$FUNCNAME" "failed to change dwm prefix"
+#
+#    src="X11INC = /usr/X11R6/incude"
+#    dst="X11INC = /usr/include/X11"
+#    subst="s|$src|$dst|g"
+#    file="$DWM_BUILD_PATH/config.mk"
+#    cmd "sed -i \"$subst\" $file"
+#    err "$?" "$FUNCNAME" "failed to change dwm x11 include path"
+#
+#    src="X11LIB = /usr/X11R6/lib"
+#    dst="X11LIB = /usr/lib/X11"
+#    subst="s|$src|$dst|g"
+#    file="$DWM_BUILD_PATH/config.mk"
+#    cmd "sed -i \"$subst\" $file"
+#    err "$?" "$FUNCNAME" "failed to change dwm x11 lib path"
+#
+#    # Set terminal command to be launched on shortcut invocation
+#    src="\\\"st\\\""
+#    dst="\\\"$DWM_TERMINAL_EMULATOR_COMMAND\\\""
+#    subst="s|$src|$dst|g"
+#    file="$DWM_BUILD_PATH/config.def.h"
+#    cmd "sed -i \"$subst\" $file"
+#    err "$?" "$FUNCNAME" "failed to change dwm terminal emulator command"
+#
+#    # Change resizehints to false for better aligned terminal windows
+#    src="static const Bool resizehints = True"
+#    dst="static const Bool resizehints = False"
+#    subst="s|$src|$dst|g"
+#    file="$DWM_BUILD_PATH/config.def.h"
+#    cmd "sed -i \"$subst\" $file"
+#    err "$?" "$FUNCNAME" "failed to change resizehints"
+#
+#    # Save configuration as new commit
+#    cmd "git -C $DWM_BUILD_PATH commit -a -m \"$CUSTOM_COMMIT_COMMENT\""
+#    err "$?" "$FUNCNAME" "failed to commit adjustments"
+#
+#    # Install
+#    cmd "make -C $DWM_BUILD_PATH clean install"
+#    err "$?" "$FUNCNAME" "failed to build and install dwm"
+#
+#    log "Installing customized dwm...done"
+#}
+
 installCustomizedDwm()
 {
     reqVar "DWM_GIT_REPO" "$FUNCNAME"
     reqVar "DWM_BUILD_PATH" "$FUNCNAME"
-    reqVar "DWM_CUSTOM_BRANCH" "$FUNCNAME"
     reqVar "DWM_BASE_COMMIT" "$FUNCNAME"
-    reqVar "DWM_TERMINAL_EMULATOR_COMMAND" "$FUNCNAME"
+    reqVar "DWM_CUSTOM_BRANCH" "$FUNCNAME"
+    reqVar "PATCHES_DIR" "$FUNCNAME"
+    reqVar "DWM_CUSTOM_PATCH_FILE" "$FUNCNAME"
     reqVar "CUSTOM_COMMIT_COMMENT" "$FUNCNAME"
 
     log "Installing customized dwm..."
@@ -747,46 +816,16 @@ installCustomizedDwm()
     cmd "git -C $DWM_BUILD_PATH checkout $DWM_BASE_COMMIT -b $DWM_CUSTOM_BRANCH"
     err "$?" "$FUNCNAME" "failed to checkout older commit as a new branch"
 
-    # Configure necessary settings
-    local src="PREFIX = /usr/local"
-    local dst="PREFIX = /usr"
-    local subst="s|$src|$dst|g"
-    local file="$DWM_BUILD_PATH/config.mk"
-    cmd "sed -i \"$subst\" $file"
-    err "$?" "$FUNCNAME" "failed to change dwm prefix"
+    # Apply patch with customizations
+    cmd "git -C $DWM_BUILD_PATH apply $PATCHES_DIR/$DWM_CUSTOM_PATCH_FILE"
+    err "$?" "$FUNCNAME" "failed to apply custom dwm patch"
 
-    src="X11INC = /usr/X11R6/incude"
-    dst="X11INC = /usr/include/X11"
-    subst="s|$src|$dst|g"
-    file="$DWM_BUILD_PATH/config.mk"
-    cmd "sed -i \"$subst\" $file"
-    err "$?" "$FUNCNAME" "failed to change dwm x11 include path"
-
-    src="X11LIB = /usr/X11R6/lib"
-    dst="X11LIB = /usr/lib/X11"
-    subst="s|$src|$dst|g"
-    file="$DWM_BUILD_PATH/config.mk"
-    cmd "sed -i \"$subst\" $file"
-    err "$?" "$FUNCNAME" "failed to change dwm x11 lib path"
-
-    # Set terminal command to be launched on shortcut invocation
-    src="\\\"st\\\""
-    dst="\\\"$DWM_TERMINAL_EMULATOR_COMMAND\\\""
-    subst="s|$src|$dst|g"
-    file="$DWM_BUILD_PATH/config.def.h"
-    cmd "sed -i \"$subst\" $file"
-    err "$?" "$FUNCNAME" "failed to change dwm terminal emulator command"
-
-    # Change resizehints to false for better aligned terminal windows
-    src="static const Bool resizehints = True"
-    dst="static const Bool resizehints = False"
-    subst="s|$src|$dst|g"
-    file="$DWM_BUILD_PATH/config.def.h"
-    cmd "sed -i \"$subst\" $file"
-    err "$?" "$FUNCNAME" "failed to change resizehints"
+    # Add changes introduced with patch. Use add . since new files may be added.
+    cmd "git -C $DWM_BUILD_PATH add ."
+    err "$?" "$FUNCNAME" "failed to add patch changes"
 
     # Save configuration as new commit
-    cmd "git -C $DWM_BUILD_PATH commit -a -m \"$CUSTOM_COMMIT_COMMENT\""
+    cmd "git -C $DWM_BUILD_PATH commit -m \"$CUSTOM_COMMIT_COMMENT\""
     err "$?" "$FUNCNAME" "failed to commit adjustments"
 
     # Install
