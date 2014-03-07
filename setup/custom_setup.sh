@@ -659,6 +659,18 @@ installElinks()
     log "Install elinks...done"
 }
 
+installCmus()
+{
+    reqVar "CMUS_PACKAGES" "$FUNCNAME"
+
+    log "Install cmus..."
+
+    installPackage $CMUS_PACKAGES
+    err "$?" "$FUNCNAME" "failed to install cmus"
+
+    log "Install cmus...done"
+}
+
 installVirtualboxGuestAdditions()
 {
     reqVar "VIRTUALBOX_GUEST_UTILS_PACKAGES" "$FUNCNAME"
@@ -913,6 +925,18 @@ installGitconfigDotfile()
     log "Install .gitconfig dotfile...done"
 }
 
+# cmus
+
+installCmusColorThemeDotfile()
+{
+    log "Install cmus color theme dotfile..."
+
+    installDotfile "solarized.theme" ".cmus"
+    err "$?" "$FUNCNAME" "failed to install cmus color theme"
+
+    log "Install cmus color theme dotfile...done"
+}
+
 # X
 
 installXinitrcDotfile()
@@ -1065,6 +1089,7 @@ setupCustom()
     #installDvtm            # Official repo version not good enough
     installCustomizedDvtm   # Use customized version instead
     installElinks
+    installCmus
     installVirtualboxGuestAdditions
 
     #=========
@@ -1102,6 +1127,9 @@ setupCustom()
 
     # git
     installGitconfigDotfile
+
+    # cmus
+    installCmusColorThemeDotfile
 
     # X
     installXinitrcDotfile
