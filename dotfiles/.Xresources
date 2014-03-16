@@ -51,7 +51,7 @@ URxvt.scrollBar:        false
 ! Solarized theme
 !===================
 
-# Define color values
+! Define color values
 #define SOLARIZED_BASE03    #002b36
 #define SOLARIZED_BASE02    #073642
 #define SOLARIZED_BASE01    #586e75
@@ -69,7 +69,7 @@ URxvt.scrollBar:        false
 #define SOLARIZED_CYAN      #2aa198
 #define SOLARIZED_GREEN     #859900
 
-# Define console colors
+! Define console colors
 #define COLOR_BLACK         SOLARIZED_BASE02
 #define COLOR_RED           SOLARIZED_RED
 #define COLOR_GREEN         SOLARIZED_GREEN
