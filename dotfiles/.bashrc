@@ -85,34 +85,59 @@ export PATH=$PATH:/$HOME/archon/scripts
 #===============================================================================
 
 #=======================================
+# Solarized
+#=======================================
+
+# Define color values
+SOLARIZED_BASE03="002b36"
+SOLARIZED_BASE02="073642"
+SOLARIZED_BASE01="586e75"
+SOLARIZED_BASE00="657b83"
+SOLARIZED_BASE0="839496"
+SOLARIZED_BASE1="93a1a1"
+SOLARIZED_BASE2="eee8d5"
+SOLARIZED_BASE3="fdf6e3"
+SOLARIZED_YELLOW="b58900"
+SOLARIZED_ORANGE="cb4b16"
+SOLARIZED_RED="dc322f"
+SOLARIZED_MAGNETA="d33682"
+SOLARIZED_VIOLET="6c71c4"
+SOLARIZED_BLUE="268bd2"
+SOLARIZED_CYAN="2aa198"
+SOLARIZED_GREEN="859900"
+
+#=======================================
 # Choice
 #=======================================
 if [[ "$TERM" = "linux" ]]; then
     #Set desired theme here
     CONSOLE_THEME="solarized"
+
+    # No color theme
+    #CONSOLE_THEME=""
 fi
 
 #=======================================
 # Definition
 #=======================================
 if [[ "$CONSOLE_THEME" = "solarized" ]]; then
-    # Set console colors
-    CONSOLE_COLOR_BLACK="073642"      # S_base02
-    CONSOLE_COLOR_RED="dc322f"        # S_red
-    CONSOLE_COLOR_GREEN="859900"      # S_green
-    CONSOLE_COLOR_YELLOW="b58900"     # S_yellow
-    CONSOLE_COLOR_BLUE="268bd2"       # S_blue
-    CONSOLE_COLOR_MAGNETA="d33682"    # S_magneta
-    CONSOLE_COLOR_CYAN="2aa198"       # S_cyan
-    CONSOLE_COLOR_WHITE="eee8d5"      # S_base2
-    CONSOLE_COLOR_BR_BLACK="002b36"   # S_base03
-    CONSOLE_COLOR_BR_RED="cb4b16"     # S_orange
-    CONSOLE_COLOR_BR_GREEN="586e75"   # S_base01
-    CONSOLE_COLOR_BR_YELLOW="657b83"  # S_base00
-    CONSOLE_COLOR_BR_BLUE="839496"    # S_base0
-    CONSOLE_COLOR_BR_MAGNETA="6c71c4" # S_violet
-    CONSOLE_COLOR_BR_CYAN="93a1a1"    # S_base1
-    CONSOLE_COLOR_BR_WHITE="fdf6e3"   # S_base3
+    # Set console colors using predefined values
+    CONSOLE_COLOR_BLACK=$SOLARIZED_BASE02
+    CONSOLE_COLOR_RED=$SOLARIZED_RED
+    CONSOLE_COLOR_GREEN=$SOLARIZED_GREEN
+    CONSOLE_COLOR_YELLOW=$SOLARIZED_YELLOW
+    CONSOLE_COLOR_BLUE=$SOLARIZED_BLUE
+    CONSOLE_COLOR_MAGNETA=$SOLARIZED_MAGNETA
+    CONSOLE_COLOR_CYAN=$SOLARIZED_CYAN
+    CONSOLE_COLOR_WHITE=$SOLARIZED_BASE2
+    CONSOLE_COLOR_BR_BLACK=$SOLARIZED_BASE03
+    CONSOLE_COLOR_BR_RED=$SOLARIZED_ORANGE
+    CONSOLE_COLOR_BR_GREEN=$SOLARIZED_BASE01
+    CONSOLE_COLOR_BR_YELLOW=$SOLARIZED_BASE00
+    CONSOLE_COLOR_BR_BLUE=$SOLARIZED_BASE0
+    CONSOLE_COLOR_BR_MAGNETA=$SOLARIZED_VIOLET
+    CONSOLE_COLOR_BR_CYAN=$SOLARIZED_BASE1
+    CONSOLE_COLOR_BR_WHITE=$SOLARIZED_BASE3
 
     # Set dir colors file
     DIR_COLORS_FILE="$HOME/.dir_colors_solarized"
