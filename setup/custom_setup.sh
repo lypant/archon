@@ -803,6 +803,18 @@ installOpera()
     log "Install opera...done"
 }
 
+installConky()
+{
+    reqVar "CONKY_PACKAGES" "$FUNCNAME"
+
+    log "Install conky..."
+
+    installPackage $CONKY_PACKAGES
+    err "$?" "$FUNCNAME" "failed to install conky"
+
+    log "Install conky...done"
+}
+
 #===================
 # Individual configuration
 #===================
@@ -959,6 +971,16 @@ installXresourcesDotfile()
     log "Install .Xresources dotfile...done"
 }
 
+installConkyDotfile()
+{
+    log "Install .conkyrc dotfile..."
+
+    installDotfile ".conkyrc" ""
+    err "$?" "$FUNCNAME" "failed to install .conkyrc dotfile"
+
+    log "Install .conkyrc dotfile...done"
+}
+
 #===================
 # Other
 #===================
@@ -1102,6 +1124,7 @@ setupCustom()
     installCustomizedDwm    # Use customized version instead
     installDmenu
     installOpera
+    installConky
 
     #===================
     # Individual configuration
@@ -1134,6 +1157,9 @@ setupCustom()
     # X
     installXinitrcDotfile
     installXresourcesDotfile
+
+    # conky
+    installConkyDotfile
 
     #===================
     # Other

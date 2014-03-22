@@ -29,6 +29,9 @@ xsetroot -solid "#$SOLARIZED_BASE03"
 # Windows Manager
 #===============================================================================
 
+# Use conky to display system info on status bar
+conky | while read -r; do xsetroot -name "$REPLY"; done &
+
 # Launch dwm
 exec dwm
 
