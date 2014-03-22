@@ -529,6 +529,18 @@ setConsoleFont()
     log "Set console font...done"
 }
 
+setConsoleFontmap()
+{
+    reqVar "CONSOLE_FONTMAP" "$FUNCNAME"
+
+    log "Set console fontmap..."
+
+    archChroot "echo FONT_MAP=$CONSOLE_FONTMAP >> /etc/vconsole.conf"
+    err "$?" "$FUNCNAME" "failed to set console fontmap"
+
+    log "Set console fontmap...done"
+}
+
 setWiredNetwork()
 {
     reqVar "NETWORK_SERVICE" "$FUNCNAME"
@@ -664,6 +676,7 @@ setupBasic()
     setHardwareClock
     setConsoleKeymap
     setConsoleFont
+    setConsoleFontmap
     setWiredNetwork
     installBootloader
     configureSyslinux
