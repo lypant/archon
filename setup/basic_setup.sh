@@ -474,7 +474,7 @@ setLanguage()
 
     log "Set language..."
 
-    archChroot "echo LANG=$LOCALIZATION_LANGUAGE_EN > /etc/locale.conf"
+    archChroot "echo LANG=$LOCALIZATION_LANGUAGE_EN >> /etc/locale.conf"
     err "$?" "$FUNCNAME" "failed to set language"
 
     log "Set language...done"
@@ -486,7 +486,7 @@ setLocalizationCtype()
 
     log "Set localization ctype..."
 
-    archChroot "echo LC_CTYPE=$LOCALIZATION_CTYPE > /etc/locale.conf"
+    archChroot "echo LC_CTYPE=$LOCALIZATION_CTYPE >> /etc/locale.conf"
     err "$?" "$FUNCNAME" "failed to set localization ctype"
 
     log "Set localization ctype...done"
@@ -498,7 +498,7 @@ setLocalizationNumeric()
 
     log "Set localization numeric..."
 
-    archChroot "echo LC_NUMERIC=$LOCALIZATION_NUMERIC > /etc/locale.conf"
+    archChroot "echo LC_NUMERIC=$LOCALIZATION_NUMERIC >> /etc/locale.conf"
     err "$?" "$FUNCNAME" "failed to set localization numeric"
 
     log "Set localization numeric...done"
@@ -510,7 +510,7 @@ setLocalizationTime()
 
     log "Set localization time..."
 
-    archChroot "echo LC_TIME=$LOCALIZATION_TIME > /etc/locale.conf"
+    archChroot "echo LC_TIME=$LOCALIZATION_TIME >> /etc/locale.conf"
     err "$?" "$FUNCNAME" "failed to set localization time"
 
     log "Set localization time...done"
@@ -522,7 +522,7 @@ setLocalizationCollate()
 
     log "Set localization collate..."
 
-    archChroot "echo LC_COLLATE=$LOCALIZATION_COLLATE > /etc/locale.conf"
+    archChroot "echo LC_COLLATE=$LOCALIZATION_COLLATE >> /etc/locale.conf"
     err "$?" "$FUNCNAME" "failed to set localization collate"
 
     log "Set localization collate...done"
@@ -534,7 +534,7 @@ setLocalizationMonetary()
 
     log "Set localization monetary..."
 
-    archChroot "echo LC_MONETARY=$LOCALIZATION_MONETARY > /etc/locale.conf"
+    archChroot "echo LC_MONETARY=$LOCALIZATION_MONETARY >> /etc/locale.conf"
     err "$?" "$FUNCNAME" "failed to set localization monetary"
 
     log "Set localization monetary...done"
@@ -547,7 +547,7 @@ setLocalizationMeasurement()
     log "Set localization measurenent..."
 
     archChroot\
-        "echo LC_MEASUREMENT=$LOCALIZATION_MEASUREMENT > /etc/locale.conf"
+        "echo LC_MEASUREMENT=$LOCALIZATION_MEASUREMENT >> /etc/locale.conf"
     err "$?" "$FUNCNAME" "failed to set localization monetary"
 
     log "Set localization measurement...done"
