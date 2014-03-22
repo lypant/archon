@@ -480,6 +480,78 @@ setLanguage()
     log "Set language...done"
 }
 
+setLocalizationCtype()
+{
+    reqVar "LOCALIZATION_CTYPE" "$FUNCNAME"
+
+    log "Set localization ctype..."
+
+    archChroot "echo LC_CTYPE=$LOCALIZATION_CTYPE > /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set localization ctype"
+
+    log "Set localization ctype...done"
+}
+
+setLocalizationNumeric()
+{
+    reqVar "LOCALIZATION_NUMERIC" "$FUNCNAME"
+
+    log "Set localization numeric..."
+
+    archChroot "echo LC_CTYPE=$LOCALIZATION_NUMERIC > /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set localization numeric"
+
+    log "Set localization numeric...done"
+}
+
+setLocalizationTime()
+{
+    reqVar "LOCALIZATION_TIME" "$FUNCNAME"
+
+    log "Set localization time..."
+
+    archChroot "echo LC_CTYPE=$LOCALIZATION_TIME > /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set localization time"
+
+    log "Set localization time...done"
+}
+
+setLocalizationCollate()
+{
+    reqVar "LOCALIZATION_COLLATE" "$FUNCNAME"
+
+    log "Set localization collate..."
+
+    archChroot "echo LC_CTYPE=$LOCALIZATION_COLLATE > /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set localization collate"
+
+    log "Set localization collate...done"
+}
+
+setLocalizationMonetary()
+{
+    reqVar "LOCALIZATION_MONETARY" "$FUNCNAME"
+
+    log "Set localization monetary..."
+
+    archChroot "echo LC_CTYPE=$LOCALIZATION_MONETARY > /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set localization monetary"
+
+    log "Set localization monetary...done"
+}
+
+setLocalizationMeasurement()
+{
+    reqVar "LOCALIZATION_MEASUREMENT" "$FUNCNAME"
+
+    log "Set localization measurenent..."
+
+    archChroot "echo LC_CTYPE=$LOCALIZATION_MEASUREMENT > /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set localization monetary"
+
+    log "Set localization measurement...done"
+}
+
 setTimeZone()
 {
     reqVar "LOCALIZATION_TIME_ZONE" "$FUNCNAME"
@@ -672,6 +744,12 @@ setupBasic()
     setLocales
     generateLocales
     setLanguage
+    setLocalizationCtype
+    setLocalizationNumeric
+    setLocalizationTime
+    setLocalizationCollate
+    setLocalizationMonetary
+    setLocalizationMeasurement
     setTimeZone
     setHardwareClock
     setConsoleKeymap
