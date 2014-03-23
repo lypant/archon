@@ -768,13 +768,6 @@ setupBasic()
     #=======================================
 
     copyProjectFiles
-    #unmountRootPartition
     unmountPartitions
 }
-
-#===============================================================================
-# Main setup function execution
-#===============================================================================
-
-setupBasic
 
