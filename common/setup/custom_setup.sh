@@ -950,6 +950,18 @@ setupCommonCustom()
     log "Setup common custom..."
 
     #=======================================
+    # Project repository cloning
+    #=======================================
+
+    installGit              # Used for config and on target system
+    configureGitUser        # Config is needed for "customized" install steps
+
+    cloneProjectRepo        # Get dotfiles, patches etc.
+    checkoutCurrentBranch
+    copyOverProjectFiles    # If any changes were done during install...
+    commitAdjustments       # ...copy them and commit for future use
+
+    #=======================================
     # Common setup
     #=======================================
 
@@ -980,8 +992,6 @@ setupCommonCustom()
 
     installVim
     installMc
-    installGit
-    configureGitUser        # Config is needed for "customized" install steps
     #installDvtm            # Official repo version not good enough
     installCustomizedDvtm   # Use customized version instead
     installElinks
@@ -1040,15 +1050,6 @@ setupCommonCustom()
 
     # conky
     installConkyDotfile
-
-    #=======================================
-    # Project repository cloning
-    #=======================================
-
-    cloneProjectRepo
-    checkoutCurrentBranch
-    copyOverProjectFiles
-    commitAdjustments
 
     #=======================================
     # Individual setup
