@@ -954,13 +954,6 @@ setupCommonCustom()
     #=======================================
 
     #===================
-    # Git - needed for some steps below and for target system
-    #===================
-
-    installGit
-    configureGitUser
-
-    #===================
     # Common users
     #===================
 
@@ -987,6 +980,8 @@ setupCommonCustom()
 
     installVim
     installMc
+    installGit
+    configureGitUser        # Config is needed for "customized" install steps
     #installDvtm            # Official repo version not good enough
     installCustomizedDvtm   # Use customized version instead
     installElinks
