@@ -4,5 +4,6 @@
 logs
 
 # Do not version backups of dotfiles created on target system
-dotfiles/backup
+virtualbox/dotfiles/backup
+monolith/dotfiles/backup
 
