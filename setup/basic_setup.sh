@@ -154,11 +154,22 @@ setLivecdPacmanTotalDownload()
     log "Set livecd pacman total download...done"
 }
 
+installArchlinuxKeyring()
+{
+    log "Install archlinux keyring..."
+
+    installPackage "archlinux-keyring"
+    err "$?" "$FUNCNAME" "failed to install archlinux keyring"
+
+    log "Install archlinux keyring...done"
+}
+
 installLivecdVim()
 {
     log "Install livecd vim..."
 
     installPackage "vim"
+    err "$?" "$FUNCNAME" "failed to install vim"
 
     log "Install livecd vim...done"
 }
@@ -714,6 +725,7 @@ setupBasic()
     setLivecdConsoleFont
     setLivecdPacmanTotalDownload
     updatePackageList
+    installArchlinuxKeyring
     installLivecdVim
 
     #=======================================
