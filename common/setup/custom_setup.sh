@@ -12,8 +12,7 @@
 # Other scripts usage
 #===============================================================================
 
-source "settings.conf"
-source "functions.sh"
+# Include necessary files from specific machine folder
 
 #===============================================================================
 # Log file for this script
@@ -955,6 +954,13 @@ setupCommonCustom()
     #=======================================
 
     #===================
+    # Git - needed for some steps below and for target system
+    #===================
+
+    installGit
+    configureGitUser
+
+    #===================
     # Common users
     #===================
 
@@ -981,7 +987,6 @@ setupCommonCustom()
 
     installVim
     installMc
-    installGit
     #installDvtm            # Official repo version not good enough
     installCustomizedDvtm   # Use customized version instead
     installElinks
@@ -1005,7 +1010,6 @@ setupCommonCustom()
     #===================
 
     configurePacman
-    configureGitUser
     setBootloaderKernelParams
     disableSyslinuxBootMenu
     setConsoleLoginMessage
