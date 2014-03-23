@@ -94,7 +94,7 @@ export PATH=$PATH:/$HOME/archon/scripts
 #=======================================
 
 # Load colors definition
-source "$HOME/archon/colors/solarized/bash.conf"
+source "$HOME/archon/virtualbox/colors/solarized/bash.conf"
 
 #=======================================
 # Choice
