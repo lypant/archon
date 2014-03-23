@@ -162,6 +162,15 @@ installLivecdVim()
     log "Install livecd vim...done"
 }
 
+installArchLinuxKeyring()
+{
+    log "Install archlinux keyring..."
+
+    installPackage "archlinux-keyring"
+
+    log "Install archlinux keyring...done"
+}
+
 #=======================================
 # Partitions and file systems
 #=======================================
@@ -714,6 +723,7 @@ setupBasic()
     setLivecdPacmanTotalDownload
     updatePackageList
     installLivecdVim
+    installArchlinuxKeyring
 
     #=======================================
     # Partitions and file systems
