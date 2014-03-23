@@ -1,12 +1,1 @@
-[user]
-	name =  lypant
-	email = lypant@tlen.pl
-[credential]
-	helper = cache
-[alias]
-	hist = log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short
-[color]
-	ui = true
-[core]
-	editor = vim
-
+../../common/dotfiles/.gitconfig

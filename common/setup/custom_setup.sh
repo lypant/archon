@@ -326,9 +326,37 @@ installAlsa()
     log "Install alsa...done"
 }
 
+installXorgBasic()
+{
+    reqVar "XORG_BASIC_PACKAGES" "$FUNCNAME"
+
+    log "Install xorg basics..."
+
+    installPackage $XORG_BASIC_PACKAGES
+    err "$?" "$FUNCNAME" "failed to install xorg basics"
+
+    log "Install xorg basics...done"
+}
+
+installXorgAdditional()
+{
+    reqVar "XORG_ADDITIONAL_PACKAGES" "$FUNCNAME"
+
+    log "Install xorg additional..."
+
+    installPackage $XORG_ADDITIONAL_PACKAGES
+    err "$?" "$FUNCNAME" "failed to install xorg additional"
+
+    log "Install xorg additional...done"
+}
+
 #===================
 # Common software packages
 #===================
+
+#=========
+# Console-based
+#=========
 
 installVim()
 {
@@ -365,230 +393,6 @@ installGit()
 
     log "Install git...done"
 }
-
-#===================
-# Common configuration
-#===================
-
-configurePacman()
-{
-    log "Configure pacman..."
-
-    uncommentVar "TotalDownload" "/etc/pacman.conf"
-    err "$?" "$FUNCNAME" "failed to configure pacman"
-
-    log "Configure pacman...done"
-}
-
-configureGitUser()
-{
-    reqVar "GIT_USER_EMAIL" "$FUNCNAME"
-    reqVar "GIT_USER_NAME" "$FUNCNAME"
-
-    log "Configure git user..."
-
-    cmd "git config --global user.email \"$GIT_USER_EMAIL\""
-    err "$?" "$FUNCNAME" "failed to configure git user email"
-
-    cmd "git config --global user.name \"$GIT_USER_NAME\""
-    err "$?" "$FUNCNAME" "failed to configure git user name"
-
-    log "Configure git user...done"
-}
-
-setBootloaderKernelParams()
-{
-    reqVar "ROOT_PARTITION_HDD" "$FUNCNAME"
-    reqVar "ROOT_PARTITION_NB" "$FUNCNAME"
-    reqVar "BOOTLOADER_KERNEL_PARAMS" "$FUNCNAME"
-
-    log "Set bootloader kernel params..."
-
-    local src="APPEND root.*$"
-    local path="$PARTITION_PREFIX$ROOT_PARTITION_HDD$ROOT_PARTITION_NB"
-    local bkp="$BOOTLOADER_KERNEL_PARAMS"
-    local params="$path $bkp"
-    local dst="APPEND root=$params"
-    local subst="s|$src|$dst|"
-    local file="/boot/syslinux/syslinux.cfg"
-    cmd "sed -i \"$subst\" $file"
-    err "$?" "$FUNCNAME" "failed to set bootloader kernel params"
-
-    log "Set bootloader kernel params...done"
-}
-
-disableSyslinuxBootMenu()
-{
-    log "Disable syslinux boot menu..."
-
-    commentVar "UI" "/boot/syslinux/syslinux.cfg"
-    err "$?" "$FUNCNAME" "failed to disable syslinux boot menu"
-
-    log "Disable syslinux boot menu...done"
-}
-
-setConsoleLoginMessage()
-{
-    # Do not require COSNOLE_LOGIN_MSG - when empty, no message will be used
-
-    log "Set console login message..."
-
-    # Remove welcome message
-    cmd "rm -f /etc/issue"
-    err "$?" "$FUNCNAME" "failed to remove /etc/issue file"
-
-    # Set new welcome message, if present
-    if [ ! -z "$CONSOLE_LOGIN_MSG" ];then
-        cmd "echo $CONSOLE_LOGIN_MSG > /etc/issue"
-        err "$?" "$FUNCNAME" "failed to set console login message"
-    else
-        log "Console welcome message not set, /etc/issue file deleted"
-    fi
-
-    log "Set console login message...done"
-}
-
-# This requires image recreation for changes to take effect
-setEarlyTerminalFont()
-{
-    log "Set early terminal font..."
-
-    # Set hooks
-    local src="^HOOKS.*$"
-    local dst="HOOKS=\\\"$HOOKS\\\""
-    local subst="s|$src|$dst|"
-    local file="/etc/mkinitcpio.conf"
-    cmd "sed -i \"$subst\" $file"
-    err "$?" "$FUNCNAME" "failed to set early terminal font"
-
-    log "Set early terminal font...done"
-}
-
-initAlsa()
-{
-    log "Init alsa..."
-
-    cmd "alsactl init"
-    # May return error 99 - ignore it
-
-    log "Init alsa...done"
-}
-
-unmuteAlsa()
-{
-    log "Unmute alsa..."
-
-    cmd "amixer sset Master unmute"
-    err "$?" "$FUNCNAME" "failed to unmute alsa"
-
-    log "Unmute alsa...done"
-}
-
-#=======================================
-# Project repository cloning
-#=======================================
-
-cloneProjectRepo()
-{
-    reqVar "PROJECT_REPO_URL" "$FUNCNAME"
-    reqVar "PROJECT_REPO_DST" "$FUNCNAME"
-
-    log "Clone $PROJECT_NAME repo..."
-
-    cmd "git clone $PROJECT_REPO_URL $PROJECT_REPO_DST"
-    err "$?" "$FUNCNAME" "failed to clone $PROJECT_NAME repo"
-
-    log "Clone $PROJECT_NAME repo...done"
-}
-
-checkoutCurrentBranch()
-{
-    reqVar "PROJECT_REPO_DST" "$FUNCNAME"
-    reqVar "PROJECT_BRANCH" "$FUNCNAME"
-
-    log "Checkout current branch..."
-
-    # Execute git commands from destination path
-    cmd "git -C $PROJECT_REPO_DST checkout $PROJECT_BRANCH"
-    err "$?" "$FUNCNAME" "failed to checkout current branch"
-
-    log "Checkout current branch...done"
-}
-
-copyOverProjectFiles()
-{
-    reqVar "PROJECT_ROOT_PATH" "$FUNCNAME"
-    reqVar "USER1_HOME" "$FUNCNAME"
-
-    log "Copy over $PROJECT_NAME files..."
-
-    cmd "cp -r $PROJECT_ROOT_PATH $USER1_HOME"
-    err "$?" "$FUNCNAME" "failed to copy over $PROJECT_NAME files"
-
-    log "Copy over $PROJECT_NAME files...done"
-}
-
-commitAdjustments()
-{
-    reqVar "PROJECT_REPO_DST" "$FUNCNAME"
-    reqVar "CUSTOM_COMMIT_COMMENT" "$FUNCNAME"
-
-    log "Commit adjustments..."
-
-    if [[ -n "$(git -C $PROJECT_REPO_DST status --porcelain)" ]]; then
-        cmd "git -C $PROJECT_REPO_DST commit -a -m \"$CUSTOM_COMMIT_COMMENT\""
-        err "$?" "$FUNCNAME" "failed to commit adjustments"
-    else
-        log "No changes detected, no need to commit"
-    fi
-
-    log "Commit adjustments...done"
-}
-
-#=======================================
-# Individual setup
-#=======================================
-
-#===================
-# Individual users
-#===================
-
-#===================
-# Individual system packages
-#===================
-
-installXorgBasic()
-{
-    reqVar "XORG_BASIC_PACKAGES" "$FUNCNAME"
-
-    log "Install xorg basics..."
-
-    installPackage $XORG_BASIC_PACKAGES
-    err "$?" "$FUNCNAME" "failed to install xorg basics"
-
-    log "Install xorg basics...done"
-}
-
-installXorgAdditional()
-{
-    reqVar "XORG_ADDITIONAL_PACKAGES" "$FUNCNAME"
-
-    log "Install xorg additional..."
-
-    installPackage $XORG_ADDITIONAL_PACKAGES
-    err "$?" "$FUNCNAME" "failed to install xorg additional"
-
-    log "Install xorg additional...done"
-}
-
-#===================
-# Individual software packages
-#===================
-
-#=========
-# Console-based
-#=========
-
 
 installDvtm()
 {
@@ -669,35 +473,6 @@ installCmus()
     err "$?" "$FUNCNAME" "failed to install cmus"
 
     log "Install cmus...done"
-}
-
-installVirtualboxGuestAdditions()
-{
-    reqVar "VIRTUALBOX_GUEST_UTILS_PACKAGES" "$FUNCNAME"
-    reqVar "VIRTUALBOX_GUEST_UTILS_MODULES" "$FUNCNAME"
-    reqVar "VIRTUALBOX_GUEST_UTILS_MODULES_FILE" "$FUNCNAME"
-
-    log "Install virtualbox guest additions..."
-
-    # Install the packages
-    installPackage $VIRTUALBOX_GUEST_UTILS_PACKAGES
-    err "$?" "$FUNCNAME" "failed to install virtualbox package"
-
-    # Load required modules
-    cmd "modprobe -a $VIRTUALBOX_GUEST_UTILS_MODULES"
-    err "$?" "$FUNCNAME" "failed to load required modules"
-
-    # Setup modules to be loaded on startup
-    if [ ! -z "$VIRTUALBOX_GUEST_UTILS_MODULES" ]; then
-        for module in $VIRTUALBOX_GUEST_UTILS_MODULES
-        do
-            cmd "echo $module >> $VIRTUALBOX_GUEST_UTILS_MODULES_FILE"
-            err "$?" "$FUNCNAME"\
-                "failed to setup module to be loaded on startup"
-        done
-    fi
-
-    log "Install virtualbox guest additions...done"
 }
 
 #=========
@@ -816,43 +591,121 @@ installConky()
 }
 
 #===================
-# Individual configuration
+# Common configuration
 #===================
 
-setVirtualboxSharedFolder()
+configurePacman()
 {
-    reqVar "USER1_NAME" "$FUNCNAME"
-    reqVar "USER1_HOME" "$FUNCNAME"
-    reqVar "VIRTUALBOX_SHARED_FOLDER_NAME" "$FUNCNAME"
+    log "Configure pacman..."
 
-    log "Set virtualbox shared folder..."
+    uncommentVar "TotalDownload" "/etc/pacman.conf"
+    err "$?" "$FUNCNAME" "failed to configure pacman"
 
-    # Create /media folder
-    cmd "mkdir /media"
-    err "$?" "$FUNCNAME" "failed to create /media dir"
+    log "Configure pacman...done"
+}
 
-    # Add user1 to vboxsf group
-    cmd "gpasswd -a $USER1_NAME vboxsf"
-    err "$?" "$FUNCNAME" "failed to add user to vboxsf group"
+configureGitUser()
+{
+    reqVar "GIT_USER_EMAIL" "$FUNCNAME"
+    reqVar "GIT_USER_NAME" "$FUNCNAME"
 
-    # Enable vboxservice service
-    enableService "vboxservice"
-    err "$?" "$FUNCNAME" "failed to enable vboxservice"
+    log "Configure git user..."
 
-    # Start vboxservice (needed for link creation)
-    startService "vboxservice"
-    err "$?" "$FUNCNAME" "failed to start vboxservice"
+    cmd "git config --global user.email \"$GIT_USER_EMAIL\""
+    err "$?" "$FUNCNAME" "failed to configure git user email"
 
-    # Wait a moment for a started service to do its job
-    cmd "sleep 5"
+    cmd "git config --global user.name \"$GIT_USER_NAME\""
+    err "$?" "$FUNCNAME" "failed to configure git user name"
 
-    # Create link for easy access
-    createLink\
-        "/media/sf_$VIRTUALBOX_SHARED_FOLDER_NAME"\
-        "$USER1_HOME/$VIRTUALBOX_SHARED_FOLDER_NAME"
-    err "$?" "$FUNCNAME" "failed to create link to shared folder"
+    log "Configure git user...done"
+}
 
-    log "Set virtualbox shared folder...done"
+setBootloaderKernelParams()
+{
+    reqVar "ROOT_PARTITION_HDD" "$FUNCNAME"
+    reqVar "ROOT_PARTITION_NB" "$FUNCNAME"
+    reqVar "BOOTLOADER_KERNEL_PARAMS" "$FUNCNAME"
+
+    log "Set bootloader kernel params..."
+
+    local src="APPEND root.*$"
+    local path="$PARTITION_PREFIX$ROOT_PARTITION_HDD$ROOT_PARTITION_NB"
+    local bkp="$BOOTLOADER_KERNEL_PARAMS"
+    local params="$path $bkp"
+    local dst="APPEND root=$params"
+    local subst="s|$src|$dst|"
+    local file="/boot/syslinux/syslinux.cfg"
+    cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to set bootloader kernel params"
+
+    log "Set bootloader kernel params...done"
+}
+
+disableSyslinuxBootMenu()
+{
+    log "Disable syslinux boot menu..."
+
+    commentVar "UI" "/boot/syslinux/syslinux.cfg"
+    err "$?" "$FUNCNAME" "failed to disable syslinux boot menu"
+
+    log "Disable syslinux boot menu...done"
+}
+
+setConsoleLoginMessage()
+{
+    # Do not require COSNOLE_LOGIN_MSG - when empty, no message will be used
+
+    log "Set console login message..."
+
+    # Remove welcome message
+    cmd "rm -f /etc/issue"
+    err "$?" "$FUNCNAME" "failed to remove /etc/issue file"
+
+    # Set new welcome message, if present
+    if [ ! -z "$CONSOLE_LOGIN_MSG" ];then
+        cmd "echo $CONSOLE_LOGIN_MSG > /etc/issue"
+        err "$?" "$FUNCNAME" "failed to set console login message"
+    else
+        log "Console welcome message not set, /etc/issue file deleted"
+    fi
+
+    log "Set console login message...done"
+}
+
+# This requires image recreation for changes to take effect
+setEarlyTerminalFont()
+{
+    log "Set early terminal font..."
+
+    # Set hooks
+    local src="^HOOKS.*$"
+    local dst="HOOKS=\\\"$HOOKS\\\""
+    local subst="s|$src|$dst|"
+    local file="/etc/mkinitcpio.conf"
+    cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to set early terminal font"
+
+    log "Set early terminal font...done"
+}
+
+initAlsa()
+{
+    log "Init alsa..."
+
+    cmd "alsactl init"
+    # May return error 99 - ignore it
+
+    log "Init alsa...done"
+}
+
+unmuteAlsa()
+{
+    log "Unmute alsa..."
+
+    cmd "amixer sset Master unmute"
+    err "$?" "$FUNCNAME" "failed to unmute alsa"
+
+    log "Unmute alsa...done"
 }
 
 #=========
@@ -981,6 +834,67 @@ installConkyDotfile()
     log "Install .conkyrc dotfile...done"
 }
 
+#=======================================
+# Project repository cloning
+#=======================================
+
+cloneProjectRepo()
+{
+    reqVar "PROJECT_REPO_URL" "$FUNCNAME"
+    reqVar "PROJECT_REPO_DST" "$FUNCNAME"
+
+    log "Clone $PROJECT_NAME repo..."
+
+    cmd "git clone $PROJECT_REPO_URL $PROJECT_REPO_DST"
+    err "$?" "$FUNCNAME" "failed to clone $PROJECT_NAME repo"
+
+    log "Clone $PROJECT_NAME repo...done"
+}
+
+checkoutCurrentBranch()
+{
+    reqVar "PROJECT_REPO_DST" "$FUNCNAME"
+    reqVar "PROJECT_BRANCH" "$FUNCNAME"
+
+    log "Checkout current branch..."
+
+    # Execute git commands from destination path
+    cmd "git -C $PROJECT_REPO_DST checkout $PROJECT_BRANCH"
+    err "$?" "$FUNCNAME" "failed to checkout current branch"
+
+    log "Checkout current branch...done"
+}
+
+copyOverProjectFiles()
+{
+    reqVar "PROJECT_ROOT_PATH" "$FUNCNAME"
+    reqVar "USER1_HOME" "$FUNCNAME"
+
+    log "Copy over $PROJECT_NAME files..."
+
+    cmd "cp -r $PROJECT_ROOT_PATH $USER1_HOME"
+    err "$?" "$FUNCNAME" "failed to copy over $PROJECT_NAME files"
+
+    log "Copy over $PROJECT_NAME files...done"
+}
+
+commitAdjustments()
+{
+    reqVar "PROJECT_REPO_DST" "$FUNCNAME"
+    reqVar "CUSTOM_COMMIT_COMMENT" "$FUNCNAME"
+
+    log "Commit adjustments..."
+
+    if [[ -n "$(git -C $PROJECT_REPO_DST status --porcelain)" ]]; then
+        cmd "git -C $PROJECT_REPO_DST commit -a -m \"$CUSTOM_COMMIT_COMMENT\""
+        err "$?" "$FUNCNAME" "failed to commit adjustments"
+    else
+        log "No changes detected, no need to commit"
+    fi
+
+    log "Commit adjustments...done"
+}
+
 #===================
 # Other
 #===================
@@ -1030,11 +944,11 @@ copyProjectLogFiles()
 # Main setup function
 #===============================================================================
 
-setupCustom()
+setupCommonCustom()
 {
     createLogDir    # Should be created by basic setup; just to be sure
 
-    log "Setup custom..."
+    log "Setup common custom..."
 
     #=======================================
     # Common setup
@@ -1054,65 +968,25 @@ setupCustom()
 
     updatePackageList
     installAlsa
-
-    #===================
-    # Common software packages
-    #===================
-
-    installVim
-    installMc
-    installGit
-
-    #===================
-    # Common configuration
-    #===================
-
-    configurePacman
-    configureGitUser
-    setBootloaderKernelParams
-    disableSyslinuxBootMenu
-    setConsoleLoginMessage
-    setEarlyTerminalFont    # Requires linux image recreation
-    initAlsa                # Initialize all devices to a default state
-    unmuteAlsa              # This should be enough on real HW
-
-    #=======================================
-    # Project repository cloning
-    #=======================================
-
-    cloneProjectRepo
-    checkoutCurrentBranch
-    copyOverProjectFiles
-    commitAdjustments
-
-    #=======================================
-    # Individual setup
-    #=======================================
-
-    #===================
-    # Individual users
-    #===================
-
-    #===================
-    # Individual system packages
-    #===================
-
     installXorgBasic
     installXorgAdditional
 
     #===================
-    # Individual software packages
+    # Common software packages
     #===================
 
     #=========
     # Console-based
     #=========
 
+    installVim
+    installMc
+    installGit
     #installDvtm            # Official repo version not good enough
     installCustomizedDvtm   # Use customized version instead
     installElinks
     installCmus
-    installVirtualboxGuestAdditions
+    #installVirtualboxGuestAdditions
 
     #=========
     # GUI-based
@@ -1127,10 +1001,17 @@ setupCustom()
     installConky
 
     #===================
-    # Individual configuration
+    # Common configuration
     #===================
 
-    setVirtualboxSharedFolder
+    configurePacman
+    configureGitUser
+    setBootloaderKernelParams
+    disableSyslinuxBootMenu
+    setConsoleLoginMessage
+    setEarlyTerminalFont    # Requires linux image recreation
+    initAlsa                # Initialize all devices to a default state
+    unmuteAlsa              # This should be enough on real HW
 
     #=========
     # Dotfiles
@@ -1161,25 +1042,50 @@ setupCustom()
     # conky
     installConkyDotfile
 
+    #=======================================
+    # Project repository cloning
+    #=======================================
+
+    cloneProjectRepo
+    checkoutCurrentBranch
+    copyOverProjectFiles
+    commitAdjustments
+
+    #=======================================
+    # Individual setup
+    #=======================================
+
+    #===================
+    # Individual users
+    #===================
+
+    #===================
+    # Individual system packages
+    #===================
+
+    #===================
+    # Individual software packages
+    #===================
+
+    #===================
+    # Individual configuration
+    #===================
+
+    #setVirtualboxSharedFolder
+
     #===================
     # Other
     #===================
 
     recreateImage   # Required by setEarlyTerminalFont
-    changeUser1HomeOwnership
+    #changeUser1HomeOwnership
 
-    log "Setup custom...done"
+    log "Setup common custom...done"
 
     #=======================================
     # Post setup actions
     #=======================================
 
-    copyProjectLogFiles
+    #copyProjectLogFiles
 }
-
-#===============================================================================
-# Main setup function execution
-#===============================================================================
-
-setupCustom
 
