@@ -12,8 +12,7 @@
 # Other scripts usage
 #===============================================================================
 
-source "settings.conf"
-source "functions.sh"
+# Include necessary files from specific machine folder
 
 #===============================================================================
 # Log file for this script

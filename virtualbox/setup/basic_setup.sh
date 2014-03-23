@@ -16,7 +16,13 @@
 source "settings.conf"
 
 # Load basic setup script common for all machines
-source "../../common/setup/basic_setup.conf"
+source "../../common/setup/settings.conf"
+
+# Load generic helper functions
+source "../../common/setup/functions.sh"
+
+# Load basic setup functions
+source "../../common/setup/basic_setup.sh"
 
 #===============================================================================
 # Main setup function execution
