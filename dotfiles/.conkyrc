@@ -12,13 +12,9 @@ use_spacer left
 pad_percents 3
 
 TEXT
-D ${downspeed enp0s3} :: \
-U ${upspeed enp0s3} :: \
 C${cpu cpu1}% :: \
 M${memperc}% :: \
-/boot${fs_used_perc /boot/}% :: \
-/${fs_used_perc /}% :: \
 swap$swapperc% :: \
 V${mixer Pcm}% :: \
-${time %d %b %Y %H:%M}
+${time %H:%M}
 
