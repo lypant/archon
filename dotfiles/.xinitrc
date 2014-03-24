@@ -30,7 +30,7 @@ setxkbmap pl
 source "$HOME/archon/colors/solarized/bash.conf"
 
 # Set root window background color
-xsetroot -solid "#$SOLARIZED_BASE03"
+xsetroot -solid "#$SOLARIZED_BASE3"
 
 #===============================================================================
 # Windows Manager

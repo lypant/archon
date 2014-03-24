@@ -80,12 +80,12 @@ index 875885b..3bbe729 100644
 -static const char selbordercolor[]  = "#005577";
 -static const char selbgcolor[]      = "#005577";
 -static const char selfgcolor[]      = "#eeeeee";
-+static const char normbordercolor[] = SOLARIZED_BASE01;
-+static const char normbgcolor[]     = SOLARIZED_BASE03;
-+static const char normfgcolor[]     = SOLARIZED_BASE01;
-+static const char selbordercolor[]  = SOLARIZED_BASE2;
++static const char normbordercolor[] = SOLARIZED_BASE1;
++static const char normbgcolor[]     = SOLARIZED_BASE3;
++static const char normfgcolor[]     = SOLARIZED_BASE1;
++static const char selbordercolor[]  = SOLARIZED_BASE02;
 +static const char selbgcolor[]      = SOLARIZED_BASE03;
-+static const char selfgcolor[]      = SOLARIZED_BASE2;
++static const char selfgcolor[]      = SOLARIZED_BASE02;
  static const unsigned int borderpx  = 1;        /* border pixel of windows */
  static const unsigned int snap      = 32;       /* snap pixel */
  static const Bool showbar           = True;     /* False means no bar */
