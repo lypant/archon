@@ -1074,7 +1074,7 @@ setupCustom()
     setConsoleLoginMessage
     setEarlyTerminalFont    # Requires linux image recreation
     initAlsa                # Initialize all devices to a default state
-    unmuteAlsa              # This should be enough on real HW
+    #unmuteAlsa              # This should be enough on real HW
 
     #=======================================
     # Project repository cloning
@@ -1112,7 +1112,7 @@ setupCustom()
     installCustomizedDvtm   # Use customized version instead
     installElinks
     installCmus
-    installVirtualboxGuestAdditions
+    #installVirtualboxGuestAdditions
 
     #=========
     # GUI-based
@@ -1130,7 +1130,7 @@ setupCustom()
     # Individual configuration
     #===================
 
-    setVirtualboxSharedFolder
+    #setVirtualboxSharedFolder
 
     #=========
     # Dotfiles

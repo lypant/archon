@@ -661,6 +661,8 @@ configureSyslinux()
     archChroot "syslinux-install_update -i -a -m"
     err "$?" "$FUNCNAME" "failed to update syslinux"
 
+    cmd "sleep 10"
+
     local src="sda3"
     local dst="$ROOT_PARTITION_HDD$ROOT_PARTITION_NB"
     local subst="s|$src|$dst|g"
@@ -722,20 +724,24 @@ setupBasic()
     # LiveCD preparation
     #=======================================
 
-    setLivecdConsoleFont
+    #setLivecdConsoleFont
     setLivecdPacmanTotalDownload
     updatePackageList
     installArchlinuxKeyring
-    installLivecdVim
+    #installLivecdVim
 
     #=======================================
     # Partitions and file systems
     #=======================================
 
     createSwapPartition
+    cmd "sleep 10"
     createBootPartition
+    cmd "sleep 10"
     createRootPartition
+    cmd "sleep 10"
     setBootPartitionBootable
+    cmd "sleep 10"
     createSwap
     activateSwap
     createBootFileSystem
