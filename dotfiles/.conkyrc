@@ -1,4 +1,4 @@
-# Thi is a comment
+# This is a comment
 
 background no
 cpu_avg_samples 2
@@ -12,9 +12,10 @@ use_spacer left
 pad_percents 3
 
 TEXT
-D ${downspeed enp0s3} :: \
-U ${upspeed enp0s3} :: \
-C${cpu cpu1}% :: \
+D ${downspeed enp4s0} :: \
+U ${upspeed enp4s0} :: \
+C1${cpu cpu1}% :: \
+C2${cpu cpu2}% :: \
 M${memperc}% :: \
 /boot${fs_used_perc /boot/}% :: \
 /${fs_used_perc /}% :: \
