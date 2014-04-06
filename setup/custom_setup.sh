@@ -484,6 +484,19 @@ unmuteAlsa()
     log "Unmute alsa...done"
 }
 
+setPcmModuleLoading()
+{
+    reqVar "MODPROBE_PATH" "$FUNCNAME"
+    reqVar "SND_PCM_OSS_FILE" "$FUNCNAME"
+    reqVar "SND_PCM_OSS_MODULE" "$FUNCNAME"
+
+    log "Set snd-pcm-oss module loading..."
+
+    cmd "echo $SND_PCM_OSS_MODULE >> $MODPROBE_PATH/$SND_PCM_OSS_FILE"
+
+    log "Set snd-pcm-oss module loading...done"
+}
+
 #=======================================
 # Project repository cloning
 #=======================================
@@ -1097,6 +1110,7 @@ setupCustom()
     setEarlyTerminalFont    # Requires linux image recreation
     initAlsa                # Initialize all devices to a default state
     unmuteAlsa              # This should be enough on real HW
+    setPcmModuleLoading
 
     #=======================================
     # Project repository cloning
