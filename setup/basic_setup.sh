@@ -27,6 +27,8 @@ LOG_FILE="$PROJECT_SETUP_BASIC_LOG_FILE"
 
 createPartition()
 {
+    reqVar "PARTITION_OPERATIONS_DELAY" "$FUNCNAME"
+
     if [[ $# -lt 5 ]]; then
         log "$FUNCNAME: not enough parameters \($#\): $@"
         log "Aborting script!"
@@ -57,11 +59,15 @@ createPartition()
 	$partCode
 	w
 	EOF
+
+    delay "$PARTITION_OPERATIONS_DELAY"
 }
 
 # Best executed when all (at least two) partitions are created
 setPartitionBootable()
 {
+    reqVar "PARTITION_OPERATIONS_DELAY" "$FUNCNAME"
+
     if [[ $# -lt 2 ]]; then
         log "$FUNCNAME: not enough parameters \($#\): $@"
         log "Aborting script!"
@@ -76,6 +82,8 @@ setPartitionBootable()
 	$partNb
 	w
 	EOF
+
+    delay "$PARTITION_OPERATIONS_DELAY"
 }
 
 downloadFile()
