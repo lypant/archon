@@ -39,6 +39,9 @@ xsetroot -solid "#$SOLARIZED_BASE03"
 # Use conky to display system info on status bar
 conky | while read -r; do xsetroot -name "$REPLY"; done &
 
+# Bind keyboard keys
+xbindkeys
+
 # Launch dwm
 exec dwm
 

@@ -815,6 +815,18 @@ installConky()
     log "Install conky...done"
 }
 
+installXbindkeys()
+{
+    reqVar "XBINDKEYS_PACKAGES" "$FUNCNAME"
+
+    log "Install xbindkeys..."
+
+    installPackage $XBINDKEYS_PACKAGES
+    err "$?" "$FUNCNAME" "failed to install xbindkeys"
+
+    log "Install xbindkeys...done"
+}
+
 #===================
 # Individual configuration
 #===================
@@ -981,6 +993,16 @@ installConkyDotfile()
     log "Install .conkyrc dotfile...done"
 }
 
+installXbindkeysDotfile()
+{
+    log "Install .xbindkeysrc dotfile..."
+
+    installDotfile ".xbindkeysrc" ""
+    err "$?" "$FUNCNAME" "failed to install .xbindkeys dotfile"
+
+    log "Install .xbindkeysrc dotfile...done"
+}
+
 #===================
 # Other
 #===================
@@ -1125,6 +1147,7 @@ setupCustom()
     installDmenu
     installOpera
     installConky
+    installXbindkeys
 
     #===================
     # Individual configuration
@@ -1160,6 +1183,9 @@ setupCustom()
 
     # conky
     installConkyDotfile
+
+    # xbindkeys
+    installXbindkeysDotfile
 
     #===================
     # Other

@@ -20,6 +20,6 @@ M${memperc}% :: \
 /boot${fs_used_perc /boot/}% :: \
 /${fs_used_perc /}% :: \
 swap$swapperc% :: \
-V${mixer Pcm}% :: \
+V${mixer Vol}% :: \
 ${time %d %b %Y %H:%M}
 
