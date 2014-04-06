@@ -1112,7 +1112,7 @@ setupCustom()
     installCustomizedDvtm   # Use customized version instead
     installElinks
     installCmus
-    installVirtualboxGuestAdditions
+    #installVirtualboxGuestAdditions
 
     #=========
     # GUI-based
@@ -1130,7 +1130,7 @@ setupCustom()
     # Individual configuration
     #===================
 
-    setVirtualboxSharedFolder
+    #setVirtualboxSharedFolder
 
     #=========
     # Dotfiles
