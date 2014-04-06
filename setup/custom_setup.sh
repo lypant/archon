@@ -449,19 +449,38 @@ setConsoleLoginMessage()
 }
 
 # This requires image recreation for changes to take effect
-setEarlyTerminalFont()
+setMkinitcpioModules()
 {
-    log "Set early terminal font..."
+    reqVar "MKINITCPIO_MODULES" "$FUNCNAME"
 
-    # Set hooks
-    local src="^HOOKS.*$"
-    local dst="HOOKS=\\\"$HOOKS\\\""
+    log "Setting mkinitcpio modules..."
+
+    local src="^MODULES.*$"
+    local dst="MODULES=\\\"$MKINITCPIO_MODULES\\\""
     local subst="s|$src|$dst|"
     local file="/etc/mkinitcpio.conf"
     cmd "sed -i \"$subst\" $file"
-    err "$?" "$FUNCNAME" "failed to set early terminal font"
+    err "$?" "$FUNCNAME" "failed to set mkinitcpio modules"
 
-    log "Set early terminal font...done"
+    log "Setting mkinitcpio modules...done"
+}
+
+# This requires image recreation for changes to take effect
+setMkinitcpioHooks()
+{
+    reqVar "MKINITCPIO_HOOKS" "$FUNCNAME"
+
+    log "Set mkinitcpio hooks..."
+
+    # Set hooks
+    local src="^HOOKS.*$"
+    local dst="HOOKS=\\\"$MKINITCPIO_HOOKS\\\""
+    local subst="s|$src|$dst|"
+    local file="/etc/mkinitcpio.conf"
+    cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to set mkinitcpio hooks"
+
+    log "Set mkinitcpio hooks...done"
 }
 
 initAlsa()
@@ -1107,7 +1126,8 @@ setupCustom()
     setBootloaderKernelParams
     disableSyslinuxBootMenu
     setConsoleLoginMessage
-    setEarlyTerminalFont    # Requires linux image recreation
+    setMkinitcpioModules    # Requires linux image recreation
+    setMkinitcpioHooks      # Requires linux image recreation
     initAlsa                # Initialize all devices to a default state
     unmuteAlsa              # This should be enough on real HW
     setPcmModuleLoading
