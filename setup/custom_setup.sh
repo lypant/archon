@@ -529,6 +529,14 @@ disablePcSpeaker()
     log "Disable pc speaker...done"
 }
 
+setMakepkgBuilddir()
+{
+
+    log "Set makepkg builddir..."
+    uncommentVar "BUILDDIR" "/etc/makepkg.conf"
+    log "Set makepkg builddir...done"
+}
+
 #=======================================
 # Project repository cloning
 #=======================================
@@ -1080,6 +1088,7 @@ setupCustom()
     unmuteAlsa              # This should be enough on real HW
     setPcmModuleLoading
     disablePcSpeaker
+    setMakepkgBuilddir
 
     #=======================================
     # Project repository cloning
