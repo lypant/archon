@@ -387,7 +387,7 @@ setMultilibRepository()
 
     # Use repository for multilib support - to allow 32B apps on 64B system
     # Needed for Android development
-    cmd "sed -i '/[multilib]/,/Include/ s|^#\(.*\)|\1|' '/etc/pacman.conf'"
+    cmd "sed -i '/\[multilib\]/,/Include/ s|^#\(.*\)|\1|' /etc/pacman.conf"
     err "$?" "$FUNCNAME" "failed to set multilib repository"
 
     log "Set multilib repository...done"
