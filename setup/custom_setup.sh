@@ -374,10 +374,23 @@ configurePacman()
 {
     log "Configure pacman..."
 
+    # Present total download instead of single package percentage
     uncommentVar "TotalDownload" "/etc/pacman.conf"
     err "$?" "$FUNCNAME" "failed to configure pacman"
 
     log "Configure pacman...done"
+}
+
+setMultilibRepository()
+{
+    log "Set multilib repository..."
+
+    # Use repository for multilib support - to allow 32B apps on 64B system
+    # Needed for Android development
+    cmd "sed -i '/[multilib]/,/Include/ s|^#\(.*\)|\1|' '/etc/pacman.conf'"
+    err "$?" "$FUNCNAME" "failed to set multilib repository"
+
+    log "Set multilib repository...done"
 }
 
 configureGitUser()
@@ -1090,6 +1103,8 @@ setupCustom()
     #===================
 
     configurePacman
+    setMultilibRepository   # Needed for Android development
+    updatePackageList       # Needed after previous step TODO: reorganize?
     configureGitUser
     setBootloaderKernelParams
     disableSyslinuxBootMenu
