@@ -851,6 +851,18 @@ installXbindkeys()
     log "Install xbindkeys...done"
 }
 
+installWmname()
+{
+    reqVar "WMNAME_PACKAGES" "$FUNCNAME"
+
+    log "Install wmname..."
+
+    installPackage $WMNAME_PACKAGES
+    err "$?" "$FUNCNAME" "failed to install wmname"
+
+    log "Install wmname...done"
+}
+
 #===================
 # Individual configuration
 #===================
@@ -1139,6 +1151,7 @@ setupCustom()
     installOpera
     installConky
     installXbindkeys
+    installWmname           # Fix misbehaving Java apps in dwm
 
     #===================
     # Individual configuration

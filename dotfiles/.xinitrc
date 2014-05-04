@@ -42,6 +42,9 @@ conky | while read -r; do xsetroot -name "$REPLY"; done &
 # Bind keyboard keys
 xbindkeys
 
+# Fix misbehaving Java applications by setting WM name
+wmname LG3D
+
 # Launch dwm
 exec dwm
 
