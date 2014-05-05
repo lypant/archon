@@ -154,15 +154,19 @@ startService()
     return $?
 }
 
-createDotfilesBackupDir()
+createDir()
 {
-    reqVar "DOTFILES_BACKUP_DIR" "$FUNCNAME"
+    if [[ $# -lt 1 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
 
+    local dir="$1"
     local retval=0
 
     # Check if backup dir exists
-    if [[ ! -d $DOTFILES_BACKUP_DIR ]]; then
-        cmd "mkdir -p $DOTFILES_BACKUP_DIR"
+    if [[ ! -d $dir ]]; then
+        cmd "mkdir -p $dir"
         retval="$?"
     fi
 
@@ -196,7 +200,7 @@ installDotfile()
     fi
 
     # Ensure that dotfiles backup dir exists
-    createDotfilesBackupDir
+    createDir "$DOTFILES_BACKUP_DIR"
     retval="$?"
     if [[ $retval -ne 0  ]]; then
         log "$FUNCNAME: failed to create dotfiles backup dir: $retval"
