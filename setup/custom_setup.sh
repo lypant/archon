@@ -529,6 +529,7 @@ setPcmModuleLoading()
     log "Set snd-pcm-oss module loading..."
 
     cmd "echo $SND_PCM_OSS_MODULE >> $KERNEL_MODULES_PATH/$SND_PCM_OSS_FILE"
+    err "$?" "$FUNCNAME" "failed to set snd-pcm-oss module loading"
 
     log "Set snd-pcm-oss module loading...done"
 }
@@ -542,8 +543,21 @@ disablePcSpeaker()
     log "Disable pc speaker..."
 
     cmd "echo \"blacklist $PCSPEAKER_MODULE\" >> $MODPROBE_PATH/$NO_PCSPEAKER_FILE"
+    err "$?" "$FUNCNAME" "failed to disable pc speaker"
 
     log "Disable pc speaker...done"
+}
+
+setTmpfsTmpSize()
+{
+    reqVar "TMPFS_TMP_SIZE" "$FUNCNAME"
+
+    log "Set tmpfs tmp size..."
+
+    cmd "echo \"tmpfs /tmp tmpfs size=$TMPFS_TMP_SIZE,rw 0 0\""
+    err "$?" "$FUNCNAME" "failed to set tmpfs tmp size"
+
+    log "Set tmpfs tmp size...done"
 }
 
 setMakepkgBuilddir()
@@ -1119,6 +1133,7 @@ setupCustom()
     unmuteAlsa              # This should be enough on real HW
     setPcmModuleLoading
     disablePcSpeaker
+    setTmpfsTmpSize
     setMakepkgBuilddir
 
     #=======================================

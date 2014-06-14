@@ -1,5 +1,5 @@
 #!/bin/bash
-d=${BUILDDIR:-$PWD}
+d="/tmp"
 for p in ${@##-*}
 do
 cd "$d"
