@@ -453,10 +453,12 @@ setTmpfsTmpSize()
 {
     reqVar "TMPFS_TMP_SIZE" "$FUNCNAME"
     reqVar "FSTAB_FILE" "$FUNCNAME"
+    reqVar "ROOT_PARTITION_MOUNT_POINT" "$FUNCNAME"
 
     log "Set tmpfs tmp size..."
 
-    cmd "echo \"tmpfs /tmp tmpfs size=$TMPFS_TMP_SIZE,rw 0 0\" >> $FSTAB_FILE "
+    cmd "echo \"tmpfs /tmp tmpfs size=$TMPFS_TMP_SIZE,rw 0 0\" >>"\
+        " $ROOT_PARTITION_MOUNT_POINT$FSTAB_FILE"
     err "$?" "$FUNCNAME" "failed to set tmpfs tmp size"
 
     log "Set tmpfs tmp size...done"
@@ -774,7 +776,7 @@ setupBasic()
     downloadMirrorList
     installBaseSystem
     generateFstab
-    setTmpfsSize    # Needed before reboot to install AUR packages nicely
+    setTmpfsTmpSize    # Needed before reboot to install AUR packages nicely
     setHostName
     setLocales
     generateLocales
