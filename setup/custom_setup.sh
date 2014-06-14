@@ -551,10 +551,11 @@ disablePcSpeaker()
 setTmpfsTmpSize()
 {
     reqVar "TMPFS_TMP_SIZE" "$FUNCNAME"
+    reqVar "FSTAB_FILE" "$FUNCNAME"
 
     log "Set tmpfs tmp size..."
 
-    cmd "echo \"tmpfs /tmp tmpfs size=$TMPFS_TMP_SIZE,rw 0 0\""
+    cmd "echo \"tmpfs /tmp tmpfs size=$TMPFS_TMP_SIZE,rw 0 0\" >> $FSTAB_FILE "
     err "$?" "$FUNCNAME" "failed to set tmpfs tmp size"
 
     log "Set tmpfs tmp size...done"
