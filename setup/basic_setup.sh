@@ -745,27 +745,27 @@ setupBasic()
     # LiveCD preparation
     #=======================================
 
-    #setLivecdConsoleFont
-    #setLivecdPacmanTotalDownload
-    #updatePackageList
-    #installArchlinuxKeyring
-    #installLivecdVim
+    setLivecdConsoleFont
+    setLivecdPacmanTotalDownload
+    updatePackageList
+    installArchlinuxKeyring
+    installLivecdVim
 
     #=======================================
     # Partitions and file systems
     #=======================================
 
-    #createSwapPartition
-    #createBootPartition
-    #createRootPartition
-    #setBootPartitionBootable
-    #createSwap
-    #activateSwap
-    #createBootFileSystem
-    #createRootFileSystem
+    createSwapPartition
+    createBootPartition
+    createRootPartition
+    setBootPartitionBootable
+    createSwap
+    activateSwap
+    createBootFileSystem
+    createRootFileSystem
     # Root partition has to be mounted first
-    #mountRootPartition
-    #mountBootPartition
+    mountRootPartition
+    mountBootPartition
 
     #=======================================
     # Installation

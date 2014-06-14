@@ -275,7 +275,8 @@ prepareAurPackage()
     # Store current dir
     local oldDir=(pwd)
 
-    for [ p in ${@##-*} ]; do
+    for p in ${@##-*}
+    do
         cmd "cd /tmp"
         err "$?" "$FUNCNAME" "failed to enter /tmp"
         cmd "curl \"https://aur.archlinux.org/packages/${p:0:2}/$p/$p.tar.gz\" |tar xz"
