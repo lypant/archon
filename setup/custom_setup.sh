@@ -296,7 +296,7 @@ installAurPackage()
 {
     log "Install AUR package $@..."
 
-    preparePackage "$@ -si --noconfirm"
+    prepareAurPackage "$@ -si --noconfirm"
 
     log "Install AUR package $@...done"
 }
