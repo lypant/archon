@@ -264,6 +264,42 @@ changeHomeOwnership()
     log "Change home dir ownership...done"
 }
 
+# Based on aur.sh script
+prepareAurPackage()
+{
+    if [[ $# -lt 1 ]];then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
+
+    # Store current dir
+    local oldDir=(pwd)
+
+    for p in ${@##-*} do
+        cmd "cd /tmp"
+        err "$?" "$FUNCNAME" "failed to enter /tmp"
+        cmd "curl \"https://aur.archlinux.org/packages/${p:0:2}/$p/$p.tar.gz\" |tar xz"
+        err "$?" "$FUNCNAME" "failed to download package"
+        cmd "cd $p"
+        err "$?" "$FUNCNAME" "failed to enter $p"
+        cmd "makepkg ${@##[^\-]*}"
+        err "$?" "$FUNCNAME" "failed to process package"
+    done
+
+    # Restore old dir
+    cmd "cd $oldDir"
+    err "$?" "$FUNCNAME" "failed to enter $oldDir"
+}
+
+installAurPackage()
+{
+    log "Install AUR package $@..."
+
+    preparePackage "$@ -si --noconfirm"
+
+    log "Install AUR package $@...done"
+}
+
 #===============================================================================
 # Setup functions
 #===============================================================================
@@ -548,19 +584,6 @@ disablePcSpeaker()
     log "Disable pc speaker...done"
 }
 
-setTmpfsTmpSize()
-{
-    reqVar "TMPFS_TMP_SIZE" "$FUNCNAME"
-    reqVar "FSTAB_FILE" "$FUNCNAME"
-
-    log "Set tmpfs tmp size..."
-
-    cmd "echo \"tmpfs /tmp tmpfs size=$TMPFS_TMP_SIZE,rw 0 0\" >> $FSTAB_FILE "
-    err "$?" "$FUNCNAME" "failed to set tmpfs tmp size"
-
-    log "Set tmpfs tmp size...done"
-}
-
 setMakepkgBuilddir()
 {
 
@@ -754,6 +777,17 @@ installCmus()
     err "$?" "$FUNCNAME" "failed to install cmus"
 
     log "Install cmus...done"
+}
+
+installJdk()
+{
+    reqVAr "JDK_AUR_PACKAGES" "$FUNCNAME"
+
+    log "Install jdk..."
+
+    installAurPackage "$JDK_AUR_PACKAGES"
+
+    log "Install jdk...done"
 }
 
 #=========
@@ -1134,7 +1168,6 @@ setupCustom()
     unmuteAlsa              # This should be enough on real HW
     setPcmModuleLoading
     disablePcSpeaker
-    setTmpfsTmpSize
     setMakepkgBuilddir
 
     #=======================================
@@ -1173,6 +1206,7 @@ setupCustom()
     installCustomizedDvtm   # Use customized version instead
     installElinks
     installCmus
+    installJdk
 
     #=========
     # GUI-based
