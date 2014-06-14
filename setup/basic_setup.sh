@@ -458,7 +458,7 @@ setTmpfsTmpSize()
     log "Set tmpfs tmp size..."
 
     cmd "echo \"tmpfs /tmp tmpfs size=$TMPFS_TMP_SIZE,rw 0 0\" >>"\
-	" $ROOT_PARTITION_MOUNT_POINT$FSTAB_FILE "
+        " $ROOT_PARTITION_MOUNT_POINT$FSTAB_FILE"
     err "$?" "$FUNCNAME" "failed to set tmpfs tmp size"
 
     log "Set tmpfs tmp size...done"
@@ -772,10 +772,10 @@ setupBasic()
     #=======================================
 
     # Use only one of alternatives - rankMirrors or downloadMirrorList
-    ##rankMirrors
-    #downloadMirrorList
-    #installBaseSystem
-    #generateFstab
+    #rankMirrors
+    downloadMirrorList
+    installBaseSystem
+    generateFstab
     setTmpfsTmpSize    # Needed before reboot to install AUR packages nicely
     setHostName
     setLocales
