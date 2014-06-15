@@ -264,6 +264,45 @@ changeHomeOwnership()
     log "Change home dir ownership...done"
 }
 
+# Based on aur.sh script
+prepareAurPackage()
+{
+    if [[ $# -lt 1 ]];then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
+
+    # Store current dir
+    local oldDir=(pwd)
+    local aurLink="https://aur.archlinux.org/packages"
+
+    for p in ${@##-*}
+    do
+        cmd "cd /tmp"
+        err "$?" "$FUNCNAME" "failed to enter /tmp"
+        cmd "curl \"$aurLink/${p:0:2}/$p/$p.tar.gz\" |tar xz"
+        err "$?" "$FUNCNAME" "failed to download package"
+        cmd "cd $p"
+        err "$?" "$FUNCNAME" "failed to enter $p"
+        cmd "makepkg ${@##[^\-]*}"
+        err "$?" "$FUNCNAME" "failed to process package"
+    done
+
+    # Restore old dir
+    cmd "cd $oldDir"
+    err "$?" "$FUNCNAME" "failed to enter $oldDir"
+}
+
+b
+installAurPackage()
+{
+    log "Install AUR package $@..."
+
+    prepareAurPackage "$@ -si --noconfirm"
+
+    log "Install AUR package $@...done"
+}
+
 #===============================================================================
 # Setup functions
 #===============================================================================
@@ -733,6 +772,17 @@ installCmus()
     err "$?" "$FUNCNAME" "failed to install cmus"
 
     log "Install cmus...done"
+}
+
+installJdk()
+{
+    reqVar "JDK_AUR_PACKAGES" "$FUNCNAME"
+
+    log "Install jdk..."
+
+    installAurPackage "$JDK_AUR_PACKAGES"
+
+    log "Install jdk...done"
 }
 
 installVirtualboxGuestAdditions()
@@ -1218,6 +1268,7 @@ setupCustom()
     installCustomizedDvtm   # Use customized version instead
     installElinks
     installCmus
+    installJdk
     installVirtualboxGuestAdditions
 
     #=========
