@@ -1174,7 +1174,8 @@ setupCustom()
     setBootloaderKernelParams
     disableSyslinuxBootMenu
     setConsoleLoginMessage
-    setMkinitcpioModules    # Requires linux image recreation
+    # Not needed for VirtualBox
+    #setMkinitcpioModules    # Requires linux image recreation
     setMkinitcpioHooks      # Requires linux image recreation
     initAlsa                # Initialize all devices to a default state
     unmuteAlsa              # This should be enough on real HW
