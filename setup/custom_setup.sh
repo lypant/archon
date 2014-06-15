@@ -154,15 +154,19 @@ startService()
     return $?
 }
 
-createDotfilesBackupDir()
+createDir()
 {
-    reqVar "DOTFILES_BACKUP_DIR" "$FUNCNAME"
+    if [[ $# -lt 1 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
 
+    local dir="$1"
     local retval=0
 
     # Check if backup dir exists
-    if [[ ! -d $DOTFILES_BACKUP_DIR ]]; then
-        cmd "mkdir -p $DOTFILES_BACKUP_DIR"
+    if [[ ! -d $dir ]]; then
+        cmd "mkdir -p $dir"
         retval="$?"
     fi
 
@@ -196,7 +200,7 @@ installDotfile()
     fi
 
     # Ensure that dotfiles backup dir exists
-    createDotfilesBackupDir
+    createDir "$DOTFILES_BACKUP_DIR"
     retval="$?"
     if [[ $retval -ne 0  ]]; then
         log "$FUNCNAME: failed to create dotfiles backup dir: $retval"
@@ -374,10 +378,23 @@ configurePacman()
 {
     log "Configure pacman..."
 
+    # Present total download instead of single package percentage
     uncommentVar "TotalDownload" "/etc/pacman.conf"
     err "$?" "$FUNCNAME" "failed to configure pacman"
 
     log "Configure pacman...done"
+}
+
+setMultilibRepository()
+{
+    log "Set multilib repository..."
+
+    # Use repository for multilib support - to allow 32B apps on 64B system
+    # Needed for Android development
+    cmd "sed -i '/\[multilib\]/,/Include/ s|^#\(.*\)|\1|' /etc/pacman.conf"
+    err "$?" "$FUNCNAME" "failed to set multilib repository"
+
+    log "Set multilib repository...done"
 }
 
 configureGitUser()
@@ -449,19 +466,38 @@ setConsoleLoginMessage()
 }
 
 # This requires image recreation for changes to take effect
-setEarlyTerminalFont()
+setMkinitcpioModules()
 {
-    log "Set early terminal font..."
+    reqVar "MKINITCPIO_MODULES" "$FUNCNAME"
 
-    # Set hooks
-    local src="^HOOKS.*$"
-    local dst="HOOKS=\\\"$HOOKS\\\""
+    log "Setting mkinitcpio modules..."
+
+    local src="^MODULES.*$"
+    local dst="MODULES=\\\"$MKINITCPIO_MODULES\\\""
     local subst="s|$src|$dst|"
     local file="/etc/mkinitcpio.conf"
     cmd "sed -i \"$subst\" $file"
-    err "$?" "$FUNCNAME" "failed to set early terminal font"
+    err "$?" "$FUNCNAME" "failed to set mkinitcpio modules"
 
-    log "Set early terminal font...done"
+    log "Setting mkinitcpio modules...done"
+}
+
+# This requires image recreation for changes to take effect
+setMkinitcpioHooks()
+{
+    reqVar "MKINITCPIO_HOOKS" "$FUNCNAME"
+
+    log "Set mkinitcpio hooks..."
+
+    # Set hooks
+    local src="^HOOKS.*$"
+    local dst="HOOKS=\\\"$MKINITCPIO_HOOKS\\\""
+    local subst="s|$src|$dst|"
+    local file="/etc/mkinitcpio.conf"
+    cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to set mkinitcpio hooks"
+
+    log "Set mkinitcpio hooks...done"
 }
 
 initAlsa()
@@ -482,6 +518,34 @@ unmuteAlsa()
     err "$?" "$FUNCNAME" "failed to unmute alsa"
 
     log "Unmute alsa...done"
+}
+
+setPcmModuleLoading()
+{
+    reqVar "KERNEL_MODULES_PATH" "$FUNCNAME"
+    reqVar "SND_PCM_OSS_FILE" "$FUNCNAME"
+    reqVar "SND_PCM_OSS_MODULE" "$FUNCNAME"
+
+    log "Set snd-pcm-oss module loading..."
+
+    cmd "echo $SND_PCM_OSS_MODULE >> $KERNEL_MODULES_PATH/$SND_PCM_OSS_FILE"
+    err "$?" "$FUNCNAME" "failed to set snd-pcm-oss module loading"
+
+    log "Set snd-pcm-oss module loading...done"
+}
+
+disablePcSpeaker()
+{
+    reqVar "PCSPEAKER_MODULE" "$FUNCNAME"
+    reqVar "MODPROBE_PATH" "$FUNCNAME"
+    reqVar "NO_PCSPEAKER_FILE" "$FUNCNAME"
+
+    log "Disable pc speaker..."
+
+    cmd "echo \"blacklist $PCSPEAKER_MODULE\" >> $MODPROBE_PATH/$NO_PCSPEAKER_FILE"
+    err "$?" "$FUNCNAME" "failed to disable pc speaker"
+
+    log "Disable pc speaker...done"
 }
 
 #=======================================
@@ -815,6 +879,32 @@ installConky()
     log "Install conky...done"
 }
 
+# To be able to bind special keyboard keys to commands
+installXbindkeys()
+{
+    reqVar "XBINDKEYS_PACKAGES" "$FUNCNAME"
+
+    log "Install xbindkeys..."
+
+    installPackage $XBINDKEYS_PACKAGES
+    err "$?" "$FUNCNAME" "failed to install xbindkeys"
+
+    log "Install xbindkeys...done"
+}
+
+# To fix misbehaving Java windows
+installWmname()
+{
+    reqVar "WMNAME_PACKAGES" "$FUNCNAME"
+
+    log "Install wmname..."
+
+    installPackage $WMNAME_PACKAGES
+    err "$?" "$FUNCNAME" "failed to install wmname"
+
+    log "Install wmname...done"
+}
+
 #===================
 # Individual configuration
 #===================
@@ -981,6 +1071,16 @@ installConkyDotfile()
     log "Install .conkyrc dotfile...done"
 }
 
+installXbindkeysDotfile()
+{
+    log "Install .xbindkeysrc dotfile..."
+
+    installDotfile ".xbindkeysrc" ""
+    err "$?" "$FUNCNAME" "failed to install .xbindkeys dotfile"
+
+    log "Install .xbindkeysrc dotfile...done"
+}
+
 #===================
 # Other
 #===================
@@ -1068,13 +1168,18 @@ setupCustom()
     #===================
 
     configurePacman
+    setMultilibRepository   # Needed for Android development
+    updatePackageList       # Needed after previous step TODO: reorganize?
     configureGitUser
     setBootloaderKernelParams
     disableSyslinuxBootMenu
     setConsoleLoginMessage
-    setEarlyTerminalFont    # Requires linux image recreation
+    setMkinitcpioModules    # Requires linux image recreation
+    setMkinitcpioHooks      # Requires linux image recreation
     initAlsa                # Initialize all devices to a default state
     unmuteAlsa              # This should be enough on real HW
+    setPcmModuleLoading
+    disablePcSpeaker
 
     #=======================================
     # Project repository cloning
@@ -1125,6 +1230,8 @@ setupCustom()
     installDmenu
     installOpera
     installConky
+    installXbindkeys
+    installWmname           # Fix misbehaving Java apps in dwm
 
     #===================
     # Individual configuration
@@ -1160,6 +1267,9 @@ setupCustom()
 
     # conky
     installConkyDotfile
+
+    # xbindkeys
+    installXbindkeysDotfile
 
     #===================
     # Other

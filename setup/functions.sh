@@ -151,3 +151,17 @@ updatePackageList()
     log "Update package list...done"
 }
 
+delay()
+{
+    if [[ $# -lt 1 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
+
+    local seconds="$1"
+
+    log "Waiting $seconds""s..."
+    cmd "sleep $seconds"
+    log "Waiting $seconds""s...done"
+}
+
