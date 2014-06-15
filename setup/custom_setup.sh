@@ -1268,7 +1268,7 @@ setupCustom()
     installCustomizedDvtm   # Use customized version instead
     installElinks
     installCmus
-    installJdk
+    #installJdk
     installVirtualboxGuestAdditions
 
     #=========
