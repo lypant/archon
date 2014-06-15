@@ -449,6 +449,21 @@ generateFstab()
     log "Generate fstab...done"
 }
 
+setTmpfsTmpSize()
+{
+    reqVar "TMPFS_TMP_SIZE" "$FUNCNAME"
+    reqVar "ROOT_PARTITION_MOUNT_POINT" "$FUNCNAME"
+    reqVar "FSTAB_FILE" "$FUNCNAME"
+
+    log "Set tmpfs tmp size..."
+
+    cmd "echo \"tmpfs /tmp tmpfs size=$TMPFS_TMP_SIZE,rw 0 0\" >>"\
+        " $ROOT_PARTITION_MOUNT_POINT$FSTAB_FILE"
+    err "$?" "$FUNCNAME" "failed to set tmpfs tmp size"
+
+    log "Set tmpfs tmp size...done"
+}
+
 setHostName()
 {
     reqVar "HOST_NAME" "$FUNCNAME"
@@ -761,6 +776,7 @@ setupBasic()
     downloadMirrorList
     installBaseSystem
     generateFstab
+    setTmpfsTmpSize
     setHostName
     setLocales
     generateLocales
