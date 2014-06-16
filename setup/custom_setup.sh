@@ -768,6 +768,20 @@ installJdk()
     log "Install jdk...done"
 }
 
+installAndroidEnv()
+{
+    reqVar "ANDROID_ENV_PACKAGES" "$FUNCNAME"
+
+    log "Install android env"
+
+    installAurPackage "$ANDROID_ENV_PACKAGES"
+
+    # Needed to update sdk manually using 'android' tool
+    cmd "chmod -R 755 /opt/android-sdk"
+
+    log "Install android env...done"
+}
+
 installVirtualboxGuestAdditions()
 {
     reqVar "VIRTUALBOX_GUEST_UTILS_PACKAGES" "$FUNCNAME"
@@ -1252,6 +1266,7 @@ setupCustom()
     installElinks
     installCmus
     installJdk
+    installAndroidEnv
     installVirtualboxGuestAdditions
 
     #=========
