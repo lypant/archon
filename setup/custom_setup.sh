@@ -264,43 +264,26 @@ changeHomeOwnership()
     log "Change home dir ownership...done"
 }
 
-# Based on aur.sh script
-prepareAurPackage()
+installAurPackage()
 {
-    if [[ $# -lt 1 ]];then
+    if [[ $# -lt 1 ]]; then
         log "$FUNCNAME: not enough parameters \($#\): $@"
         return 1
     fi
 
-    # Store current dir
-    local oldDir=(pwd)
-    local aurLink="https://aur.archlinux.org/packages"
+    local buildDir="/tmp"
+    local url="https://aur.archlinux.org/packages"
 
-    for p in ${@##-*}
+    for p in $@
     do
-        cmd "cd /tmp"
-        err "$?" "$FUNCNAME" "failed to enter /tmp"
-        cmd "curl \"$aurLink/${p:0:2}/$p/$p.tar.gz\" |tar xz"
-        err "$?" "$FUNCNAME" "failed to download package"
-        cmd "cd $p"
-        err "$?" "$FUNCNAME" "failed to enter $p"
-        cmd "makepkg ${@##[^\-]*}"
-        err "$?" "$FUNCNAME" "failed to process package"
+        local pkgFile="$url/${p:0:2}/$p/$p.tar.gz"
+
+        cd $buildDir
+        cmd "curl \"$pkgFile\" | tar xz"
+        cd $buildDir/$p
+        # TODO: Consider another solution to avoid --asroot
+        cmd "makepkg -si --asroot --noconfirm"
     done
-
-    # Restore old dir
-    cmd "cd $oldDir"
-    err "$?" "$FUNCNAME" "failed to enter $oldDir"
-}
-
-b
-installAurPackage()
-{
-    log "Install AUR package $@..."
-
-    prepareAurPackage "$@ -si --noconfirm"
-
-    log "Install AUR package $@...done"
 }
 
 #===============================================================================
@@ -1268,7 +1251,7 @@ setupCustom()
     installCustomizedDvtm   # Use customized version instead
     installElinks
     installCmus
-    #installJdk
+    installJdk
     installVirtualboxGuestAdditions
 
     #=========
