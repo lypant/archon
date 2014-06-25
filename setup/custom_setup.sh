@@ -923,8 +923,19 @@ installWmname()
     log "Install wmname...done"
 }
 
-#===================
-# Individual configuration
+installVlc()
+{
+    reqVar "VLC_PACKAGES" "$FUNCNAME"
+
+    log "Install vlc..."
+
+    installPackage $VLC_PACKAGES
+    err "$?" "$FUNCNAME" "failed to install vlc"
+
+    log "Install vlc...done"
+}
+
+#=================== # Individual configuration
 #===================
 
 #=========
@@ -1215,6 +1226,7 @@ setupCustom()
     installConky
     installXbindkeys
     installWmname           # Fix misbehaving Java apps in dwm
+    installVlc
 
     #===================
     # Individual configuration
