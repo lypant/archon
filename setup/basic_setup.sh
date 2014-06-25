@@ -452,8 +452,8 @@ generateFstab()
 setTmpfsTmpSize()
 {
     reqVar "TMPFS_TMP_SIZE" "$FUNCNAME"
-    reqVar "FSTAB_FILE" "$FUNCNAME"
     reqVar "ROOT_PARTITION_MOUNT_POINT" "$FUNCNAME"
+    reqVar "FSTAB_FILE" "$FUNCNAME"
 
     log "Set tmpfs tmp size..."
 

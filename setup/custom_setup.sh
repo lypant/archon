@@ -264,41 +264,26 @@ changeHomeOwnership()
     log "Change home dir ownership...done"
 }
 
-# Based on aur.sh script
-prepareAurPackage()
+installAurPackage()
 {
-    if [[ $# -lt 1 ]];then
+    if [[ $# -lt 1 ]]; then
         log "$FUNCNAME: not enough parameters \($#\): $@"
         return 1
     fi
 
-    # Store current dir
-    local oldDir=(pwd)
+    local buildDir="/tmp"
+    local url="https://aur.archlinux.org/packages"
 
-    for p in ${@##-*}
+    for p in $@
     do
-        cmd "cd /tmp"
-        err "$?" "$FUNCNAME" "failed to enter /tmp"
-        cmd "curl \"https://aur.archlinux.org/packages/${p:0:2}/$p/$p.tar.gz\" |tar xz"
-        err "$?" "$FUNCNAME" "failed to download package"
-        cmd "cd $p"
-        err "$?" "$FUNCNAME" "failed to enter $p"
-        cmd "makepkg ${@##[^\-]*}"
-        err "$?" "$FUNCNAME" "failed to process package"
+        local pkgFile="$url/${p:0:2}/$p/$p.tar.gz"
+
+        cd $buildDir
+        cmd "curl \"$pkgFile\" | tar xz"
+        cd $buildDir/$p
+        # TODO: Consider another solution to avoid --asroot
+        cmd "makepkg -si --asroot --noconfirm"
     done
-
-    # Restore old dir
-    cmd "cd $oldDir"
-    err "$?" "$FUNCNAME" "failed to enter $oldDir"
-}
-
-installAurPackage()
-{
-    log "Install AUR package $@..."
-
-    prepareAurPackage "$@ -si --noconfirm"
-
-    log "Install AUR package $@...done"
 }
 
 #===============================================================================
@@ -585,14 +570,6 @@ disablePcSpeaker()
     log "Disable pc speaker...done"
 }
 
-setMakepkgBuilddir()
-{
-
-    log "Set makepkg builddir..."
-    uncommentVar "BUILDDIR" "/etc/makepkg.conf"
-    log "Set makepkg builddir...done"
-}
-
 #=======================================
 # Project repository cloning
 #=======================================
@@ -791,6 +768,20 @@ installJdk()
     log "Install jdk...done"
 }
 
+installAndroidEnv()
+{
+    reqVar "ANDROID_ENV_PACKAGES" "$FUNCNAME"
+
+    log "Install android env"
+
+    installAurPackage "$ANDROID_ENV_PACKAGES"
+
+    # Needed to update sdk manually using 'android' tool
+    cmd "chmod -R 755 /opt/android-sdk"
+
+    log "Install android env...done"
+}
+
 #=========
 # GUI-based
 #=========
@@ -906,6 +897,7 @@ installConky()
     log "Install conky...done"
 }
 
+# To be able to bind special keyboard keys to commands
 installXbindkeys()
 {
     reqVar "XBINDKEYS_PACKAGES" "$FUNCNAME"
@@ -918,6 +910,7 @@ installXbindkeys()
     log "Install xbindkeys...done"
 }
 
+# To fix misbehaving Java windows
 installWmname()
 {
     reqVar "WMNAME_PACKAGES" "$FUNCNAME"
@@ -1169,7 +1162,6 @@ setupCustom()
     unmuteAlsa              # This should be enough on real HW
     setPcmModuleLoading
     disablePcSpeaker
-    setMakepkgBuilddir
 
     #=======================================
     # Project repository cloning
@@ -1208,6 +1200,7 @@ setupCustom()
     installElinks
     installCmus
     installJdk
+    installAndroidEnv
 
     #=========
     # GUI-based
