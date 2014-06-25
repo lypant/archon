@@ -1170,7 +1170,7 @@ setupCustom()
     cloneProjectRepo
     checkoutCurrentBranch
     copyOverProjectFiles
-    commitAdjustments
+    #commitAdjustments  # TODO: Remove? Causes more work usually
 
     #=======================================
     # Individual setup
