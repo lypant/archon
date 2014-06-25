@@ -776,7 +776,7 @@ setupBasic()
     downloadMirrorList
     installBaseSystem
     generateFstab
-    setTmpfsTmpSize
+    setTmpfsTmpSize    # Needed before reboot to install AUR packages nicely
     setHostName
     setLocales
     generateLocales
