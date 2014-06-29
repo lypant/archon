@@ -98,8 +98,8 @@ req()
     local function="$2"
 
     if [[ -z "${!var}" ]]; then
-        log "$function: variable $var not defined"
-        log "Aborting script!"
+        _log "$function: variable $var not defined"
+        _log "Aborting script!"
         exit 1
     fi
 }
@@ -110,8 +110,8 @@ err()
 {
     # Check number of required params
     if [[ $# -lt 3 ]]; then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        log "Aborting script!"
+        _log "$FUNCNAME: not enough parameters \($#\): $@"
+        _log "Aborting script!"
         exit 1
     fi
 
@@ -120,21 +120,72 @@ err()
     local msg="$3"
 
     if [[ "$error" -ne 0 ]]; then
-        log "$funcname: $msg: $error"
-        log "Aborting script!"
+        _log "$funcname: $msg: $error"
+        _log "Aborting script!"
         exit 2
     fi
 }
 
 #===============================================================================
-# Eye candy functions
+# Helper functions
 #===============================================================================
+
+updatePackageList()
+{
+    _log "Update package list..."
+
+    _cmd "pacman -Syy"
+    err "$?" "$FUNCNAME" "failed to update package list"
+
+    _log "Update package list...done"
+}
+
+installPackage()
+{
+    _log "Installing package $@..."
+
+    _cmd "pacman -S $@ --noconfirm"
+    err "$?" "$FUNCNAME" "failed to install package $@"
+
+    _log "Installing package $@...done"
+}
+
+#===============================================================================
+# Setup functions
+#===============================================================================
+
+#=======================================
+# LiveCD preparation
+#=======================================
 
 setConsoleFontTemporarily()
 {
     req CONSOLE_FONT $FUNCNAME
 
-    _cmd setfont $CONSOLE_FONT
-    err $? $FUNCNAME "failed to set console font temporarily"
+    # Font setting is not crucial, so don't abort the script when it fails
+    setfont $CONSOLE_FONT
+}
+
+
+installArchlinuxKeyring()
+{
+    req ARCHLINUX_KEYRING_PACKAGES $FUNCNAME
+
+    _log "Install archlinux keyring..."
+
+    installPackage $ARCHLINUX_KEYRING_PACKAGES
+
+    _log "Install archlinux keyring...done"
+}
+
+installLivecdVim()
+{
+    req VIM_PACKAGES $FUNCNAME
+
+    _log "Install livecd vim..."
+
+    installPackage $VIM_PACKAGES
+
+    _log "Install livecd vim...done"
 }
 

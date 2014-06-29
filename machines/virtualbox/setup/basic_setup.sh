@@ -12,6 +12,7 @@
 #===============================================================================
 
 source ../../../include/setup/archon_settings.conf
+source ../../../include/setup/settings.conf
 source settings.conf
 source ../../../include/setup/functions.sh
 
@@ -30,10 +31,19 @@ LOG_FILE="$BASIC_SETUP_LOG_FILE"
 #   LOG_PREFIX
 basicSetup()
 {
-    setConsoleFontTemporarily
     createLogDir
 
     _log "Basic setup..."
+
+    #=======================================
+    # LiveCD environment preparation
+    #=======================================
+
+    setConsoleFontTemporarily
+    updatePackageList
+    instalArchlinuxKeyring
+    installLivecdVim
+
     _log "Basic setup...done"
 }
 
