@@ -41,7 +41,7 @@ basicSetup()
 
     setConsoleFontTemporarily
     updatePackageList
-    instalArchlinuxKeyring
+    installArchlinuxKeyring
     installLivecdVim
 
     _log "Basic setup...done"
