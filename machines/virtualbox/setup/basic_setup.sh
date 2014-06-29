@@ -25,6 +25,9 @@ LOG_FILE="$BASIC_SETUP_LOG_FILE"
 # Main setup function
 #===============================================================================
 
+# Requires:
+#   LOG_FILE
+#   LOG_PREFIX
 basicSetup()
 {
     createLogDir
