@@ -30,6 +30,7 @@ LOG_FILE="$BASIC_SETUP_LOG_FILE"
 #   LOG_PREFIX
 basicSetup()
 {
+    setConsoleFontTemporarily
     createLogDir
 
     _log "Basic setup..."
