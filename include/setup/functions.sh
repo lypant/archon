@@ -10,6 +10,8 @@
 # CONVENTIONS:  Function should either return error code or abort the script
 #               on failure.
 #               Names of functions returning value start with an underscode.
+#               Exception:  log function - returns result but always neglected,
+#                           so without underscore for convenience
 #===============================================================================
 
 #===============================================================================
@@ -44,7 +46,7 @@ createLogDir()
 # Requires:
 #   LOG_FILE
 #   LOG_PREFIX
-_log()
+log()
 {
     # Check if all required variables are set
     if [[ -z "$LOG_FILE" ]]; then
@@ -98,8 +100,8 @@ req()
     local function="$2"
 
     if [[ -z "${!var}" ]]; then
-        _log "$function: variable $var not defined"
-        _log "Aborting script!"
+        log "$function: variable $var not defined"
+        log "Aborting script!"
         exit 1
     fi
 }
@@ -110,8 +112,8 @@ err()
 {
     # Check number of required params
     if [[ $# -lt 3 ]]; then
-        _log "$FUNCNAME: not enough parameters \($#\): $@"
-        _log "Aborting script!"
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        log "Aborting script!"
         exit 1
     fi
 
@@ -120,8 +122,8 @@ err()
     local msg="$3"
 
     if [[ "$error" -ne 0 ]]; then
-        _log "$funcname: $msg: $error"
-        _log "Aborting script!"
+        log "$funcname: $msg: $error"
+        log "Aborting script!"
         exit 2
     fi
 }
@@ -132,37 +134,37 @@ err()
 
 updatePackageList()
 {
-    _log "Update package list..."
+    log "Update package list..."
 
     _cmd "pacman -Syy"
     err "$?" "$FUNCNAME" "failed to update package list"
 
-    _log "Update package list...done"
+    log "Update package list...done"
 }
 
 installPackage()
 {
-    _log "Installing package $@..."
+    log "Installing package $@..."
 
     _cmd "pacman -S $@ --noconfirm"
     err "$?" "$FUNCNAME" "failed to install package $@"
 
-    _log "Installing package $@...done"
+    log "Installing package $@...done"
 }
 
 # Delay is given in seconds
 delay()
 {
     if [[ $# -lt 1 ]]; then
-        _log "$FUNCNAME: not enough parameters \($#\): $@"
+        log "$FUNCNAME: not enough parameters \($#\): $@"
         exit 1
     fi
 
     local seconds="$1"
 
-    _log "Waiting $seconds""s..."
+    log "Waiting $seconds""s..."
     _cmd "sleep $seconds"
-    _log "Waiting $seconds""s...done"
+    log "Waiting $seconds""s...done"
 }
 
 createPartition()
@@ -170,8 +172,8 @@ createPartition()
     req PARTITION_OPERATIONS_DELAY $FUNCNAME
 
     if [[ $# -lt 5 ]]; then
-        _log "$FUNCNAME: not enough parameters \($#\): $@"
-        _log "Aborting script!"
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        log "Aborting script!"
         exit 1
     fi
 
@@ -224,22 +226,22 @@ installArchlinuxKeyring()
 {
     req ARCHLINUX_KEYRING_PACKAGES $FUNCNAME
 
-    _log "Install archlinux keyring..."
+    log "Install archlinux keyring..."
 
     installPackage $ARCHLINUX_KEYRING_PACKAGES
 
-    _log "Install archlinux keyring...done"
+    log "Install archlinux keyring...done"
 }
 
 installLivecdVim()
 {
     req VIM_PACKAGES $FUNCNAME
 
-    _log "Install livecd vim..."
+    log "Install livecd vim..."
 
     installPackage $VIM_PACKAGES
 
-    _log "Install livecd vim...done"
+    log "Install livecd vim...done"
 }
 
 #=======================================
@@ -255,7 +257,7 @@ createSwapPartition()
     req SWAP_PARTITION_SIZE $FUNCNAME
     req SWAP_PARTITION_CODE $FUNCNAME
 
-    _log "Create swap partition..."
+    log "Create swap partition..."
 
     createPartition\
         "$PARTITION_PREFIX$SWAP_PARTITION_HDD"\
@@ -264,6 +266,48 @@ createSwapPartition()
         "$SWAP_PARTITION_SIZE"\
         "$SWAP_PARTITION_CODE"
 
-    _log "Create swap partition...done"
+    log "Create swap partition...done"
+}
+
+createBootPartition()
+{
+    req PARTITION_PREFIX $FUNCNAME
+    req BOOT_PARTITION_HDD $FUNCNAME
+    req BOOT_PARTITION_TYPE $FUNCNAME
+    req BOOT_PARTITION_NB $FUNCNAME
+    req BOOT_PARTITION_SIZE $FUNCNAME
+    req BOOT_PARTITION_CODE $FUNCNAME
+
+    log "Create boot partition..."
+
+    createPartition\
+        "$PARTITION_PREFIX$BOOT_PARTITION_HDD"\
+        "$BOOT_PARTITION_TYPE"\
+        "$BOOT_PARTITION_NB"\
+        "$BOOT_PARTITION_SIZE"\
+        "$BOOT_PARTITION_CODE"
+
+    log "Create boot partition...done"
+}
+
+createRootPartition()
+{
+    req PARTITION_PREFIX $FUNCNAME
+    req ROOT_PARTITION_HDD $FUNCNAME
+    req ROOT_PARTITION_TYPE $FUNCNAME
+    req ROOT_PARTITION_NB $FUNCNAME
+    #req ROOT_PARTITION_SIZE $FUNCNAME # Use remaining space
+    req ROOT_PARTITION_CODE $FUNCNAME
+
+    log "Create root partition..."
+
+    createPartition\
+        "$PARTITION_PREFIX$ROOT_PARTITION_HDD"\
+        "$ROOT_PARTITION_TYPE"\
+        "$ROOT_PARTITION_NB"\
+        "$ROOT_PARTITION_SIZE"\
+        "$ROOT_PARTITION_CODE"
+
+    log "Create root partition...done"
 }
 

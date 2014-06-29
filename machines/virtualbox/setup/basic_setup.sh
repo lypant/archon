@@ -33,7 +33,7 @@ basicSetup()
 {
     createLogDir
 
-    _log "Basic setup..."
+    log "Basic setup..."
 
     #=======================================
     # LiveCD environment preparation
@@ -44,7 +44,15 @@ basicSetup()
     installArchlinuxKeyring
     installLivecdVim
 
-    _log "Basic setup...done"
+    #=======================================
+    # Partitions and file systems
+    #=======================================
+
+    createSwapPartition
+    createBootFileSystem
+    createRootFileSystem
+
+    log "Basic setup...done"
 }
 
 #===============================================================================
