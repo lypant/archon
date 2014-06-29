@@ -252,7 +252,7 @@ _downloadFile()
     local src=$1
     local dst=$2
 
-    cmd "curl -so $dst --create-dirs $src"
+    _cmd "curl -so $dst --create-dirs $src"
     return $?
 }
 
