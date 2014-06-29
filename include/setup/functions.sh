@@ -256,6 +256,37 @@ _downloadFile()
     return $?
 }
 
+_archChroot()
+{
+    req ROOT_PARTITION_MOUNT_POINT $FUNCNAME
+
+    if [[ $# -lt 1 ]];then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
+
+    _cmd arch-chroot $ROOT_PARTITION_MOUNT_POINT /bin/bash -c \""$@"\"
+    return $?
+}
+
+setLocale()
+{
+    if [[ $# -lt 1 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        err "1" "$FUNCNAME" "failed to set locale"
+    fi
+
+    log "Set locale for  $1..."
+
+    local subst="s|^#\\\\\(${1}.*\\\\\)$|\1|"
+    local file="/etc/locale.gen"
+    _archChroot "sed -i \\\"$subst\\\" $file"
+    err "$?" "$FUNCNAME" "failed to set locale"
+
+    log "Set locale for $1...done"
+}
+
+
 #===============================================================================
 # Setup functions
 #===============================================================================
@@ -542,5 +573,297 @@ installBaseSystem()
     err "$?" "$FUNCNAME" "failed to install base system"
 
     log "Install base system...done"
+}
+
+generateFstab()
+{
+    req ROOT_PARTITION_MOUNT_POINT $FUNCNAME
+
+    log "Generate fstab..."
+
+    _cmd "genfstab -L -p $ROOT_PARTITION_MOUNT_POINT >>"\
+        " $ROOT_PARTITION_MOUNT_POINT/etc/fstab"
+    err "$?" "$FUNCNAME" "failed to generate fstab"
+
+    log "Generate fstab...done"
+}
+
+setTmpfsTmpSize()
+{
+    req TMPFS_TMP_SIZE $FUNCNAME
+    req ROOT_PARTITION_MOUNT_POINT $FUNCNAME
+    req FSTAB_FILE $FUNCNAME
+
+    log "Set tmpfs tmp size..."
+
+    _cmd "echo \"tmpfs /tmp tmpfs size=$TMPFS_TMP_SIZE,rw 0 0\" >>"\
+        " $ROOT_PARTITION_MOUNT_POINT$FSTAB_FILE"
+    err "$?" "$FUNCNAME" "failed to set tmpfs tmp size"
+
+    log "Set tmpfs tmp size...done"
+}
+
+setHostName()
+{
+    req HOST_NAME $FUNCNAME
+
+    log "Set host name..."
+
+    _archChroot "echo $HOST_NAME > /etc/hostname"
+    err "$?" "$FUNCNAME" "failed to set host name"
+
+    log "Set host name...done"
+}
+
+setLocales()
+{
+    req LOCALIZATION_LANGUAGE_EN $FUNCNAME
+    req LOCALIZATION_LANGUAGE_PL $FUNCNAME
+
+    log "Set locales..."
+
+    setLocale "$LOCALIZATION_LANGUAGE_EN"
+    setLocale "$LOCALIZATION_LANGUAGE_PL"
+
+    log "Set locales...done"
+}
+
+generateLocales()
+{
+    log "Generate locales..."
+
+    _archChroot "locale-gen"
+    err "$?" "$FUNCNAME" "failed to generate locales"
+
+    log "Generate locales...done"
+}
+
+setLanguage()
+{
+    req LOCALIZATION_LANGUAGE_EN $FUNCNAME
+
+    log "Set language..."
+
+    _archChroot "echo LANG=$LOCALIZATION_LANGUAGE_EN >> /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set language"
+
+    log "Set language...done"
+}
+
+setLocalizationCtype()
+{
+    req LOCALIZATION_CTYPE $FUNCNAME
+
+    log "Set localization ctype..."
+
+    _archChroot "echo LC_CTYPE=$LOCALIZATION_CTYPE >> /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set localization ctype"
+
+    log "Set localization ctype...done"
+}
+
+setLocalizationNumeric()
+{
+    req LOCALIZATION_NUMERIC $FUNCNAME
+
+    log "Set localization numeric..."
+
+    _archChroot "echo LC_NUMERIC=$LOCALIZATION_NUMERIC >> /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set localization numeric"
+
+    log "Set localization numeric...done"
+}
+
+setLocalizationTime()
+{
+    req LOCALIZATION_TIME $FUNCNAME
+
+    log "Set localization time..."
+
+    _archChroot "echo LC_TIME=$LOCALIZATION_TIME >> /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set localization time"
+
+    log "Set localization time...done"
+}
+
+setLocalizationCollate()
+{
+    req LOCALIZATION_COLLATE $FUNCNAME
+
+    log "Set localization collate..."
+
+    _archChroot "echo LC_COLLATE=$LOCALIZATION_COLLATE >> /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set localization collate"
+
+    log "Set localization collate...done"
+}
+
+setLocalizationMonetary()
+{
+    req LOCALIZATION_MONETARY $FUNCNAME
+
+    log "Set localization monetary..."
+
+    _archChroot "echo LC_MONETARY=$LOCALIZATION_MONETARY >> /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set localization monetary"
+
+    log "Set localization monetary...done"
+}
+
+setLocalizationMeasurement()
+{
+    req LOCALIZATION_MEASUREMENT $FUNCNAME
+
+    log "Set localization measurenent..."
+
+    _archChroot\
+        "echo LC_MEASUREMENT=$LOCALIZATION_MEASUREMENT >> /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set localization monetary"
+
+    log "Set localization measurement...done"
+}
+
+setTimeZone()
+{
+    req LOCALIZATION_TIME_ZONE $FUNCNAME
+
+    log "Set time zone..."
+
+    _archChroot\
+        "ln -s /usr/share/zoneinfo/$LOCALIZATION_TIME_ZONE /etc/localtime"
+    err "$?" "$FUNCNAME" "failed to set time zone"
+
+    log "Set time zone...done"
+}
+
+setHardwareClock()
+{
+    req LOCALIZATION_HW_CLOCK $FUNCNAME
+
+    log "Set hardware clock..."
+
+    _archChroot "hwclock $LOCALIZATION_HW_CLOCK"
+    err "$?" "$FUNCNAME" "failed to set hardware clock"
+
+    log "Set hardware clock...done"
+}
+
+setConsoleKeymap()
+{
+    req CONSOLE_KEYMAP $FUNCNAME
+
+    log "Set console keymap..."
+
+    _archChroot "echo KEYMAP=$CONSOLE_KEYMAP > /etc/vconsole.conf"
+    err "$?" "$FUNCNAME" "failed to set console keymap"
+
+    log "Set console keymap...done"
+}
+
+setConsoleFont()
+{
+    req CONSOLE_FONT $FUNCNAME
+
+    log "Set console font..."
+
+    _archChroot "echo FONT=$CONSOLE_FONT >> /etc/vconsole.conf"
+    err "$?" "$FUNCNAME" "failed to set console font"
+
+    log "Set console font...done"
+}
+
+setConsoleFontmap()
+{
+    req CONSOLE_FONTMAP $FUNCNAME
+
+    log "Set console fontmap..."
+
+    _archChroot "echo FONT_MAP=$CONSOLE_FONTMAP >> /etc/vconsole.conf"
+    err "$?" "$FUNCNAME" "failed to set console fontmap"
+
+    log "Set console fontmap...done"
+}
+
+setWiredNetwork()
+{
+    req NETWORK_SERVICE $FUNCNAME
+    req NETWORK_INTERFACE_WIRED $FUNCNAME
+
+    log "Set wired network..."
+
+    _archChroot\
+        "systemctl enable $NETWORK_SERVICE@$NETWORK_INTERFACE_WIRED.service"
+    err "$?" "$FUNCNAME" "failed to set wired network"
+
+    log "Set wired network...done"
+}
+
+installBootloader()
+{
+    req BOOTLOADER_PACKAGE $FUNCNAME
+
+    log "Install bootloader..."
+
+    _archChroot "pacman -S $BOOTLOADER_PACKAGE --noconfirm"
+    err "$?" "$FUNCNAME" "failed to install bootloader"
+
+    log "Install bootloader...done"
+}
+
+configureSyslinux()
+{
+    req ROOT_PARTITION_HDD $FUNCNAME
+    req ROOT_PARTITION_NB $FUNCNAME
+
+    log "Configure syslinux..."
+
+    _archChroot "syslinux-install_update -i -a -m"
+    err "$?" "$FUNCNAME" "failed to update syslinux"
+
+    local src="sda3"
+    local dst="$ROOT_PARTITION_HDD$ROOT_PARTITION_NB"
+    local subst="s|$src|$dst|g"
+    local file="/boot/syslinux/syslinux.cfg"
+    _archChroot "sed -i \\\"$subst\\\" $file"
+    err "$?" "$FUNCNAME" "failed to change partition name in syslinux"
+
+    log "Configure syslinux...done"
+}
+
+setRootPassword()
+{
+    log "Set root password..."
+
+    local ASK=1
+
+    while [ $ASK -ne 0 ]; do
+        _archChroot "passwd"
+        ASK=$?
+    done
+
+    log "Set root password...done"
+}
+
+#=======================================
+# Post installation actions
+#=======================================
+
+copyProjectFiles()
+{
+    req PROJECT_MNT_PATH $FUNCNAME
+    req PROJECT_ROOT_PATH $FUNCNAME
+
+    # Do not perform typical logging in this function...
+    # This would spoil nice logs copied to new system
+
+    mkdir -p $PROJECT_MNT_PATH
+    err "$?" "$FUNCNAME" "failed to copy $PROJECT_NAME files"
+
+    cp -R $PROJECT_ROOT_PATH/* $PROJECT_MNT_PATH
+    err "$?" "$FUNCNAME" "failed to copy $PROJECT_NAME files"
+
+    # This is only for livecd output and logs consistency
+    log "Copy $PROJECT_NAME files..."
+    log "Copy $PROJECT_NAME files...done"
 }
 

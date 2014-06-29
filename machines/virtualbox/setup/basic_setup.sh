@@ -68,6 +68,27 @@ basicSetup()
     #rankMirrors
     downloadMirrorList
     installBaseSystem
+    generateFstab
+    setTmpfsTmpSize    # Needed before reboot to install AUR packages nicely
+    setHostName
+    setLocales
+    generateLocales
+    setLanguage
+    setLocalizationCtype
+    setLocalizationNumeric
+    setLocalizationTime
+    setLocalizationCollate
+    setLocalizationMonetary
+    setLocalizationMeasurement
+    setTimeZone
+    setHardwareClock
+    setConsoleKeymap
+    setConsoleFont
+    setConsoleFontmap
+    setWiredNetwork
+    installBootloader
+    configureSyslinux
+    setRootPassword
 
     log "Basic setup...done"
 
@@ -75,6 +96,7 @@ basicSetup()
     # Post installation actions
     #=======================================
 
+    copyProjectFiles
     unmountPartitions
 }
 
