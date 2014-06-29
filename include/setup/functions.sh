@@ -205,6 +205,29 @@ createPartition()
     delay $PARTITION_OPERATIONS_DELAY
 }
 
+# Best executed when all (at least two) partitions are created
+setPartitionBootable()
+{
+    req PARTITION_OPERATIONS_DELAY $FUNCNAME
+
+    if [[ $# -lt 2 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        log "Aborting script!"
+        exit 1
+    fi
+
+    local disk="$1"     # e.g. /dev/sda
+    local partNb="$2"   # e.g. "1" for "/dev/sda1"
+
+    cat <<-EOF | fdisk $disk
+	a
+	$partNb
+	w
+	EOF
+
+    delay $PARTITION_OPERATIONS_DELAY
+}
+
 #===============================================================================
 # Setup functions
 #===============================================================================
@@ -309,5 +332,126 @@ createRootPartition()
         "$ROOT_PARTITION_CODE"
 
     log "Create root partition...done"
+}
+
+setBootPartitionBootable()
+{
+    req PARTITION_PREFIX $FUNCNAME
+    req BOOT_PARTITION_HDD $FUNCNAME
+    req BOOT_PARTITION_NB $FUNCNAME
+
+    log "Set boot partition bootable..."
+
+    setPartitionBootable\
+        "$PARTITION_PREFIX$BOOT_PARTITION_HDD"\
+        "$BOOT_PARTITION_NB"
+
+    log "Set boot partition bootable...done"
+}
+
+createSwap()
+{
+    req PARTITION_PREFIX $FUNCNAME
+    req SWAP_PARTITION_HDD $FUNCNAME
+    req SWAP_PARTITION_NB $FUNCNAME
+
+    log "Create swap..."
+
+    _cmd "mkswap $PARTITION_PREFIX$SWAP_PARTITION_HDD$SWAP_PARTITION_NB"
+    err "$?" "$FUNCNAME" "failed to create swap"
+
+    log "Create swap...done"
+}
+
+activateSwap()
+{
+    req PARTITION_PREFIX $FUNCNAME
+    req SWAP_PARTITION_HDD $FUNCNAME
+    req SWAP_PARTITION_NB $FUNCNAME
+
+    log "Activate swap..."
+
+    _cmd "swapon $PARTITION_PREFIX$SWAP_PARTITION_HDD$SWAP_PARTITION_NB"
+    err "$?" "$FUNCNAME" "failed to activate swap"
+
+    log "Activate swap...done"
+}
+
+createBootFileSystem()
+{
+    req BOOT_PARTITION_FS $FUNCNAME
+    req BOOT_PARTITION_HDD $FUNCNAME
+    req BOOT_PARTITION_NB $FUNCNAME
+
+    log "Create boot file system..."
+
+    _cmd "mkfs.$BOOT_PARTITION_FS"\
+        "$PARTITION_PREFIX$BOOT_PARTITION_HDD$BOOT_PARTITION_NB"
+    err "$?" "$FUNCNAME" "failed to create boot file system"
+
+    log "Create boot file system...done"
+}
+
+createRootFileSystem()
+{
+    req ROOT_PARTITION_FS $FUNCNAME
+    req PARTITION_PREFIX $FUNCNAME
+    req ROOT_PARTITION_HDD $FUNCNAME
+    req ROOT_PARTITION_NB $FUNCNAME
+
+    log "Create root file system..."
+
+    _cmd "mkfs.$ROOT_PARTITION_FS"\
+        " $PARTITION_PREFIX$ROOT_PARTITION_HDD$ROOT_PARTITION_NB"
+    err "$?" "$FUNCNAME" "failed to create root file system"
+
+    log "Create root file system...done"
+}
+
+mountBootPartition()
+{
+    req PARTITION_PREFIX $FUNCNAME
+    req BOOT_PARTITION_HDD $FUNCNAME
+    req BOOT_PARTITION_NB $FUNCNAME
+    req BOOT_PARTITION_MOUNT_POINT $FUNCNAME
+
+    log "Mount boot partition..."
+
+    _cmd "mkdir $BOOT_PARTITION_MOUNT_POINT"
+    err "$?" "$FUNCNAME" "failed to create boot partition mount point"
+
+    _cmd "mount $PARTITION_PREFIX$BOOT_PARTITION_HDD$BOOT_PARTITION_NB"\
+        " $BOOT_PARTITION_MOUNT_POINT"
+    err "$?" "$FUNCNAME" "failed to mount boot partition"
+
+    log "Mount boot partition...done"
+}
+
+mountRootPartition()
+{
+    req PARTITION_PREFIX $FUNCNAME
+    req ROOT_PARTITION_HDD $FUNCNAME
+    req ROOT_PARTITION_NB $FUNCNAME
+    req ROOT_PARTITION_MOUNT_POINT $FUNCNAME
+
+    log "Mount root partition..."
+
+    _cmd "mount $PARTITION_PREFIX$ROOT_PARTITION_HDD$ROOT_PARTITION_NB"\
+        " $ROOT_PARTITION_MOUNT_POINT"
+    err "$?" "$FUNCNAME" "failed to mount root partition"
+
+    log "Mount root partition...done"
+}
+
+unmountPartitions()
+{
+    req LIVECD_MOUNT_POINT $FUNCNAME
+
+    log "Unmount partitions..."
+
+    _cmd "umount -R $LIVECD_MOUNT_POINT"
+    err "$?" "$FUNCNAME" "failed to unmount partitions"
+
+    log "Unmount partitions...done"
 }
 

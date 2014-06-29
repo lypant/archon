@@ -49,10 +49,23 @@ basicSetup()
     #=======================================
 
     createSwapPartition
+    createBootPartition
+    createRootPartition
+    setBootPartitionBootable
+    createSwap
+    activateSwap
     createBootFileSystem
     createRootFileSystem
+    mountBootPartition
+    mountRootPartition
 
     log "Basic setup...done"
+
+    #=======================================
+    # Post installation actions
+    #=======================================
+
+    unmountPartitions
 }
 
 #===============================================================================
