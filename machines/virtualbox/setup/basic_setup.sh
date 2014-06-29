@@ -67,6 +67,7 @@ basicSetup()
     # Use only one of alternatives - rankMirrors or downloadMirrorList
     #rankMirrors
     downloadMirrorList
+    installBaseSystem
 
     log "Basic setup...done"
 

@@ -531,3 +531,16 @@ downloadMirrorList()
     log "Download mirror list...done"
 }
 
+installBaseSystem()
+{
+    req ROOT_PARTITION_MOUNT_POINT $FUNCNAME
+    req BASE_SYSTEM_PACKAGES $FUNCNAME
+
+    log "Install base system..."
+
+    _cmd "pacstrap -i $ROOT_PARTITION_MOUNT_POINT $BASE_SYSTEM_PACKAGES"
+    err "$?" "$FUNCNAME" "failed to install base system"
+
+    log "Install base system...done"
+}
+
