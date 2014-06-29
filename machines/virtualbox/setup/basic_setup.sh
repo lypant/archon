@@ -56,8 +56,9 @@ basicSetup()
     activateSwap
     createBootFileSystem
     createRootFileSystem
-    mountBootPartition
+    # Root partition has to be mounted first
     mountRootPartition
+    mountBootPartition
 
     log "Basic setup...done"
 

@@ -408,6 +408,22 @@ createRootFileSystem()
     log "Create root file system...done"
 }
 
+mountRootPartition()
+{
+    req PARTITION_PREFIX $FUNCNAME
+    req ROOT_PARTITION_HDD $FUNCNAME
+    req ROOT_PARTITION_NB $FUNCNAME
+    req ROOT_PARTITION_MOUNT_POINT $FUNCNAME
+
+    log "Mount root partition..."
+
+    _cmd "mount $PARTITION_PREFIX$ROOT_PARTITION_HDD$ROOT_PARTITION_NB"\
+        " $ROOT_PARTITION_MOUNT_POINT"
+    err "$?" "$FUNCNAME" "failed to mount root partition"
+
+    log "Mount root partition...done"
+}
+
 mountBootPartition()
 {
     req PARTITION_PREFIX $FUNCNAME
@@ -425,22 +441,6 @@ mountBootPartition()
     err "$?" "$FUNCNAME" "failed to mount boot partition"
 
     log "Mount boot partition...done"
-}
-
-mountRootPartition()
-{
-    req PARTITION_PREFIX $FUNCNAME
-    req ROOT_PARTITION_HDD $FUNCNAME
-    req ROOT_PARTITION_NB $FUNCNAME
-    req ROOT_PARTITION_MOUNT_POINT $FUNCNAME
-
-    log "Mount root partition..."
-
-    _cmd "mount $PARTITION_PREFIX$ROOT_PARTITION_HDD$ROOT_PARTITION_NB"\
-        " $ROOT_PARTITION_MOUNT_POINT"
-    err "$?" "$FUNCNAME" "failed to mount root partition"
-
-    log "Mount root partition...done"
 }
 
 unmountPartitions()
