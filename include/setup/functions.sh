@@ -150,6 +150,59 @@ installPackage()
     _log "Installing package $@...done"
 }
 
+# Delay is given in seconds
+delay()
+{
+    if [[ $# -lt 1 ]]; then
+        _log "$FUNCNAME: not enough parameters \($#\): $@"
+        exit 1
+    fi
+
+    local seconds="$1"
+
+    _log "Waiting $seconds""s..."
+    _cmd "sleep $seconds"
+    _log "Waiting $seconds""s...done"
+}
+
+createPartition()
+{
+    req PARTITION_OPERATIONS_DELAY $FUNCNAME
+
+    if [[ $# -lt 5 ]]; then
+        _log "$FUNCNAME: not enough parameters \($#\): $@"
+        _log "Aborting script!"
+        exit 1
+    fi
+
+    local disk="$1"         # e.g. /dev/sda
+    local partType="$2"     # "p" for prtimary, "e" for extented
+    local partNb="$3"       # e.g. "1" for "/dev/sda1"
+    local partSize="$4"     # e.g. "+1G" for 1GiB, "" for remaining space
+    local partCode="$5"     # e.g. "82" for swap, "83" for Linux, etc.
+    local partCodeNb=""     # No partition nb for code setting for 1st partition
+
+    # For first partition, provide partition number when entering
+    # partition code
+    if [[ $partNb -ne 1 ]]; then
+        partCodeNb=$partNb
+    fi
+
+    cat <<-EOF | fdisk $disk
+	n
+	$partType
+	$partNb
+	
+	$partSize
+	t
+	$partCodeNb
+	$partCode
+	w
+	EOF
+
+    delay $PARTITION_OPERATIONS_DELAY
+}
+
 #===============================================================================
 # Setup functions
 #===============================================================================
@@ -187,5 +240,30 @@ installLivecdVim()
     installPackage $VIM_PACKAGES
 
     _log "Install livecd vim...done"
+}
+
+#=======================================
+# Partitions and file systems
+#=======================================
+
+createSwapPartition()
+{
+    req PARTITION_PREFIX $FUNCNAME
+    req SWAP_PARTITION_HDD $FUNCNAME
+    req SWAP_PARTITION_TYPE $FUNCNAME
+    req SWAP_PARTITION_NB $FUNCNAME
+    req SWAP_PARTITION_SIZE $FUNCNAME
+    req SWAP_PARTITION_CODE $FUNCNAME
+
+    _log "Create swap partition..."
+
+    createPartition\
+        "$PARTITION_PREFIX$SWAP_PARTITION_HDD"\
+        "$SWAP_PARTITION_TYPE"\
+        "$SWAP_PARTITION_NB"\
+        "$SWAP_PARTITION_SIZE"\
+        "$SWAP_PARTITION_CODE"
+
+    _log "Create swap partition...done"
 }
 
