@@ -9,3 +9,5 @@ stored in a different branch, the master branch should look like this branch.
 Additionally, code refactoring, unification and simplification of functions
 should be done, where possible.
 
+TODO:
+    - Check if rank mirrors/download mirror list has an effect for target system

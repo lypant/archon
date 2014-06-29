@@ -60,6 +60,14 @@ basicSetup()
     mountRootPartition
     mountBootPartition
 
+    #=======================================
+    # Installation
+    #=======================================
+
+    # Use only one of alternatives - rankMirrors or downloadMirrorList
+    #rankMirrors
+    downloadMirrorList
+
     log "Basic setup...done"
 
     #=======================================

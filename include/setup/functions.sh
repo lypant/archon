@@ -128,6 +128,20 @@ err()
     fi
 }
 
+_uncommentVar()
+{
+    if [[ $# -lt 2 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
+
+	local var="$1"
+	local file="$2"
+
+    _cmd "sed -i \"s|^#\(${var}.*\)$|\1|\" ${file}"
+    return $?
+}
+
 #===============================================================================
 # Helper functions
 #===============================================================================
@@ -226,6 +240,20 @@ setPartitionBootable()
 	EOF
 
     delay $PARTITION_OPERATIONS_DELAY
+}
+
+_downloadFile()
+{
+    if [[ $# -lt 2 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
+
+    local src=$1
+    local dst=$2
+
+    cmd "curl -so $dst --create-dirs $src"
+    return $?
 }
 
 #===============================================================================
@@ -453,5 +481,53 @@ unmountPartitions()
     err "$?" "$FUNCNAME" "failed to unmount partitions"
 
     log "Unmount partitions...done"
+}
+
+#=======================================
+# Installation
+#=======================================
+
+# Note: rankMirrors takes longer time but
+# might provide faster servers than downloadMirrorList
+rankMirrors()
+{
+    req MIRROR_LIST_FILE $FUNCNAME
+    req MIRROR_LIST_FILE_BACKUP $FUNCNAME
+    req MIRROR_COUNT $FUNCNAME
+
+    log "Rank mirrors..."
+
+    # Backup original file
+    _cmd "cp $MIRROR_LIST_FILE $MIRROR_LIST_FILE_BACKUP"
+    err "$?" "$FUNCNAME" "failed to rank mirrors"
+
+    _cmd "rankmirrors -n $MIRROR_COUNT $MIRROR_LIST_FILE_BACKUP >"\
+        "$MIRROR_LIST_FILE"
+    err "$?" "$FUNCNAME" "failed to rank mirrors"
+
+    log "Rank mirrors...done"
+}
+
+# Note: downloadMirrorList is faster than rankMirrors but
+# might give slower servers
+downloadMirrorList()
+{
+    req MIRROR_LIST_FILE $FUNCNAME
+    req MIRROR_LIST_FILE_BACKUP $FUNCNAME
+    req MIRROR_LIST_URL $FUNCNAME
+
+    log "Download mirror list..."
+
+    # Backup original file
+    _cmd "cp $MIRROR_LIST_FILE $MIRROR_LIST_FILE_BACKUP"
+    err "$?" "$FUNCNAME" "failed to download mirror list"
+
+    _downloadFile $MIRROR_LIST_URL $MIRROR_LIST_FILE
+    err "$?" "$FUNCNAME" "failed to download mirror list"
+
+    _uncommentVar "Server" $MIRROR_LIST_FILE
+    err "$?" "$FUNCNAME" "failed to download mirror list"
+
+    log "Download mirror list...done"
 }
 
