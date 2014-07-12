@@ -1378,6 +1378,56 @@ installCustomizedDvtm()
     log "Install customized dvtm...done"
 }
 
+installElinks()
+{
+    req ELINKS_PACKAGES $FUNCNAME
+
+    log "Install elinks..."
+
+    installPackage $ELINKS_PACKAGES
+
+    log "Install elinks...done"
+}
+
+installCmus()
+{
+    req CMUS_PACKAGES $FUNCNAME
+
+    log "Install cmus..."
+
+    installPackage $CMUS_PACKAGES
+
+    log "Install cmus...done"
+}
+
+installVirtualboxGuestAdditions()
+{
+    req VIRTUALBOX_GUEST_UTILS_PACKAGES $FUNCNAME
+    req VIRTUALBOX_GUEST_UTILS_MODULES $FUNCNAME
+    req VIRTUALBOX_GUEST_UTILS_MODULES_FILE $FUNCNAME
+
+    log "Install virtualbox guest additions..."
+
+    # Install the packages
+    installPackage $VIRTUALBOX_GUEST_UTILS_PACKAGES
+
+    # Load required modules
+    _cmd "modprobe -a $VIRTUALBOX_GUEST_UTILS_MODULES"
+    err "$?" "$FUNCNAME" "failed to load required modules"
+
+    # Setup modules to be loaded on startup
+    if [ ! -z "$VIRTUALBOX_GUEST_UTILS_MODULES" ]; then
+        for module in $VIRTUALBOX_GUEST_UTILS_MODULES
+        do
+            _cmd "echo $module >> $VIRTUALBOX_GUEST_UTILS_MODULES_FILE"
+            err "$?" "$FUNCNAME"\
+                "failed to setup module to be loaded on startup"
+        done
+    fi
+
+    log "Install virtualbox guest additions...done"
+}
+
 #===================
 # Other
 #===================

@@ -120,6 +120,11 @@ customSetup()
 
     #installDvtm            # Official repo version not good enough
     installCustomizedDvtm   # Use customized version instead
+    installElinks
+    installCmus
+    # TODO: installJdk
+    # TODO: installAndroidEnv
+    installVirtualboxGuestAdditions
 
     #===================
     # Other
