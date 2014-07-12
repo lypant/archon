@@ -1428,6 +1428,150 @@ installVirtualboxGuestAdditions()
     log "Install virtualbox guest additions...done"
 }
 
+#=========
+# GUI-based
+#=========
+
+installRxvtUnicode()
+{
+    req RXVTUNICODE_PACKAGES $FUNCNAME
+
+    log "Install rxvt unicode..."
+
+    installPackage $RXVTUNICODE_PACKAGES
+
+    log "Install rxvt unicode...done"
+}
+
+installGuiFonts()
+{
+    req GUI_FONT_PACKAGES $FUNCNAME
+
+    log "Install gui fonts..."
+
+    installPackage $GUI_FONT_PACKAGES
+
+    log "Install gui fonts...done"
+}
+
+installDwm()
+{
+    req DWM_PACKAGES $FUNCNAME
+
+    log "Install dwm..."
+
+    installPackage $DWM_PACKAGES
+
+    log "Install dwm...done"
+}
+
+installCustomizedDwm()
+{
+    req DWM_GIT_REPO $FUNCNAME
+    req DWM_BUILD_PATH $FUNCNAME
+    req DWM_BASE_COMMIT $FUNCNAME
+    req DWM_CUSTOM_BRANCH $FUNCNAME
+    req PATCHES_DIR $FUNCNAME
+    req DWM_CUSTOM_PATCH_FILE $FUNCNAME
+    req CUSTOM_COMMIT_COMMENT $FUNCNAME
+
+    log "Installing customized dwm..."
+
+    # Clone project from git
+    _cmd "git clone $DWM_GIT_REPO $DWM_BUILD_PATH"
+    err "$?" "$FUNCNAME" "failed to clone dwm repository"
+
+    # Newest commit was not working... use specific, working version
+    _cmd "git -C $DWM_BUILD_PATH checkout $DWM_BASE_COMMIT -b $DWM_CUSTOM_BRANCH"
+    err "$?" "$FUNCNAME" "failed to checkout older commit as a new branch"
+
+    # Apply patch with customizations
+    _cmd "git -C $DWM_BUILD_PATH apply $PATCHES_DIR/$DWM_CUSTOM_PATCH_FILE"
+    err "$?" "$FUNCNAME" "failed to apply custom dwm patch"
+
+    # Add changes introduced with patch. Use add . since new files may be added.
+    _cmd "git -C $DWM_BUILD_PATH add ."
+    err "$?" "$FUNCNAME" "failed to add patch changes"
+
+    # Save configuration as new commit
+    _cmd "git -C $DWM_BUILD_PATH commit -m \"$CUSTOM_COMMIT_COMMENT\""
+    err "$?" "$FUNCNAME" "failed to commit adjustments"
+
+    # Install
+    _cmd "make -C $DWM_BUILD_PATH clean install"
+    err "$?" "$FUNCNAME" "failed to build and install dwm"
+
+    log "Installing customized dwm...done"
+}
+
+installDmenu()
+{
+    req DMENU_PACKAGES $FUNCNAME
+
+    log "Install dmenu..."
+
+    installPackage $DMENU_PACKAGES
+
+    log "Install dmenu...done"
+}
+
+installOpera()
+{
+    req OPERA_PACKAGES $FUNCNAME
+
+    log "Install opera..."
+
+    installPackage $OPERA_PACKAGES
+
+    log "Install opera...done"
+}
+
+installConky()
+{
+    req CONKY_PACKAGES $FUNCNAME
+
+    log "Install conky..."
+
+    installPackage $CONKY_PACKAGES
+
+    log "Install conky...done"
+}
+
+# To be able to bind special keyboard keys to commands
+installXbindkeys()
+{
+    req XBINDKEYS_PACKAGES $FUNCNAME
+
+    log "Install xbindkeys..."
+
+    installPackage $XBINDKEYS_PACKAGES
+
+    log "Install xbindkeys...done"
+}
+
+# To fix misbehaving Java windows
+installWmname()
+{
+    req WMNAME_PACKAGES $FUNCNAME
+
+    log "Install wmname..."
+
+    installPackage $WMNAME_PACKAGES
+
+    log "Install wmname...done"
+}
+
+installVlc()
+{
+    req VLC_PACKAGES $FUNCNAME
+
+    log "Install vlc..."
+
+    installPackage $VLC_PACKAGES
+
+    log "Install vlc...done"
+}
+
 #===================
 # Other
 #===================

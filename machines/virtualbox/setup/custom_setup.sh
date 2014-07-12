@@ -126,6 +126,21 @@ customSetup()
     # TODO: installAndroidEnv
     installVirtualboxGuestAdditions
 
+    #=========
+    # GUI-based
+    #=========
+
+    installRxvtUnicode
+    installGuiFonts
+    #installDwm             # Official repo version not good enough
+    installCustomizedDwm    # Use customized version instead
+    installDmenu
+    installOpera
+    installConky
+    installXbindkeys
+    installWmname           # Fix misbehaving Java apps in dwm
+    installVlc
+
     #===================
     # Other
     #===================
