@@ -1236,6 +1236,50 @@ disablePcSpeaker()
     log "Disable pc speaker...done"
 }
 
+#=======================================
+# Project repository cloning
+#=======================================
+
+cloneProjectRepo()
+{
+    req PROJECT_REPO_URL $FUNCNAME
+    req PROJECT_REPO_DST $FUNCNAME
+
+    log "Clone $PROJECT_NAME repo..."
+
+    _cmd "git clone $PROJECT_REPO_URL $PROJECT_REPO_DST"
+    err "$?" "$FUNCNAME" "failed to clone $PROJECT_NAME repo"
+
+    log "Clone $PROJECT_NAME repo...done"
+}
+
+checkoutCurrentBranch()
+{
+    req PROJECT_REPO_DST $FUNCNAME
+    req PROJECT_BRANCH $FUNCNAME
+
+    log "Checkout current branch..."
+
+    # Execute git commands from destination path
+    _cmd "git -C $PROJECT_REPO_DST checkout $PROJECT_BRANCH"
+    err "$?" "$FUNCNAME" "failed to checkout current branch"
+
+    log "Checkout current branch...done"
+}
+
+copyOverProjectFiles()
+{
+    req PROJECT_ROOT_PATH $FUNCNAME
+    req USER1_HOME $FUNCNAME
+
+    log "Copy over $PROJECT_NAME files..."
+
+    _cmd "cp -r $PROJECT_ROOT_PATH $USER1_HOME"
+    err "$?" "$FUNCNAME" "failed to copy over $PROJECT_NAME files"
+
+    log "Copy over $PROJECT_NAME files...done"
+}
+
 #===================
 # Other
 #===================

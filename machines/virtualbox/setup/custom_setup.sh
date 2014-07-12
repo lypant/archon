@@ -87,6 +87,14 @@ customSetup()
     setPcmModuleLoading
     disablePcSpeaker
 
+    #=======================================
+    # Project repository cloning
+    #=======================================
+
+    cloneProjectRepo
+    checkoutCurrentBranch
+    copyOverProjectFiles
+
     #===================
     # Other
     #===================
