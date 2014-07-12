@@ -1314,11 +1314,13 @@ copyProjectLogFiles()
 {
     req LOG_DIR $FUNCNAME
     req PROJECT_REPO_DST $FUNCNAME
+    req MACHINES_DIR_NAME $FUNCNAME
+    req MACHINE $FUNCNAME
 
     # Do not perform typical logging in this function...
     # This would spoil nice logs copied to user's dir
 
-    cp -r $LOG_DIR $PROJECT_REPO_DST
+    cp -r $LOG_DIR $PROJECT_REPO_DST/$MACHINES_DIR_NAME/$MACHINE
     err "$?" "$FUNCNAME" "failed to copy project log files"
 }
 
