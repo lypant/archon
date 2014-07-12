@@ -973,3 +973,55 @@ setUser1Sudoer()
     log "Set user1 sudoer...done"
 }
 
+#===================
+# Common system packages
+#===================
+
+installAlsa()
+{
+    req ALSA_PACKAGES $FUNCTION
+
+    log "Install alsa..."
+
+    installPackage $ALSA_PACKAGES
+
+    log "Install alsa...done"
+}
+
+#===================
+# Common software packages
+#===================
+
+installVim()
+{
+    req VIM_PACKAGES $FUNCTION
+
+    log "Install vim..."
+
+    installPackage $VIM_PACKAGES
+
+    log "Install vim...done"
+}
+
+installMc()
+{
+    req MC_PACKAGES $FUNCTION
+
+    log "Install mc..."
+
+    installPackage $MC_PACKAGES
+
+    log "Install mc...done"
+}
+
+installGit()
+{
+    req GIT_PACKAGES $FUNCTION
+
+    log "Install git..."
+
+    installPackage $GIT_PACKAGES
+
+    log "Install git...done"
+}
+

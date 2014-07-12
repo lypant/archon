@@ -53,6 +53,21 @@ customSetup()
     setUser1Password
     setUser1Sudoer
 
+    #===================
+    # Common system packages
+    #===================
+
+    updatePackageList
+    installAlsa
+
+    #===================
+    # Common software packages
+    #===================
+
+    installVim
+    installMc
+    installGit
+
     log "Custom setup...done"
 }
 
