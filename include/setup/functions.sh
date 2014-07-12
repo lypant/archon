@@ -286,9 +286,67 @@ setLocale()
     log "Set locale for $1...done"
 }
 
+addUser()
+{
+    if [[ $# -lt 4 ]];then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        err "1" "$FUNCNAME" "failed to add user"
+    fi
+
+    local mainGroup="$1"
+    local additionalGroups="$2"
+    local shell="$3"
+    local name="$4"
+
+    log "Add user..."
+
+    _cmd "useradd -m -g $mainGroup -G $additionalGroups -s $shell $name"
+    err "$?" "$FUNCNAME" "failed to add user"
+
+    log "Add user...done"
+}
+
+setUserPassword()
+{
+    if [[ $# -lt 1 ]];then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        err "1" "$FUNCNAME" "failed to set user password"
+    fi
+
+    log "Set user password..."
+
+    local ask=1
+    local name="$1"
+
+    while [ $ask -ne 0 ]; do
+        log "Provide password for user $name"
+        _cmd "passwd $name"
+        ask=$?
+    done
+
+    log "Set user password...done"
+}
+
+setSudoer()
+{
+    if [[ $# -lt 1 ]];then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        err "1" "$FUNCNAME" "failed to set sudoer"
+    fi
+
+    log "Set sudoer..."
+
+    local name="$1"
+
+    # TODO - do it in a safer way... Here just for experiments
+    _cmd "echo \"$name ALL=(ALL) ALL\" >> /etc/sudoers"
+    err "$?" "$FUNCNAME" "failed to set sudoer"
+
+    log "Set sudoer...done"
+}
 
 #===============================================================================
-# Setup functions
+# Basic setup functions
 #===============================================================================
 
 #=======================================
@@ -865,5 +923,53 @@ copyProjectFiles()
     # This is only for livecd output and logs consistency
     log "Copy $PROJECT_NAME files..."
     log "Copy $PROJECT_NAME files...done"
+}
+
+#===============================================================================
+# Custom setup functions
+#===============================================================================
+
+#=======================================
+# Common setup
+#=======================================
+
+#===================
+# Common users
+#===================
+
+addUser1()
+{
+    req USER1_MAIN_GROUP $FUNCTION
+    req USER1_ADDITIONAL_GROUPS $FUNCTION
+    req USER1_SHELL $FUNCTION
+    req USER1_NAME $FUNCTION
+
+    log "Add user1..."
+
+    addUser $USER1_MAIN_GROUP $USER1_ADDITIONAL_GROUPS $USER1_SHELL $USER1_NAME
+
+    log "Add user1...done"
+}
+
+setUser1Password()
+{
+    req USER1_NAME $FUNCTION
+
+    log "Set user 1 password..."
+
+    setUserPassword $USER1_NAME
+
+    log "Set user 1 password...done"
+}
+
+setUser1Sudoer()
+{
+    req USER1_NAME $FUNCTION
+
+    log "Set user1 sudoer..."
+
+    setSudoer $USER1_NAME
+
+    log "Set user1 sudoer...done"
 }
 

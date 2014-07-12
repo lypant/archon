@@ -41,6 +41,18 @@ customSetup()
 
     setConsoleFontTemporarily
 
+    #=======================================
+    # Common setup
+    #=======================================
+
+    #===================
+    # Common users
+    #===================
+
+    addUser1
+    setUser1Password
+    setUser1Sudoer
+
     log "Custom setup...done"
 }
 
