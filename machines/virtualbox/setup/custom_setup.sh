@@ -87,7 +87,20 @@ customSetup()
     setPcmModuleLoading
     disablePcSpeaker
 
+    #===================
+    # Other
+    #===================
+
+    recreateImage   # Required by mkinitcpio-related steps
+    changeUser1HomeOwnership
+
     log "Custom setup...done"
+
+    #=======================================
+    # Post setup actions
+    #=======================================
+
+    copyProjectLogFiles
 }
 
 #===============================================================================

@@ -359,6 +359,24 @@ setSudoer()
     log "Set sudoer...done"
 }
 
+changeHomeOwnership()
+{
+    if [[ $# -lt 2 ]];then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
+
+    log "Change home dir ownership..."
+
+    local userName="$1"
+    local userHome="$2"
+
+    _cmd "chown -R $userName:users $userHome"
+    err "$?" "$FUNCNAME" "failed to change home dir ownership"
+
+    log "Change home dir ownership...done"
+}
+
 #===============================================================================
 # Basic setup functions
 #===============================================================================
@@ -1216,5 +1234,47 @@ disablePcSpeaker()
     err "$?" "$FUNCNAME" "failed to disable pc speaker"
 
     log "Disable pc speaker...done"
+}
+
+#===================
+# Other
+#===================
+
+recreateImage()
+{
+    log "Recreate linux image..."
+
+    _cmd "mkinitcpio -p linux"
+    err "$?" "$FUNCNAME" "failed to set recreate linux image"
+
+    log "Recreate linux image...done"
+}
+
+changeUser1HomeOwnership()
+{
+    req USER1_NAME $FUNCNAME
+    req USER1_HOME $FUNCNAME
+
+    log "Change user1 home ownership..."
+
+    changeHomeOwnership "$USER1_NAME" "$USER1_HOME"
+
+    log "Change user1 home ownership...done"
+}
+
+#=======================================
+# Post setup actions
+#=======================================
+
+copyProjectLogFiles()
+{
+    req LOG_DIR $FUNCNAME
+    req PROJECT_REPO_DST $FUNCNAME
+
+    # Do not perform typical logging in this function...
+    # This would spoil nice logs copied to user's dir
+
+    cp -r $LOG_DIR $PROJECT_REPO_DST
+    err "$?" "$FUNCNAME" "failed to copy project log files"
 }
 
