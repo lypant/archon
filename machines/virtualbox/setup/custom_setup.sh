@@ -95,6 +95,32 @@ customSetup()
     checkoutCurrentBranch
     copyOverProjectFiles
 
+    #=======================================
+    # Individual setup
+    #=======================================
+
+    #===================
+    # Individual users
+    #===================
+
+    #===================
+    # Individual system packages
+    #===================
+
+    installXorgBasic
+    installXorgAdditional
+
+    #===================
+    # Individual software packages
+    #===================
+
+    #=========
+    # Console-based
+    #=========
+
+    #installDvtm            # Official repo version not good enough
+    installCustomizedDvtm   # Use customized version instead
+
     #===================
     # Other
     #===================

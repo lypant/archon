@@ -1280,6 +1280,104 @@ copyOverProjectFiles()
     log "Copy over $PROJECT_NAME files...done"
 }
 
+#=======================================
+# Individual setup
+#=======================================
+
+#===================
+# Individual users
+#===================
+
+#===================
+# Individual system packages
+#===================
+
+installXorgBasic()
+{
+    req XORG_BASIC_PACKAGES $FUNCNAME
+
+    log "Install xorg basics..."
+
+    installPackage $XORG_BASIC_PACKAGES
+
+    log "Install xorg basics...done"
+}
+
+installXorgAdditional()
+{
+    req XORG_ADDITIONAL_PACKAGES $FUNCNAME
+
+    log "Install xorg additional..."
+
+    installPackage $XORG_ADDITIONAL_PACKAGES
+
+    log "Install xorg additional...done"
+}
+
+#===================
+# Individual software packages
+#===================
+
+#=========
+# Console-based
+#=========
+
+installDvtm()
+{
+    req DVTM_PACKAGES $FUNCNAME
+    log "Install dvtm..."
+
+    installPackage $DVTM_PACKAGES
+
+    log "Install dvtm...done"
+}
+
+installCustomizedDvtm()
+{
+    req DVTM_GIT_REPO $FUNCNAME
+    req DVTM_BUILD_PATH $FUNCNAME
+    req DVTM_CUSTOM_BRANCH $FUNCNAME
+    req DVTM_ACTIVE_COLOR $FUNCNAME
+    req DVTM_MOD_KEY $FUNCNAME
+    req CUSTOM_COMMIT_COMMENT $FUNCNAME
+
+    log "Install customized dvtm..."
+
+    _cmd "git clone $DVTM_GIT_REPO $DVTM_BUILD_PATH"
+    err "$?" "$FUNCNAME" "failed to clone dvtm repository"
+
+    _cmd "git -C $DVTM_BUILD_PATH checkout -b $DVTM_CUSTOM_BRANCH"
+    err "$?" "$FUNCNAME" "failed to checkout new branch"
+
+    # Change default blue color to something brighter
+    # to make it visible on older CRT monitor
+    local src="BLUE"
+    local dst="$DVTM_ACTIVE_COLOR"
+    local subst="s|$src|$dst|g"
+    local file="$DVTM_BUILD_PATH/config.def.h"
+    _cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to change active color"
+
+    # Change default mod key - 'g' is not convenient to be used with CTRL key
+    src="#define MOD CTRL('g')"
+    dst="#define MOD CTRL('$DVTM_MOD_KEY')"
+    subst="s|$src|$dst|g"
+    file="$DVTM_BUILD_PATH/config.def.h"
+    _cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to change mod key"
+
+    _cmd "git -C $DVTM_BUILD_PATH commit -a -m \"$CUSTOM_COMMIT_COMMENT\""
+    err "$?" "$FUNCNAME" "failed to commit adjustments"
+
+    _cmd "make -C $DVTM_BUILD_PATH"
+    err "$?" "$FUNCNAME" "failed to make dvtm"
+
+    _cmd "make -C $DVTM_BUILD_PATH install"
+    err "$?" "$FUNCNAME" "failed to install dvtm"
+
+    log "Install customized dvtm...done"
+}
+
 #===================
 # Other
 #===================
