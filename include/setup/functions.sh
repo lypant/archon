@@ -142,6 +142,20 @@ _uncommentVar()
     return $?
 }
 
+_commentVar()
+{
+    if [[ $# -lt 2 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
+
+	local var="$1"
+	local file="$2"
+
+    _cmd "sed -i \"s|^\(${var}.*\)$|#\1|\" ${file}"
+    return $?
+}
+
 #===============================================================================
 # Helper functions
 #===============================================================================
@@ -933,6 +947,18 @@ copyProjectFiles()
 # Common setup
 #=======================================
 
+setMultilibRepository()
+{
+    log "Set multilib repository..."
+
+    # Use repository for multilib support - to allow 32B apps on 64B system
+    # Needed for Android development
+    _cmd "sed -i '/\[multilib\]/,/Include/ s|^#\(.*\)|\1|' /etc/pacman.conf"
+    err "$?" "$FUNCNAME" "failed to set multilib repository"
+
+    log "Set multilib repository...done"
+}
+
 #===================
 # Common users
 #===================
@@ -1023,5 +1049,172 @@ installGit()
     installPackage $GIT_PACKAGES
 
     log "Install git...done"
+}
+
+#===================
+# Common configuration
+#===================
+
+configurePacman()
+{
+    log "Configure pacman..."
+
+    # Present total download instead of single package percentage
+    _uncommentVar "TotalDownload" "/etc/pacman.conf"
+    err "$?" "$FUNCNAME" "failed to configure pacman"
+
+    log "Configure pacman...done"
+}
+
+configureGitUser()
+{
+    req GIT_USER_EMAIL $FUNCNAME
+    req GIT_USER_NAME $FUNCNAME
+
+    log "Configure git user..."
+
+    _cmd "git config --global user.email \"$GIT_USER_EMAIL\""
+    err "$?" "$FUNCNAME" "failed to configure git user email"
+
+    _cmd "git config --global user.name \"$GIT_USER_NAME\""
+    err "$?" "$FUNCNAME" "failed to configure git user name"
+
+    log "Configure git user...done"
+}
+
+setBootloaderKernelParams()
+{
+    req ROOT_PARTITION_HDD $FUNCNAME
+    req ROOT_PARTITION_NB $FUNCNAME
+    req BOOTLOADER_KERNEL_PARAMS $FUNCNAME
+
+    log "Set bootloader kernel params..."
+
+    local src="APPEND root.*$"
+    local path="$PARTITION_PREFIX$ROOT_PARTITION_HDD$ROOT_PARTITION_NB"
+    local bkp="$BOOTLOADER_KERNEL_PARAMS"
+    local params="$path $bkp"
+    local dst="APPEND root=$params"
+    local subst="s|$src|$dst|"
+    local file="/boot/syslinux/syslinux.cfg"
+    _cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to set bootloader kernel params"
+
+    log "Set bootloader kernel params...done"
+}
+
+disableSyslinuxBootMenu()
+{
+    log "Disable syslinux boot menu..."
+
+    _commentVar "UI" "/boot/syslinux/syslinux.cfg"
+    err "$?" "$FUNCNAME" "failed to disable syslinux boot menu"
+
+    log "Disable syslinux boot menu...done"
+}
+
+setConsoleLoginMessage()
+{
+    # Do not require COSNOLE_LOGIN_MSG - when empty, no message will be used
+
+    log "Set console login message..."
+
+    # Remove welcome message
+    _cmd "rm -f /etc/issue"
+    err "$?" "$FUNCNAME" "failed to remove /etc/issue file"
+
+    # Set new welcome message, if present
+    if [ ! -z "$CONSOLE_LOGIN_MSG" ];then
+        _cmd "echo $CONSOLE_LOGIN_MSG > /etc/issue"
+        err "$?" "$FUNCNAME" "failed to set console login message"
+    else
+        log "Console welcome message not set, /etc/issue file deleted"
+    fi
+
+    log "Set console login message...done"
+}
+
+# This requires image recreation for changes to take effect
+setMkinitcpioModules()
+{
+    req MKINITCPIO_MODULES $FUNCNAME
+
+    log "Setting mkinitcpio modules..."
+
+    local src="^MODULES.*$"
+    local dst="MODULES=\\\"$MKINITCPIO_MODULES\\\""
+    local subst="s|$src|$dst|"
+    local file="/etc/mkinitcpio.conf"
+    _cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to set mkinitcpio modules"
+
+    log "Setting mkinitcpio modules...done"
+}
+
+# This requires image recreation for changes to take effect
+setMkinitcpioHooks()
+{
+    req MKINITCPIO_HOOKS $FUNCNAME
+
+    log "Set mkinitcpio hooks..."
+
+    # Set hooks
+    local src="^HOOKS.*$"
+    local dst="HOOKS=\\\"$MKINITCPIO_HOOKS\\\""
+    local subst="s|$src|$dst|"
+    local file="/etc/mkinitcpio.conf"
+    _cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to set mkinitcpio hooks"
+
+    log "Set mkinitcpio hooks...done"
+}
+
+initAlsa()
+{
+    log "Init alsa..."
+
+    _cmd "alsactl init"
+    # May return error 99 - ignore it
+
+    log "Init alsa...done"
+}
+
+unmuteAlsa()
+{
+    log "Unmute alsa..."
+
+    _cmd "amixer sset Master unmute"
+    err "$?" "$FUNCNAME" "failed to unmute alsa"
+
+    log "Unmute alsa...done"
+}
+
+setPcmModuleLoading()
+{
+    req KERNEL_MODULES_PATH $FUNCNAME
+    req SND_PCM_OSS_FILE $FUNCNAME
+    req SND_PCM_OSS_MODULE $FUNCNAME
+
+    log "Set snd-pcm-oss module loading..."
+
+    _cmd "echo $SND_PCM_OSS_MODULE >> $KERNEL_MODULES_PATH/$SND_PCM_OSS_FILE"
+    err "$?" "$FUNCNAME" "failed to set snd-pcm-oss module loading"
+
+    log "Set snd-pcm-oss module loading...done"
+}
+
+disablePcSpeaker()
+{
+    req PCSPEAKER_MODULE $FUNCNAME
+    req MODPROBE_PATH $FUNCNAME
+    req NO_PCSPEAKER_FILE $FUNCNAME
+
+    log "Disable pc speaker..."
+
+    _cmd "echo \"blacklist $PCSPEAKER_MODULE\" >>"\
+        " $MODPROBE_PATH/$NO_PCSPEAKER_FILE"
+    err "$?" "$FUNCNAME" "failed to disable pc speaker"
+
+    log "Disable pc speaker...done"
 }
 

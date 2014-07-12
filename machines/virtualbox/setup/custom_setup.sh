@@ -45,6 +45,8 @@ customSetup()
     # Common setup
     #=======================================
 
+    setMultilibRepository   # Needed for Android development
+
     #===================
     # Common users
     #===================
@@ -67,6 +69,23 @@ customSetup()
     installVim
     installMc
     installGit
+
+    #===================
+    # Common configuration
+    #===================
+
+    configurePacman
+    configureGitUser
+    setBootloaderKernelParams
+    disableSyslinuxBootMenu
+    setConsoleLoginMessage
+    # Not needed for VirtualBox
+    #setMkinitcpioModules    # Requires linux image recreation
+    setMkinitcpioHooks      # Requires linux image recreation
+    initAlsa                # Initialize all devices to a default state
+    unmuteAlsa              # This should be enough on real HW
+    setPcmModuleLoading
+    disablePcSpeaker
 
     log "Custom setup...done"
 }
