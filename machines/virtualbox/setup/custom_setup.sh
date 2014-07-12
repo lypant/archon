@@ -147,6 +147,38 @@ customSetup()
 
     setVirtualboxSharedFolder
 
+    #=========
+    # Dotfiles
+    #=========
+
+    # Bash etc.
+    installBashprofileDotfile
+    installBashrcDotfile
+    installDircolorssolarizedDotfile
+
+    # vim
+    installVimrcDotfile
+    installVimsolarizedDotfile
+
+    # mc
+    installMcsolarizedDotfile
+
+    # git
+    installGitconfigDotfile
+
+    # cmus
+    installCmusColorThemeDotfile
+
+    # X
+    installXinitrcDotfile
+    installXresourcesDotfile
+
+    # conky
+    installConkyDotfile
+
+    # xbindkeys
+    installXbindkeysDotfile
+
     #===================
     # Other
     #===================

@@ -424,6 +424,118 @@ _createLink()
     return $retval
 }
 
+_createDir()
+{
+    if [[ $# -lt 1 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
+
+    local dir="$1"
+    local retval=0
+
+    # Check if backup dir exists
+    if [[ ! -d $dir ]]; then
+        _cmd "mkdir -p $dir"
+        retval="$?"
+    fi
+
+    return $retval
+}
+
+_backupFile()
+{
+    if [[ $# -lt 2 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
+
+    local original=$1
+    local backup=$2
+    local retval=0
+
+    # If original file exists, move it to backup dir
+    if [[ -e $original ]]; then
+        _cmd "cp $original $backup"
+        retval=$?
+    fi
+
+    return $retval
+}
+
+_installDotfile()
+{
+    req DOTFILES_BACKUP_DIR $FUNCNAME
+    req DOTFILES_SOURCE_DIR $FUNCNAME
+    req USER1_HOME $FUNCNAME
+
+    if [[ $# -lt 2 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
+
+    local dotfileName="$1"
+    local dotfileHomePath="$2"
+    local dotfile=""
+    local nested=0
+    local now=`date +"%Y%m%d_%H%M"`
+
+    # Avoid extra slash when path is empty
+    if [[ -z "$dotfileHomePath" ]]; then
+        dotfile="$dotfileName"
+        nested=0
+    else
+        dotfile="$dotfileHomePath/$dotfileName"
+        nested=1
+    fi
+
+    # Ensure that dotfiles backup dir exists
+    _createDir "$DOTFILES_BACKUP_DIR"
+    retval="$?"
+    if [[ $retval -ne 0  ]]; then
+        log "$FUNCNAME: failed to create dotfiles backup dir: $retval"
+        return 2
+    fi
+
+    # Backup original dotfile, if it exists
+    _backupFile "$USER1_HOME/$dotfile" "$DOTFILES_BACKUP_DIR/$dotfile"_"$now"
+    retval="$?"
+    if [[ $retval -ne 0  ]]; then
+        log "$FUNCNAME: failed to backup dotfile $dotfile: $retval"
+        return 3
+    fi
+
+    # Remove original dotfile
+    _cmd "rm -f $USER1_HOME/$dotfile"
+    retval="$?"
+    if [[ $retval -ne 0  ]]; then
+        log "$FUNCNAME: failed to delete original dotfile"\
+            " $USER1_HOME/$dotfile: $retval"
+        return 4
+    fi
+
+    # Ensure that for nested dotfile the path exists
+    if [[ $nested -eq 1 ]]; then
+        _cmd "mkdir -p $USER1_HOME/$dotfileHomePath"
+        retval="$?"
+        if [[ $retval -ne 0  ]]; then
+            log "$FUNCNAME: failed to create path for nested dotfile: $retval"
+            return 5
+        fi
+    fi
+
+    # Create link to new dotfile
+    _createLink "$DOTFILES_SOURCE_DIR/$dotfile" "$USER1_HOME/$dotfile"
+    retval="$?"
+    if [[ $retval -ne 0  ]]; then
+        log "$FUNCNAME: failed to create link to new dotfile"\
+            "$DOTFILES_SOURCE_DIR/$dotfile: $retval"
+        return 6
+    fi
+
+    return $retval
+}
+
 #===============================================================================
 # Basic setup functions
 #===============================================================================
@@ -1657,6 +1769,142 @@ setVirtualboxSharedFolder()
     err "$?" "$FUNCNAME" "failed to create link to shared folder"
 
     log "Set virtualbox shared folder...done"
+}
+
+#=========
+# Dotfiles
+#=========
+
+# Bash etc.
+
+installBashprofileDotfile()
+{
+    log "Install bash_profile dotfile..."
+
+    _installDotfile ".bash_profile" ""
+    err "$?" "$FUNCNAME" "failed to install bash_profile dotfile"
+
+    log "Install bash_profile dotfile...done"
+}
+
+installBashrcDotfile()
+{
+    log "Install bashrc dotfile..."
+
+    _installDotfile ".bashrc" ""
+    err "$?" "$FUNCNAME" "failed to install bashrc dotfile"
+
+    log "Install bashrc dotfile...done"
+}
+
+installDircolorssolarizedDotfile()
+{
+    log "Install .dir_colors_solarized dotfile..."
+
+    _installDotfile ".dir_colors_solarized" ""
+    err "$?" "$FUNCNAME" "failed to install .dir_colors_solarized dotfile"
+
+    log "Install .dir_colors_solarized dotfile...done"
+}
+
+# vim
+
+installVimrcDotfile()
+{
+    log "Install vimrc dotfile..."
+
+    _installDotfile ".vimrc" ""
+    err "$?" "$FUNCNAME" "failed to install vimrc dotfile"
+
+    log "Install vimrc dotfile...done"
+}
+
+installVimsolarizedDotfile()
+{
+    log "Install solarized.vim dotfile..."
+
+    _installDotfile "solarized.vim" ".vim/colors"
+    err "$?" "$FUNCNAME" "failed to install solarized.vim dotfile"
+
+    log "Install solarized.vim dotfile...done"
+}
+
+# mc
+
+installMcsolarizedDotfile()
+{
+    log "Install mc_solarized.ini dotfile..."
+
+    _installDotfile "mc_solarized.ini" ".config/mc"
+    err "$?" "$FUNCNAME" "failed to install mc_solarized.ini dotfile"
+
+    log "Install mc_solarized.ini dotfile...done"
+}
+
+# git
+
+installGitconfigDotfile()
+{
+    log "Install .gitconfig dotfile..."
+
+    _installDotfile ".gitconfig" ""
+    err "$?" "$FUNCNAME" "failed to install .gitconfig dotfile"
+
+    log "Install .gitconfig dotfile...done"
+}
+
+# cmus
+
+installCmusColorThemeDotfile()
+{
+    log "Install cmus color theme dotfile..."
+
+    _installDotfile "solarized.theme" ".cmus"
+    err "$?" "$FUNCNAME" "failed to install cmus color theme"
+
+    log "Install cmus color theme dotfile...done"
+}
+
+# X
+
+installXinitrcDotfile()
+{
+    log "Install .xinitrc dotfile..."
+
+    _installDotfile ".xinitrc" ""
+    err "$?" "$FUNCNAME" "failed to install .xinitrc dotfile"
+
+    log "Install .xinitrc dotfile...done"
+}
+
+installXresourcesDotfile()
+{
+    log "Install .Xresources dotfile..."
+
+    _installDotfile ".Xresources" ""
+    err "$?" "$FUNCNAME" "failed to install .Xresources dotfile"
+
+    log "Install .Xresources dotfile...done"
+}
+
+installConkyDotfile()
+{
+    log "Install .conkyrc dotfile..."
+
+    _installDotfile ".conkyrc" ""
+    err "$?" "$FUNCNAME" "failed to install .conkyrc dotfile"
+
+    log "Install .conkyrc dotfile...done"
+}
+
+installXbindkeysDotfile()
+{
+    log "Install .xbindkeysrc dotfile..."
+
+    _installDotfile ".xbindkeysrc" ""
+    err "$?" "$FUNCNAME" "failed to install .xbindkeys dotfile"
+
+    log "Install .xbindkeysrc dotfile...done"
 }
 
 #===================
