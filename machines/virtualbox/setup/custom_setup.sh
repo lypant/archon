@@ -142,6 +142,12 @@ customSetup()
     installVlc
 
     #===================
+    # Individual configuration
+    #===================
+
+    setVirtualboxSharedFolder
+
+    #===================
     # Other
     #===================
 

@@ -377,6 +377,53 @@ changeHomeOwnership()
     log "Change home dir ownership...done"
 }
 
+_enableService()
+{
+    if [[ $# -lt 1 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
+
+    _cmd "systemctl enable $1"
+    return $?
+}
+
+_startService()
+{
+    if [[ $# -lt 1 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
+
+    _cmd "systemctl start $1"
+    return $?
+}
+
+_createLink()
+{
+    if [[ $# -lt 2 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
+
+    local linkTarget=$1
+    local linkName=$2
+    local retval=0
+
+    # Check if target exists
+    if [[ -e $linkTarget ]]; then
+        # File exists
+        # create symlink
+        _cmd "ln -s $linkTarget $linkName"
+        retval=$?
+    else
+        log "Link target does not exist!"
+        retval=2
+    fi
+
+    return $retval
+}
+
 #===============================================================================
 # Basic setup functions
 #===============================================================================
@@ -1570,6 +1617,46 @@ installVlc()
     installPackage $VLC_PACKAGES
 
     log "Install vlc...done"
+}
+
+#===================
+# Individual configuration
+#===================
+
+setVirtualboxSharedFolder()
+{
+    req USER1_NAME $FUNCNAME
+    req USER1_HOME $FUNCNAME
+    req VIRTUALBOX_SHARED_FOLDER_NAME $FUNCNAME
+
+    log "Set virtualbox shared folder..."
+
+    # Create /media folder
+    _cmd "mkdir /media"
+    err "$?" "$FUNCNAME" "failed to create /media dir"
+
+    # Add user1 to vboxsf group
+    _cmd "gpasswd -a $USER1_NAME vboxsf"
+    err "$?" "$FUNCNAME" "failed to add user to vboxsf group"
+
+    # Enable vboxservice service
+    _enableService "vboxservice"
+    err "$?" "$FUNCNAME" "failed to enable vboxservice"
+
+    # Start vboxservice (needed for link creation)
+    _startService "vboxservice"
+    err "$?" "$FUNCNAME" "failed to start vboxservice"
+
+    # Wait a moment for a started service to do its job
+    _cmd "sleep 5"
+
+    # Create link for easy access
+    _createLink\
+        "/media/sf_$VIRTUALBOX_SHARED_FOLDER_NAME"\
+        "$USER1_HOME/$VIRTUALBOX_SHARED_FOLDER_NAME"
+    err "$?" "$FUNCNAME" "failed to create link to shared folder"
+
+    log "Set virtualbox shared folder...done"
 }
 
 #===================
