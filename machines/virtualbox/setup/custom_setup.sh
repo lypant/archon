@@ -139,7 +139,7 @@ customSetup()
     installConky
     installXbindkeys
     installWmname           # Fix misbehaving Java apps in dwm
-    #installVlc             # TODO: Check graphics driver - brakes Xorg on vbox
+    installVlc
 
     #===================
     # Individual configuration
