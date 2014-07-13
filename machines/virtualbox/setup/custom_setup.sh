@@ -122,8 +122,8 @@ customSetup()
     installCustomizedDvtm   # Use customized version instead
     installElinks
     installCmus
-    # TODO: installJdk
-    # TODO: installAndroidEnv
+    installJdk
+    installAndroidEnv
     installVirtualboxGuestAdditions
 
     #=========

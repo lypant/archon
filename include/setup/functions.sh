@@ -536,6 +536,31 @@ _installDotfile()
     return $retval
 }
 
+installAurPackage()
+{
+    if [[ $# -lt 1 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        exit 1
+    fi
+
+    local buildDir="/tmp"
+    local url="https://aur.archlinux.org/packages"
+
+    for p in $@
+    do
+        local pkgFile="$url/${p:0:2}/$p/$p.tar.gz"
+
+        cd $buildDir
+        _cmd "curl \"$pkgFile\" | tar xz"
+        err "$?" "$FUNCNAME" "failed to download $pkgFile package file"
+
+        cd $buildDir/$p
+        # TODO: Consider another solution to avoid --asroot
+        _cmd "makepkg -si --asroot --noconfirm"
+        err "$?" "$FUNCNAME" "failed to make package $p"
+    done
+}
+
 #===============================================================================
 # Basic setup functions
 #===============================================================================
@@ -1557,6 +1582,32 @@ installCmus()
     installPackage $CMUS_PACKAGES
 
     log "Install cmus...done"
+}
+
+installJdk()
+{
+    req JDK_AUR_PACKAGES $FUNCNAME
+
+    log "Install jdk..."
+
+    installAurPackage $JDK_AUR_PACKAGES
+
+    log "Install jdk...done"
+}
+
+installAndroidEnv()
+{
+    req ANDROID_ENV_PACKAGES $FUNCNAME
+
+    log "Install android env"
+
+    installAurPackage $ANDROID_ENV_PACKAGES
+
+    # Needed to update sdk manually using 'android' tool
+    _cmd "chmod -R 755 /opt/android-sdk"
+    err "$?" "$FUNCNAME" "failed to set permissions to /opt/android-sdk"
+
+    log "Install android env...done"
 }
 
 installVirtualboxGuestAdditions()
