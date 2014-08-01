@@ -24,5 +24,5 @@ source ../../common/setup/common_steps.sh
 # Perform customization
 #===============================================================================
 
-Customize
+customize
 

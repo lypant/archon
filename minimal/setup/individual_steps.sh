@@ -23,12 +23,22 @@
 # Installation groups
 #=======================================
 
+individualPreInstall()
+{
+    :
+}
+
 individualPartitioning()
 {
     :
 }
 
 individualInstall()
+{
+    :
+}
+
+individualPostInstall()
 {
     :
 }
@@ -41,7 +51,17 @@ individualInstall()
 # Customization groups
 #=======================================
 
+individualPreCustomize()
+{
+    :
+}
+
 individualCustomize()
+{
+    :
+}
+
+individualPostCustomize()
 {
     :
 }

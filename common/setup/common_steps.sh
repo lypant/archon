@@ -23,22 +23,22 @@
 # Installation groups
 #=======================================
 
-CommonPreInstall()
+commonPreInstall()
 {
     :
 }
 
-CommonPartitioning()
+commonPartitioning()
 {
     :
 }
 
-CommonInstall()
+commonInstall()
 {
     :
 }
 
-CommonPostInstall()
+commonPostInstall()
 {
     :
 }
@@ -47,14 +47,16 @@ CommonPostInstall()
 # Installation main function
 #=======================================
 
-Install()
+install()
 {
-    CommonPreInstall
-    CommonPartitioning
-    IndividualPartitioning  # Defined in machine specific files
-    CommonInstall
-    IndividualInstall       # Defined in machine specific files
-    CommonPostInstall
+    commonPreInstall
+    individualPreInstall    # To be defined in individual_steps.sh
+    commonPartitioning
+    individualPartitioning  # To be defined in individual_steps.sh
+    commonInstall
+    individualInstall       # To be defined in individual_steps.sh
+    commonPostInstall
+    individualPostInstall   # To be defined in individual_steps.sh
 }
 
 #===============================================================================
@@ -65,22 +67,22 @@ Install()
 # Customization groups
 #=======================================
 
-CommonPreCustomize()
+commonPreCustomize()
 {
     :
 }
 
-CommonCloneProjectRepository()
+commonCloneProjectRepository()
 {
     :
 }
 
-CommonCustomize()
+commonCustomize()
 {
     :
 }
 
-CommonPostCustomize()
+commonPostCustomize()
 {
     :
 }
@@ -89,12 +91,14 @@ CommonPostCustomize()
 # Customization main function
 #=======================================
 
-Customize()
+customize()
 {
-    CommonPreCustomize
-    CommonCloneProjectRepository
-    CommonCustomize
-    IndividualCustomize     # Defined in machine specific files
-    CommonPostCustomize
+    commonPreCustomize
+    individualPreCustomize          # To be defined in individual_steps.sh
+    commonCloneProjectRepository
+    commonCustomize
+    individualCustomize             # To be defined in individual_steps.sh
+    commonPostCustomize
+    individualPostCustomize         # To be defined in individual_steps.sh
 }
 
