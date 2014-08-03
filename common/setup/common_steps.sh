@@ -28,12 +28,25 @@ commonPreInstall()
     createLogDir
     log "Install..."
 
+    setConsoleFontTemporarily
     updatePackageList
+    #installArchlinuxKeyring    # Individual
+    #installLivecdVim           # Individual
 }
 
 commonPartitioning()
 {
-    :
+    createSwapPartition
+    createBootPartition
+    createRootPartition
+    setBootPartitionBootable
+    createSwap
+    activateSwap
+    createBootFileSystem
+    createRootFileSystem
+    # Root partition has to be mounted first
+    mountRootPartition
+    mountBootPartition
 }
 
 commonInstall()
@@ -44,6 +57,9 @@ commonInstall()
 commonPostInstall()
 {
     log "Install...done"
+
+    copyProjectFiles
+    unmountPartitions
 }
 
 #=======================================
