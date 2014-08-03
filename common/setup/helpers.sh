@@ -43,3 +43,13 @@ createLogDir()
     fi
 }
 
+updatePackageList()
+{
+    log "Update package list..."
+
+    _cmd "pacman -Syy"
+    err "$?" "$FUNCNAME" "failed to update package list"
+
+    log "Update package list...done"
+}
+

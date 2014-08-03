@@ -27,6 +27,8 @@ commonPreInstall()
 {
     createLogDir
     log "Install..."
+
+    updatePackageList
 }
 
 commonPartitioning()

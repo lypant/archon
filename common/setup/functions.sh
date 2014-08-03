@@ -42,3 +42,50 @@ log()
     return ${PIPESTATUS[0]}
 }
 
+# Requires:
+#   LOG_FILE
+#   CMD_PREFIX
+_cmd()
+{
+    # Check if all required variables are set
+    if [[ -z "$LOG_FILE" ]]; then
+        echo "$FUNCNAME: variable LOG_FILE not set"
+        return 1
+    fi
+
+    if [[ -z "$CMD_PREFIX" ]]; then
+        echo "$FUNCNAME: variable CMD_PREFIX not set"
+        return 2
+    fi
+
+    # Record command to be executed to the log file
+    echo "$CMD_PREFIX$@" >> $LOG_FILE
+
+    # Execute command
+    # Redirect stdout and stderr to screen and log file
+    (eval "$@" 2>&1) | tee -a $LOG_FILE
+    return ${PIPESTATUS[0]}
+}
+
+# Checks provided error code. Terminates script when it is nonzero.
+# Usage: err $? $FUNCNAME "message to be shown and logged"
+err()
+{
+    # Check number of required params
+    if [[ $# -lt 3 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        log "Aborting script!"
+        exit 1
+    fi
+
+    local error="$1"
+    local funcname="$2"
+    local msg="$3"
+
+    if [[ "$error" -ne 0 ]]; then
+        log "$funcname: $msg: $error"
+        log "Aborting script!"
+        exit 2
+    fi
+}
+
