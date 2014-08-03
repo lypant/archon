@@ -51,7 +51,31 @@ commonPartitioning()
 
 commonInstall()
 {
-    :
+    # Use only one of alternatives - rankMirrors or downloadMirrorList
+    #rankMirrors
+    downloadMirrorList
+    installBaseSystem
+    generateFstab
+    #setTmpfsTmpSize    # Needed before reboot to install AUR packages nicely # Individual
+    setHostName
+    setLocales
+    generateLocales
+    setLanguage
+    setLocalizationCtype
+    setLocalizationNumeric
+    setLocalizationTime
+    setLocalizationCollate
+    setLocalizationMonetary
+    setLocalizationMeasurement
+    setTimeZone
+    setHardwareClock
+    setConsoleKeymap
+    setConsoleFont
+    setConsoleFontmap
+    setWiredNetwork
+    installBootloader
+    configureSyslinux
+    setRootPassword
 }
 
 commonPostInstall()
