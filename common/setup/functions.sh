@@ -67,6 +67,20 @@ _cmd()
     return ${PIPESTATUS[0]}
 }
 
+# Checks whether required variable is set
+# Usage: req MY_VAR $FUNCNAME
+req()
+{
+    local var="$1"
+    local function="$2"
+
+    if [[ -z "${!var}" ]]; then
+        log "$function: variable $var not defined"
+        log "Aborting script!"
+        exit 1
+    fi
+}
+
 # Checks provided error code. Terminates script when it is nonzero.
 # Usage: err $? $FUNCNAME "message to be shown and logged"
 err()
@@ -87,5 +101,33 @@ err()
         log "Aborting script!"
         exit 2
     fi
+}
+
+_uncommentVar()
+{
+    if [[ $# -lt 2 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
+
+	local var="$1"
+	local file="$2"
+
+    _cmd "sed -i \"s|^#\(${var}.*\)$|\1|\" ${file}"
+    return $?
+}
+
+_commentVar()
+{
+    if [[ $# -lt 2 ]]; then
+        log "$FUNCNAME: not enough parameters \($#\): $@"
+        return 1
+    fi
+
+	local var="$1"
+	local file="$2"
+
+    _cmd "sed -i \"s|^\(${var}.*\)$|#\1|\" ${file}"
+    return $?
 }
 
