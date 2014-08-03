@@ -26,6 +26,7 @@
 commonPreInstall()
 {
     createLogDir
+    log "Install..."
 }
 
 commonPartitioning()
@@ -40,7 +41,7 @@ commonInstall()
 
 commonPostInstall()
 {
-    :
+    log "Install...done"
 }
 
 #=======================================
