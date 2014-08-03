@@ -25,7 +25,7 @@
 
 commonPreInstall()
 {
-    :
+    createLogDir
 }
 
 commonPartitioning()
