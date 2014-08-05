@@ -112,7 +112,8 @@ install()
 
 commonPreCustomize()
 {
-    :
+    createLogDir
+    log "Customize..."
 }
 
 commonCloneProjectRepository()
@@ -127,7 +128,7 @@ commonCustomize()
 
 commonPostCustomize()
 {
-    :
+    log "Customize...done"
 }
 
 #=======================================
