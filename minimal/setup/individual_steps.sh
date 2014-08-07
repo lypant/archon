@@ -68,7 +68,8 @@ individualPreCustomize()
 
 individualCustomize()
 {
-    :
+    installVirtualboxGuestAdditions
+    setVirtualboxSharedFolder
 }
 
 individualPostCustomize()
