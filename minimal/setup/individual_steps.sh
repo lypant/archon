@@ -23,6 +23,11 @@
 # Installation groups
 #=======================================
 
+individualInstallEnv()
+{
+    setConsoleFontTemporarily
+}
+
 individualPreInstall()
 {
     :
@@ -50,6 +55,11 @@ individualPostInstall()
 #=======================================
 # Customization groups
 #=======================================
+
+individualCustomizeEnv()
+{
+    setConsoleFontTemporarily
+}
 
 individualPreCustomize()
 {

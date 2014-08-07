@@ -28,7 +28,7 @@ commonPreInstall()
     createLogDir
     log "Install..."
 
-    setConsoleFontTemporarily
+    #setConsoleFontTemporarily  # Individual
     updatePackageList
     #installArchlinuxKeyring    # Individual
     #installLivecdVim           # Individual
@@ -92,6 +92,7 @@ commonPostInstall()
 
 install()
 {
+    individualInstallEnv    # To be defined in individual_steps.sh
     commonPreInstall
     individualPreInstall    # To be defined in individual_steps.sh
     commonPartitioning
@@ -114,21 +115,106 @@ commonPreCustomize()
 {
     createLogDir
     log "Customize..."
+
+    #setConsoleFontTemporarily  # Individual
+    configurePacman
+    #setMultilibRepository   # Needed for Android development   # Individual
+}
+
+commonSetMainUser()
+{
+    addUser1
+    setUser1Password
+    setUser1Sudoer
+}
+
+commonInstallGit()
+{
+    updatePackageList
+    installGit
+    configureGitUser
 }
 
 commonCloneProjectRepository()
 {
-    :
+    cloneProjectRepo
+    checkoutCurrentBranch
+    copyOverProjectFiles
+}
+
+commonSetupProject()
+{
+    commonSetMainUser
+    commonInstallGit
+    commonCloneProjectRepository
 }
 
 commonCustomize()
 {
-    :
+    # System
+    installXorgBasic
+    installXorgAdditional
+    installAlsa
+
+    # Console based software
+    installVim
+    installMc
+    #installDvtm            # Official repo version not good enough
+    installCustomizedDvtm   # Use customized version instead
+    installElinks
+    installCmus
+    #installJdk                         # Individual
+    #installAndroidEnv                  # Individual
+    #installVirtualboxGuestAdditions    # Individual
+
+    # GUI based software
+    installRxvtUnicode
+    installGuiFonts
+    #installDwm             # Official repo version not good enough
+    installCustomizedDwm    # Use customized version instead
+    installDmenu
+    installOpera
+    installConky
+    installXbindkeys
+    installWmname           # Fix misbehaving Java apps in dwm
+    installVlc
+
+    # Dotfiles
+    installBashprofileDotfile
+    installBashrcDotfile
+    installDircolorssolarizedDotfile
+    installVimrcDotfile
+    installVimsolarizedDotfile
+    installMcsolarizedDotfile
+    installGitconfigDotfile
+    installCmusColorThemeDotfile
+    installXinitrcDotfile
+    installXresourcesDotfile
+    installConkyDotfile
+    installXbindkeysDotfile
+
+    # Configuration
+    setBootloaderKernelParams
+    disableSyslinuxBootMenu
+    setConsoleLoginMessage
+    #setMkinitcpioModules    # Requires linux image recreation  # Individual
+    setMkinitcpioHooks      # Requires linux image recreation
+    initAlsa                # Initialize all devices to a default state
+    unmuteAlsa              # This should be enough on real HW
+    setPcmModuleLoading
+    disablePcSpeaker
+
+    #setVirtualboxSharedFolder          # Individual
 }
 
 commonPostCustomize()
 {
+    recreateImage   # Required by mkinitcpio-related steps
+    changeUser1HomeOwnership
+
     log "Customize...done"
+
+    copyProjectLogFiles
 }
 
 #=======================================
@@ -137,9 +223,10 @@ commonPostCustomize()
 
 customize()
 {
+    individualCustomizeEnv          # To be defined in individual_steps.sh
     commonPreCustomize
     individualPreCustomize          # To be defined in individual_steps.sh
-    commonCloneProjectRepository
+    commonSetupProject
     commonCustomize
     individualCustomize             # To be defined in individual_steps.sh
     commonPostCustomize
