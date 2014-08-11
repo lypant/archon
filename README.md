@@ -9,3 +9,5 @@ Instruction
 1. Download the project files
 curl -L https://github.com/lypant/archon/tarball/common | tar xz
 
+TODO:
+- Split collors definintion from .bashrc into separate file (existing bash.conf?)

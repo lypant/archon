@@ -1,0 +1,1 @@
+../../../../monolith/dotfiles/.vim/colors/solarized.vim

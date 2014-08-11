@@ -200,6 +200,7 @@ commonCustomize()
     #setMkinitcpioModules    # Requires linux image recreation  # Individual
     setMkinitcpioHooks      # Requires linux image recreation
     initAlsa                # Initialize all devices to a default state
+    # TODO: This step should be individual
     unmuteAlsa              # This should be enough on real HW
     setPcmModuleLoading
     disablePcSpeaker
