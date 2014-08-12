@@ -191,7 +191,7 @@ commonCustomize()
     installXinitrcDotfile
     installXresourcesDotfile
     installConkyDotfile
-    installXbindkeysDotfile
+    #installXbindkeysDotfile    # Individual
 
     # Configuration
     setBootloaderKernelParams
