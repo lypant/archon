@@ -78,7 +78,7 @@ individualCustomize()
     installXbindkeysDotfile
 
     # Configuration
-    setMkinitcpioModules        # Requires linux image recreation
+    #setMkinitcpioModules        # Not needed for virtualbox
     setVirtualboxSharedFolder
 }
 
