@@ -74,7 +74,11 @@ individualCustomize()
     installAndroidEnv
     installVirtualboxGuestAdditions
 
+    # Dotfiles
+    installXbindkeysDotfile
+
     # Configuration
+    setMkinitcpioModules        # Requires linux image recreation
     setVirtualboxSharedFolder
 }
 

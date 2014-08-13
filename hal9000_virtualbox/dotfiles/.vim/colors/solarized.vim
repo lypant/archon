@@ -1,0 +1,1 @@
+../../../../hal9000/dotfiles/.vim/colors/solarized.vim
