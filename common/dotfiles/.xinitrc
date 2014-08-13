@@ -40,7 +40,7 @@ xsetroot -solid "#$SOLARIZED_BASE03"
 conky | while read -r; do xsetroot -name "$REPLY"; done &
 
 # Bind keyboard keys
-xbindkeys
+#xbindkeys
 
 # Fix misbehaving Java applications by setting WM name
 wmname LG3D
