@@ -1,0 +1,25 @@
+# This is a comment
+
+background no
+cpu_avg_samples 2
+net_avg_samples 2
+no_buffers yes
+out_to_console yes
+out_to_x no
+total_runtimes 0
+update_interval 1.0
+use_spacer left
+pad_percents 3
+
+TEXT
+D ${downspeed enp4s0} :: \
+U ${upspeed enp4s0} :: \
+C1${cpu cpu1}% :: \
+C2${cpu cpu2}% :: \
+M${memperc}% :: \
+/boot${fs_used_perc /boot/}% :: \
+/${fs_used_perc /}% :: \
+swap$swapperc% :: \
+V${mixer Vol}% :: \
+${time %d %b %Y %H:%M}
+
