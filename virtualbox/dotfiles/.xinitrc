@@ -27,7 +27,7 @@ setxkbmap pl
 #===============================================================================
 
 # Load colors definition
-source "$HOME/archon/common/colors/solarized/bash.conf"
+source "$HOME/archon/virtualbox/colors/solarized/bash.conf"
 
 # Set root window background color
 xsetroot -solid "#$SOLARIZED_BASE03"
