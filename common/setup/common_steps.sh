@@ -7,12 +7,6 @@
 # DESCRIPTION:  Arranges step functions into groups which are common
 #               for all machines.
 #               Contains only function definitions - they are not executed.
-#
-# CONVENTIONS:  A function should either return an error code or abort a script
-#               on failure.
-#               Names of functions returning value start with an underscore.
-#               Exception:  log function - returns result but always neglected,
-#                           so without an underscore - for convenience
 #===============================================================================
 
 set -o nounset errexit

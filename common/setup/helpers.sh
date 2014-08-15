@@ -6,12 +6,6 @@
 #
 # DESCRIPTION:  Simple functions used by other scripts to perform larger tasks.
 #               Contains only function definitions - they are not executed.
-#
-# CONVENTIONS:  A function should either return an error code or abort a script
-#               on failure.
-#               Names of functions returning value start with an underscore.
-#               Exception:  log function - returns result but always neglected,
-#                           so without an underscore - for convenience
 #===============================================================================
 
 set -o nounset errexit
@@ -39,7 +33,7 @@ updatePackageList()
 {
     log "Update package list..."
 
-    _cmd "pacman -Syy"
+    cmd "pacman -Syy"
 
     log "Update package list...done"
 }
@@ -48,7 +42,7 @@ installPackage()
 {
     log "Installing package $@..."
 
-    _cmd "pacman -S $@ --noconfirm"
+    cmd "pacman -S $@ --noconfirm"
 
     log "Installing package $@...done"
 }
@@ -59,7 +53,7 @@ delay()
     local seconds="$1"
 
     log "Waiting $seconds""s..."
-    _cmd "sleep $seconds"
+    cmd "sleep $seconds"
     log "Waiting $seconds""s...done"
 }
 
@@ -108,18 +102,18 @@ setPartitionBootable()
     delay $PARTITION_OPERATIONS_DELAY
 }
 
-_downloadFile()
+downloadFile()
 {
     local src=$1
     local dst=$2
 
-    _cmd "curl -so $dst --create-dirs $src"
+    cmd "curl -so $dst --create-dirs $src"
     return $?
 }
 
-_archChroot()
+archChroot()
 {
-    _cmd arch-chroot $ROOT_PARTITION_MOUNT_POINT /bin/bash -c \""$@"\"
+    cmd arch-chroot $ROOT_PARTITION_MOUNT_POINT /bin/bash -c \""$@"\"
     return $?
 }
 
@@ -129,7 +123,7 @@ setLocale()
 
     local subst="s|^#\\\\\(${1}.*\\\\\)$|\1|"
     local file="/etc/locale.gen"
-    _archChroot "sed -i \\\"$subst\\\" $file"
+    archChroot "sed -i \\\"$subst\\\" $file"
 
     log "Set locale for $1...done"
 }
@@ -143,7 +137,7 @@ addUser()
 
     log "Add user..."
 
-    _cmd "useradd -m -g $mainGroup -G $additionalGroups -s $shell $name"
+    cmd "useradd -m -g $mainGroup -G $additionalGroups -s $shell $name"
 
     log "Add user...done"
 }
@@ -157,7 +151,7 @@ setUserPassword()
 
     while [ $ask -ne 0 ]; do
         log "Provide password for user $name"
-        _cmd "passwd $name"
+        cmd "passwd $name"
         ask=$?
     done
 
@@ -171,7 +165,7 @@ setSudoer()
     local name="$1"
 
     # TODO - do it in a safer way... Here just for experiments
-    _cmd "echo \"$name ALL=(ALL) ALL\" >> /etc/sudoers"
+    cmd "echo \"$name ALL=(ALL) ALL\" >> /etc/sudoers"
 
     log "Set sudoer...done"
 }
@@ -183,24 +177,24 @@ changeHomeOwnership()
     local userName="$1"
     local userHome="$2"
 
-    _cmd "chown -R $userName:users $userHome"
+    cmd "chown -R $userName:users $userHome"
 
     log "Change home dir ownership...done"
 }
 
-_enableService()
+enableService()
 {
-    _cmd "systemctl enable $1"
+    cmd "systemctl enable $1"
     return $?
 }
 
-_startService()
+startService()
 {
-    _cmd "systemctl start $1"
+    cmd "systemctl start $1"
     return $?
 }
 
-_createLink()
+createLink()
 {
     local linkTarget=$1
     local linkName=$2
@@ -210,7 +204,7 @@ _createLink()
     if [[ -e $linkTarget ]]; then
         # File exists
         # create symlink
-        _cmd "ln -s $linkTarget $linkName"
+        cmd "ln -s $linkTarget $linkName"
         retval=$?
     else
         log "Link target does not exist!"
@@ -220,21 +214,21 @@ _createLink()
     return $retval
 }
 
-_createDir()
+createDir()
 {
     local dir="$1"
     local retval=0
 
     # Check if backup dir exists
     if [[ ! -d $dir ]]; then
-        _cmd "mkdir -p $dir"
+        cmd "mkdir -p $dir"
         retval="$?"
     fi
 
     return $retval
 }
 
-_backupFile()
+backupFile()
 {
     local original=$1
     local backup=$2
@@ -242,14 +236,14 @@ _backupFile()
 
     # If original file exists, move it to backup dir
     if [[ -e $original ]]; then
-        _cmd "cp $original $backup"
+        cmd "cp $original $backup"
         retval=$?
     fi
 
     return $retval
 }
 
-_installDotfile()
+installDotfile()
 {
     local dotfileName="$1"
     local dotfileHomePath="$2"
@@ -267,7 +261,7 @@ _installDotfile()
     fi
 
     # Ensure that dotfiles backup dir exists
-    _createDir "$DOTFILES_BACKUP_DIR"
+    createDir "$DOTFILES_BACKUP_DIR"
     retval="$?"
     if [[ $retval -ne 0  ]]; then
         log "$FUNCNAME: failed to create dotfiles backup dir: $retval"
@@ -275,7 +269,7 @@ _installDotfile()
     fi
 
     # Backup original dotfile, if it exists
-    _backupFile "$USER1_HOME/$dotfile" "$DOTFILES_BACKUP_DIR/$dotfile"_"$now"
+    backupFile "$USER1_HOME/$dotfile" "$DOTFILES_BACKUP_DIR/$dotfile"_"$now"
     retval="$?"
     if [[ $retval -ne 0  ]]; then
         log "$FUNCNAME: failed to backup dotfile $dotfile: $retval"
@@ -283,7 +277,7 @@ _installDotfile()
     fi
 
     # Remove original dotfile
-    _cmd "rm -f $USER1_HOME/$dotfile"
+    cmd "rm -f $USER1_HOME/$dotfile"
     retval="$?"
     if [[ $retval -ne 0  ]]; then
         log "$FUNCNAME: failed to delete original dotfile"\
@@ -293,7 +287,7 @@ _installDotfile()
 
     # Ensure that for nested dotfile the path exists
     if [[ $nested -eq 1 ]]; then
-        _cmd "mkdir -p $USER1_HOME/$dotfileHomePath"
+        cmd "mkdir -p $USER1_HOME/$dotfileHomePath"
         retval="$?"
         if [[ $retval -ne 0  ]]; then
             log "$FUNCNAME: failed to create path for nested dotfile: $retval"
@@ -302,7 +296,7 @@ _installDotfile()
     fi
 
     # Create link to new dotfile
-    _createLink "$DOTFILES_SOURCE_DIR/$dotfile" "$USER1_HOME/$dotfile"
+    createLink "$DOTFILES_SOURCE_DIR/$dotfile" "$USER1_HOME/$dotfile"
     retval="$?"
     if [[ $retval -ne 0  ]]; then
         log "$FUNCNAME: failed to create link to new dotfile"\
@@ -323,11 +317,11 @@ installAurPackage()
         local pkgFile="$url/${p:0:2}/$p/$p.tar.gz"
 
         cd $buildDir
-        _cmd "curl \"$pkgFile\" | tar xz"
+        cmd "curl \"$pkgFile\" | tar xz"
 
         cd $buildDir/$p
         # TODO: Consider another solution to avoid --asroot
-        _cmd "makepkg -si --asroot --noconfirm"
+        cmd "makepkg -si --asroot --noconfirm"
     done
 }
 

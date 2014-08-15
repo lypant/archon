@@ -6,12 +6,6 @@
 #
 # DESCRIPTION:  Basic functions used by other scripts.
 #               Contains only function definitions - they are not executed.
-#
-# CONVENTIONS:  A function should either return an error code or abort a script
-#               on failure.
-#               Names of functions returning value start with an underscore.
-#               Exception:  log function - returns result but always neglected,
-#                           so without an underscore - for convenience
 #===============================================================================
 
 set -o nounset errexit
@@ -36,7 +30,7 @@ log()
 # Requires:
 #   LOG_FILE
 #   CMD_PREFIX
-_cmd()
+cmd()
 {
     # Record command to be executed to the log file
     echo "$CMD_PREFIX$@" >> $LOG_FILE
@@ -47,31 +41,21 @@ _cmd()
     return ${PIPESTATUS[0]}
 }
 
-_uncommentVar()
+uncommentVar()
 {
-    if [[ $# -lt 2 ]]; then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        return 1
-    fi
-
 	local var="$1"
 	local file="$2"
 
-    _cmd "sed -i \"s|^#\(${var}.*\)$|\1|\" ${file}"
+    cmd "sed -i \"s|^#\(${var}.*\)$|\1|\" ${file}"
     return $?
 }
 
-_commentVar()
+commentVar()
 {
-    if [[ $# -lt 2 ]]; then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        return 1
-    fi
-
 	local var="$1"
 	local file="$2"
 
-    _cmd "sed -i \"s|^\(${var}.*\)$|#\1|\" ${file}"
+    cmd "sed -i \"s|^\(${var}.*\)$|#\1|\" ${file}"
     return $?
 }
 
