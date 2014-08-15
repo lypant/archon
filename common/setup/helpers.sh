@@ -24,16 +24,6 @@ set -o nounset errexit
 #   LOG_DIR
 createLogDir()
 {
-    # Check if log dir variable is set.
-    # Since there is no standard logging mechanism available at that stage,
-    # just check the variable and echo on screen instead of using
-    # req function.
-    if [[ -z "$LOG_DIR" ]]; then
-        echo "$FUNCNAME: variable LOG_DIR not set"
-        echo "Aborting script!"
-        exit 1
-    fi
-
     # Create log directory
     mkdir -p $LOG_DIR
 
@@ -50,7 +40,6 @@ updatePackageList()
     log "Update package list..."
 
     _cmd "pacman -Syy"
-    err "$?" "$FUNCNAME" "failed to update package list"
 
     log "Update package list...done"
 }
@@ -60,7 +49,6 @@ installPackage()
     log "Installing package $@..."
 
     _cmd "pacman -S $@ --noconfirm"
-    err "$?" "$FUNCNAME" "failed to install package $@"
 
     log "Installing package $@...done"
 }
@@ -68,11 +56,6 @@ installPackage()
 # Delay is given in seconds
 delay()
 {
-    if [[ $# -lt 1 ]]; then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        exit 1
-    fi
-
     local seconds="$1"
 
     log "Waiting $seconds""s..."
@@ -82,14 +65,6 @@ delay()
 
 createPartition()
 {
-    req PARTITION_OPERATIONS_DELAY $FUNCNAME
-
-    if [[ $# -lt 5 ]]; then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        log "Aborting script!"
-        exit 1
-    fi
-
     local disk="$1"         # e.g. /dev/sda
     local partType="$2"     # "p" for prtimary, "e" for extented
     local partNb="$3"       # e.g. "1" for "/dev/sda1"
@@ -121,14 +96,6 @@ createPartition()
 # Best executed when all (at least two) partitions are created
 setPartitionBootable()
 {
-    req PARTITION_OPERATIONS_DELAY $FUNCNAME
-
-    if [[ $# -lt 2 ]]; then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        log "Aborting script!"
-        exit 1
-    fi
-
     local disk="$1"     # e.g. /dev/sda
     local partNb="$2"   # e.g. "1" for "/dev/sda1"
 
@@ -143,11 +110,6 @@ setPartitionBootable()
 
 _downloadFile()
 {
-    if [[ $# -lt 2 ]]; then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        return 1
-    fi
-
     local src=$1
     local dst=$2
 
@@ -157,41 +119,23 @@ _downloadFile()
 
 _archChroot()
 {
-    req ROOT_PARTITION_MOUNT_POINT $FUNCNAME
-
-    if [[ $# -lt 1 ]];then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        return 1
-    fi
-
     _cmd arch-chroot $ROOT_PARTITION_MOUNT_POINT /bin/bash -c \""$@"\"
     return $?
 }
 
 setLocale()
 {
-    if [[ $# -lt 1 ]]; then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        err "1" "$FUNCNAME" "failed to set locale"
-    fi
-
     log "Set locale for  $1..."
 
     local subst="s|^#\\\\\(${1}.*\\\\\)$|\1|"
     local file="/etc/locale.gen"
     _archChroot "sed -i \\\"$subst\\\" $file"
-    err "$?" "$FUNCNAME" "failed to set locale"
 
     log "Set locale for $1...done"
 }
 
 addUser()
 {
-    if [[ $# -lt 4 ]];then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        err "1" "$FUNCNAME" "failed to add user"
-    fi
-
     local mainGroup="$1"
     local additionalGroups="$2"
     local shell="$3"
@@ -200,18 +144,12 @@ addUser()
     log "Add user..."
 
     _cmd "useradd -m -g $mainGroup -G $additionalGroups -s $shell $name"
-    err "$?" "$FUNCNAME" "failed to add user"
 
     log "Add user...done"
 }
 
 setUserPassword()
 {
-    if [[ $# -lt 1 ]];then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        err "1" "$FUNCNAME" "failed to set user password"
-    fi
-
     log "Set user password..."
 
     local ask=1
@@ -228,69 +166,42 @@ setUserPassword()
 
 setSudoer()
 {
-    if [[ $# -lt 1 ]];then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        err "1" "$FUNCNAME" "failed to set sudoer"
-    fi
-
     log "Set sudoer..."
 
     local name="$1"
 
     # TODO - do it in a safer way... Here just for experiments
     _cmd "echo \"$name ALL=(ALL) ALL\" >> /etc/sudoers"
-    err "$?" "$FUNCNAME" "failed to set sudoer"
 
     log "Set sudoer...done"
 }
 
 changeHomeOwnership()
 {
-    if [[ $# -lt 2 ]];then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        return 1
-    fi
-
     log "Change home dir ownership..."
 
     local userName="$1"
     local userHome="$2"
 
     _cmd "chown -R $userName:users $userHome"
-    err "$?" "$FUNCNAME" "failed to change home dir ownership"
 
     log "Change home dir ownership...done"
 }
 
 _enableService()
 {
-    if [[ $# -lt 1 ]]; then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        return 1
-    fi
-
     _cmd "systemctl enable $1"
     return $?
 }
 
 _startService()
 {
-    if [[ $# -lt 1 ]]; then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        return 1
-    fi
-
     _cmd "systemctl start $1"
     return $?
 }
 
 _createLink()
 {
-    if [[ $# -lt 2 ]]; then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        return 1
-    fi
-
     local linkTarget=$1
     local linkName=$2
     local retval=0
@@ -311,11 +222,6 @@ _createLink()
 
 _createDir()
 {
-    if [[ $# -lt 1 ]]; then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        return 1
-    fi
-
     local dir="$1"
     local retval=0
 
@@ -330,11 +236,6 @@ _createDir()
 
 _backupFile()
 {
-    if [[ $# -lt 2 ]]; then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        return 1
-    fi
-
     local original=$1
     local backup=$2
     local retval=0
@@ -350,15 +251,6 @@ _backupFile()
 
 _installDotfile()
 {
-    req DOTFILES_BACKUP_DIR $FUNCNAME
-    req DOTFILES_SOURCE_DIR $FUNCNAME
-    req USER1_HOME $FUNCNAME
-
-    if [[ $# -lt 2 ]]; then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        return 1
-    fi
-
     local dotfileName="$1"
     local dotfileHomePath="$2"
     local dotfile=""
@@ -423,11 +315,6 @@ _installDotfile()
 
 installAurPackage()
 {
-    if [[ $# -lt 1 ]]; then
-        log "$FUNCNAME: not enough parameters \($#\): $@"
-        exit 1
-    fi
-
     local buildDir="/tmp"
     local url="https://aur.archlinux.org/packages"
 
@@ -437,12 +324,10 @@ installAurPackage()
 
         cd $buildDir
         _cmd "curl \"$pkgFile\" | tar xz"
-        err "$?" "$FUNCNAME" "failed to download $pkgFile package file"
 
         cd $buildDir/$p
         # TODO: Consider another solution to avoid --asroot
         _cmd "makepkg -si --asroot --noconfirm"
-        err "$?" "$FUNCNAME" "failed to make package $p"
     done
 }
 
