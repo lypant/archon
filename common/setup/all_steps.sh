@@ -622,10 +622,10 @@ setMultilibRepository()
 
 addUser1()
 {
-    req USER1_MAIN_GROUP $FUNCTION
-    req USER1_ADDITIONAL_GROUPS $FUNCTION
-    req USER1_SHELL $FUNCTION
-    req USER1_NAME $FUNCTION
+    req USER1_MAIN_GROUP $FUNCNAME
+    req USER1_ADDITIONAL_GROUPS $FUNCNAME
+    req USER1_SHELL $FUNCNAME
+    req USER1_NAME $FUNCNAME
 
     log "Add user1..."
 
@@ -636,7 +636,7 @@ addUser1()
 
 setUser1Password()
 {
-    req USER1_NAME $FUNCTION
+    req USER1_NAME $FUNCNAME
 
     log "Set user 1 password..."
 
@@ -647,7 +647,7 @@ setUser1Password()
 
 setUser1Sudoer()
 {
-    req USER1_NAME $FUNCTION
+    req USER1_NAME $FUNCNAME
 
     log "Set user1 sudoer..."
 
@@ -662,7 +662,7 @@ setUser1Sudoer()
 
 installAlsa()
 {
-    req ALSA_PACKAGES $FUNCTION
+    req ALSA_PACKAGES $FUNCNAME
 
     log "Install alsa..."
 
@@ -677,7 +677,7 @@ installAlsa()
 
 installVim()
 {
-    req VIM_PACKAGES $FUNCTION
+    req VIM_PACKAGES $FUNCNAME
 
     log "Install vim..."
 
@@ -688,7 +688,7 @@ installVim()
 
 installMc()
 {
-    req MC_PACKAGES $FUNCTION
+    req MC_PACKAGES $FUNCNAME
 
     log "Install mc..."
 
@@ -699,7 +699,7 @@ installMc()
 
 installGit()
 {
-    req GIT_PACKAGES $FUNCTION
+    req GIT_PACKAGES $FUNCNAME
 
     log "Install git..."
 
@@ -772,8 +772,6 @@ disableSyslinuxBootMenu()
 
 setConsoleLoginMessage()
 {
-    # Do not require COSNOLE_LOGIN_MSG - when empty, no message will be used
-
     log "Set console login message..."
 
     # Remove welcome message

@@ -24,17 +24,11 @@ PROJECT_NAME=${PROJECT_NAME##*/}
 source ../../common/setup/common_settings.conf
 source ../../common/setup/project_settings.conf
 source individual_settings.conf
-
-#source individual_settings.conf
-#source ../../common/setup/project_settings.conf
-#source ../../common/setup/common_settings.conf
-#source ../../common/setup/project_settings.conf
-#source individual_settings.conf
-#source ../../common/setup/functions.sh
-#source ../../common/setup/helpers.sh
-#source ../../common/setup/all_steps.sh
-#source individual_steps.sh
-#source ../../common/setup/common_steps.sh
+source ../../common/setup/functions.sh
+source ../../common/setup/helpers.sh
+source ../../common/setup/all_steps.sh
+source individual_steps.sh
+source ../../common/setup/common_steps.sh
 
 #===============================================================================
 #  Log file
