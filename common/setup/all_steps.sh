@@ -947,6 +947,6 @@ copyProjectLogFiles()
     # Do not perform typical logging in this function...
     # This would spoil nice logs copied to user's dir
 
-    cp -r $LOG_DIR $PROJECT_REPO_DST/$MACHINE
+    cp -r $LOG_DIR $PROJECT_REPO_DST/$VARIANT
 }
 

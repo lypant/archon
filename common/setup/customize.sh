@@ -14,8 +14,8 @@ set -o nounset errexit
 #===============================================================================
 
 # Set variant name based on dir name
-MACHINE=$(cd ../; pwd)
-MACHINE=${MACHINE##*/}
+VARIANT=$(cd ../; pwd)
+VARIANT=${VARIANT##*/}
 
 # Set variant name based on dir name
 PROJECT_NAME=$(cd ../../; pwd)
