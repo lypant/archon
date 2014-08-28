@@ -40,13 +40,13 @@ if [[ -z "$DISPLAY" ]]; then
     # Do not use fancy characters to draw outline
     # Use vim as editor
     # Use mc_viewer.sh script as viewer - vim with additional parameters
-    alias mc='EDITOR=vim VIEWER=$HOME/archon/common/scripts/mc_viewer.sh mc -a'
+    alias mc='EDITOR=vim VIEWER=$HOME/archon/variant/scripts/mc_viewer.sh mc -a'
 else
     # Aliases for GUI
 
     # Use vim as editor
     # Use mc_viewer.sh script as viewer - vim with additional parameters
-    alias mc='EDITOR=vim VIEWER=$HOME/archon/common/scripts/mc_viewer.sh mc'
+    alias mc='EDITOR=vim VIEWER=$HOME/archon/variant/scripts/mc_viewer.sh mc'
 fi
 
 #===================
@@ -83,7 +83,7 @@ source "/usr/share/git/completion/git-completion.bash"
 #=======================================
 
 # Add more dirs to path
-export PATH=$PATH:/$HOME/archon/common/scripts
+export PATH=$PATH:/$HOME/archon/variant/scripts
 
 #===============================================================================
 # Color themes
@@ -94,7 +94,7 @@ export PATH=$PATH:/$HOME/archon/common/scripts
 #=======================================
 
 # Load colors definition
-source "$HOME/archon/common/colors/solarized/bash.conf"
+source "$HOME/archon/variant/colors/solarized/bash.conf"
 
 #=======================================
 # Choice
