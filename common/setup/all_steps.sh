@@ -728,15 +728,16 @@ installDwm()
 
 installCustomizedDwm()
 {
+    local patch="$USER1_HOME/$PROJECT_NAME/$VARIANT/$PATCHES_DIR_NAME"
+          patch="$patch/$DWM_CUSTOM_PATCH_FILE"
+
     log "Installing customized dwm..."
     # Clone project from git
     cmd "git clone $DWM_GIT_REPO $DWM_BUILD_PATH"
     # Newest commit was not working... use specific, working version
     cmd "git -C $DWM_BUILD_PATH checkout $DWM_BASE_COMMIT -b $DWM_CUSTOM_BRANCH"
     # Apply patch with customizations
-    cmd "git -C $DWM_BUILD_PATH apply"\
-        "$USER1_HOME/$PROJECT_NAME/$VARIANT/$PATCHES_DIR_NAME/"\
-        "$DWM_CUSTOM_PATCH_FILE"
+    cmd "git -C $DWM_BUILD_PATH apply $patch"
     # Add changes introduced with patch. Use add . since new files may be added.
     cmd "git -C $DWM_BUILD_PATH add ."
     # Save configuration as new commit
