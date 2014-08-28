@@ -39,3 +39,6 @@ set background=dark
 " Mark 80th column
 set colorcolumn=80
 
+" Set tags file location searching pattern
+set tags=tags;
+
