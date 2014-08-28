@@ -280,6 +280,8 @@ installDotfile()
     local dotfile=""
     local nested=0
     local now=`date +"%Y%m%d_%H%M"`
+    local dotfilesSrcDir="$USER1_HOME/$PROJECT_NAME/$VARIANT/$DOTFILES_DIR_NAME"
+    local dotfilesBkpDir="$dotfilesSrcDir/$BACKUP_DIR_NAME"
 
     # Avoid extra slash when path is empty
     if [[ -z "$dotfileHomePath" ]]; then
@@ -291,7 +293,7 @@ installDotfile()
     fi
 
     # Ensure that dotfiles backup dir exists
-    createDir "$DOTFILES_BACKUP_DIR"
+    createDir "$dotfilesBkpDir"
     retval="$?"
     if [[ $retval -ne 0  ]]; then
         log "$FUNCNAME: failed to create dotfiles backup dir: $retval"
@@ -299,7 +301,7 @@ installDotfile()
     fi
 
     # Backup original dotfile, if it exists
-    backupFile "$USER1_HOME/$dotfile" "$DOTFILES_BACKUP_DIR/$dotfile"_"$now"
+    backupFile "$USER1_HOME/$dotfile" "$dotfilesBkpDir/$dotfile"_"$now"
     retval="$?"
     if [[ $retval -ne 0  ]]; then
         log "$FUNCNAME: failed to backup dotfile $dotfile: $retval"
@@ -326,11 +328,11 @@ installDotfile()
     fi
 
     # Create link to new dotfile
-    createLink "$DOTFILES_SOURCE_DIR/$dotfile" "$USER1_HOME/$dotfile"
+    createLink "$dotfilesSrcDir/$dotfile" "$USER1_HOME/$dotfile"
     retval="$?"
     if [[ $retval -ne 0  ]]; then
         log "$FUNCNAME: failed to create link to new dotfile"\
-            "$DOTFILES_SOURCE_DIR/$dotfile: $retval"
+            "$dotfilesSrcDir/$dotfile: $retval"
         return 6
     fi
 

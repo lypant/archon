@@ -52,7 +52,8 @@ commonInstall()
     downloadMirrorList
     installBaseSystem
     generateFstab
-    #setTmpfsTmpSize    # Needed before reboot to install AUR packages nicely # Individual
+    # Needed before reboot to install AUR packages nicely
+    #setTmpfsTmpSize    # Individual
     setHostName
     setLocales
     generateLocales

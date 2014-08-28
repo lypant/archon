@@ -561,7 +561,7 @@ disablePcSpeaker()
 cloneProjectRepo()
 {
     log "Clone $PROJECT_NAME repo..."
-    cmd "git clone $PROJECT_REPO_URL $PROJECT_REPO_DST"
+    cmd "git clone $PROJECT_REPO_URL $USER1_HOME/$PROJECT_NAME"
     log "Clone $PROJECT_NAME repo...done"
 }
 
@@ -569,7 +569,7 @@ checkoutCurrentBranch()
 {
     log "Checkout current branch..."
     # Execute git commands from destination path
-    cmd "git -C $PROJECT_REPO_DST checkout $PROJECT_BRANCH"
+    cmd "git -C $USER1_HOME/$PROJECT_NAME checkout $PROJECT_BRANCH"
     log "Checkout current branch...done"
 }
 
@@ -734,7 +734,9 @@ installCustomizedDwm()
     # Newest commit was not working... use specific, working version
     cmd "git -C $DWM_BUILD_PATH checkout $DWM_BASE_COMMIT -b $DWM_CUSTOM_BRANCH"
     # Apply patch with customizations
-    cmd "git -C $DWM_BUILD_PATH apply $PATCHES_DIR/$DWM_CUSTOM_PATCH_FILE"
+    cmd "git -C $DWM_BUILD_PATH apply"\
+        "$USER1_HOME/$PROJECT_NAME/$VARIANT/$PATCHES_DIR_NAME/"\
+        "$DWM_CUSTOM_PATCH_FILE"
     # Add changes introduced with patch. Use add . since new files may be added.
     cmd "git -C $DWM_BUILD_PATH add ."
     # Save configuration as new commit
@@ -939,6 +941,6 @@ copyProjectLogFiles()
     # Do not perform typical logging in this function...
     # This would spoil nice logs copied to user's dir
 
-    cp -r $LOG_DIR $PROJECT_REPO_DST/$VARIANT
+    cp -r $LOG_DIR $USER1_HOME/$PROJECT_NAME/$VARIANT
 }
 
