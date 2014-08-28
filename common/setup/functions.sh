@@ -47,7 +47,6 @@ uncommentVar()
 	local file="$2"
 
     cmd "sed -i \"s|^#\(${var}.*\)$|\1|\" ${file}"
-    return $?
 }
 
 commentVar()
@@ -56,7 +55,6 @@ commentVar()
 	local file="$2"
 
     cmd "sed -i \"s|^\(${var}.*\)$|#\1|\" ${file}"
-    return $?
 }
 
 #===============================================================================
@@ -81,29 +79,23 @@ createLogDir()
 updatePackageList()
 {
     log "Update package list..."
-
     cmd "pacman -Syy"
-
     log "Update package list...done"
 }
 
 installPackage()
 {
     log "Installing package $@..."
-
     cmd "pacman -S $@ --noconfirm"
-
     log "Installing package $@...done"
 }
 
 # Delay is given in seconds
 delay()
 {
-    local seconds="$1"
-
-    log "Waiting $seconds""s..."
-    cmd "sleep $seconds"
-    log "Waiting $seconds""s...done"
+    log "Waiting $1""s..."
+    cmd "sleep $1"
+    log "Waiting $1""s...done"
 }
 
 createPartition()
@@ -157,23 +149,20 @@ downloadFile()
     local dst=$2
 
     cmd "curl -so $dst --create-dirs $src"
-    return $?
 }
 
 archChroot()
 {
     cmd arch-chroot $ROOT_PARTITION_MOUNT_POINT /bin/bash -c \""$@"\"
-    return $?
 }
 
 setLocale()
 {
-    log "Set locale for  $1..."
-
     local subst="s|^#\\\\\(${1}.*\\\\\)$|\1|"
     local file="/etc/locale.gen"
-    archChroot "sed -i \\\"$subst\\\" $file"
 
+    log "Set locale for  $1..."
+    archChroot "sed -i \\\"$subst\\\" $file"
     log "Set locale for $1...done"
 }
 
@@ -185,18 +174,16 @@ addUser()
     local name="$4"
 
     log "Add user..."
-
     cmd "useradd -m -g $mainGroup -G $additionalGroups -s $shell $name"
-
     log "Add user...done"
 }
 
 setUserPassword()
 {
-    log "Set user password..."
-
     local ask=1
     local name="$1"
+
+    log "Set user password..."
 
     while [ $ask -ne 0 ]; do
         log "Provide password for user $name"
@@ -207,40 +194,34 @@ setUserPassword()
     log "Set user password...done"
 }
 
+# TODO - do it in a safer way... Here just for experiments
 setSudoer()
 {
-    log "Set sudoer..."
-
     local name="$1"
 
-    # TODO - do it in a safer way... Here just for experiments
+    log "Set sudoer..."
     cmd "echo \"$name ALL=(ALL) ALL\" >> /etc/sudoers"
-
     log "Set sudoer...done"
 }
 
 changeHomeOwnership()
 {
-    log "Change home dir ownership..."
-
     local userName="$1"
     local userHome="$2"
 
+    log "Change home dir ownership..."
     cmd "chown -R $userName:users $userHome"
-
     log "Change home dir ownership...done"
 }
 
 enableService()
 {
     cmd "systemctl enable $1"
-    return $?
 }
 
 startService()
 {
     cmd "systemctl start $1"
-    return $?
 }
 
 createLink()

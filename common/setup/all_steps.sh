@@ -321,24 +321,23 @@ installBootloader()
 
 configureSyslinux()
 {
-    log "Configure syslinux..."
-
-    archChroot "syslinux-install_update -i -a -m"
-
     local src="sda3"
     local dst="$ROOT_PARTITION_HDD$ROOT_PARTITION_NB"
     local subst="s|$src|$dst|g"
     local file="/boot/syslinux/syslinux.cfg"
-    archChroot "sed -i \\\"$subst\\\" $file"
 
+    log "Configure syslinux..."
+    archChroot "syslinux-install_update -i -a -m"
+    archChroot "sed -i \\\"$subst\\\" $file"
     log "Configure syslinux...done"
 }
 
 setRootPassword()
 {
+    local ASK=1
+
     log "Set root password..."
 
-    local ASK=1
     while [ $ASK -ne 0 ]; do
         archChroot "passwd"
         ASK=$?
@@ -356,7 +355,6 @@ copyProjectFiles()
     # Do not perform typical logging in this function...
     # This would spoil nice logs copied to new system
     mkdir -p $PROJECT_MNT_PATH
-
     cp -R $PROJECT_ROOT_PATH/* $PROJECT_MNT_PATH
 
     # This is only for livecd output and logs consistency
@@ -464,8 +462,6 @@ configureGitUser()
 
 setBootloaderKernelParams()
 {
-    log "Set bootloader kernel params..."
-
     local src="APPEND root.*$"
     local path="$PARTITION_PREFIX$ROOT_PARTITION_HDD$ROOT_PARTITION_NB"
     local bkp="$BOOTLOADER_KERNEL_PARAMS"
@@ -473,8 +469,9 @@ setBootloaderKernelParams()
     local dst="APPEND root=$params"
     local subst="s|$src|$dst|"
     local file="/boot/syslinux/syslinux.cfg"
-    cmd "sed -i \"$subst\" $file"
 
+    log "Set bootloader kernel params..."
+    cmd "sed -i \"$subst\" $file"
     log "Set bootloader kernel params...done"
 }
 
@@ -505,29 +502,26 @@ setConsoleLoginMessage()
 # This requires image recreation for changes to take effect
 setMkinitcpioModules()
 {
-    log "Setting mkinitcpio modules..."
-
     local src="^MODULES.*$"
     local dst="MODULES=\\\"$MKINITCPIO_MODULES\\\""
     local subst="s|$src|$dst|"
     local file="/etc/mkinitcpio.conf"
-    cmd "sed -i \"$subst\" $file"
 
+    log "Setting mkinitcpio modules..."
+    cmd "sed -i \"$subst\" $file"
     log "Setting mkinitcpio modules...done"
 }
 
 # This requires image recreation for changes to take effect
 setMkinitcpioHooks()
 {
-    log "Set mkinitcpio hooks..."
-
-    # Set hooks
     local src="^HOOKS.*$"
     local dst="HOOKS=\\\"$MKINITCPIO_HOOKS\\\""
     local subst="s|$src|$dst|"
     local file="/etc/mkinitcpio.conf"
-    cmd "sed -i \"$subst\" $file"
 
+    log "Set mkinitcpio hooks..."
+    cmd "sed -i \"$subst\" $file"
     log "Set mkinitcpio hooks...done"
 }
 
@@ -629,17 +623,17 @@ installDvtm()
 
 installCustomizedDvtm()
 {
-    log "Install customized dvtm..."
-
-    cmd "git clone $DVTM_GIT_REPO $DVTM_BUILD_PATH"
-    cmd "git -C $DVTM_BUILD_PATH checkout -b $DVTM_CUSTOM_BRANCH"
-
     # Change default blue color to something brighter
     # to make it visible on older CRT monitor
     local src="BLUE"
     local dst="$DVTM_ACTIVE_COLOR"
     local subst="s|$src|$dst|g"
     local file="$DVTM_BUILD_PATH/config.def.h"
+
+    log "Install customized dvtm..."
+
+    cmd "git clone $DVTM_GIT_REPO $DVTM_BUILD_PATH"
+    cmd "git -C $DVTM_BUILD_PATH checkout -b $DVTM_CUSTOM_BRANCH"
     cmd "sed -i \"$subst\" $file"
 
     # Change default mod key - 'g' is not convenient to be used with CTRL key
@@ -647,12 +641,10 @@ installCustomizedDvtm()
     dst="#define MOD CTRL('$DVTM_MOD_KEY')"
     subst="s|$src|$dst|g"
     file="$DVTM_BUILD_PATH/config.def.h"
+
     cmd "sed -i \"$subst\" $file"
-
     cmd "git -C $DVTM_BUILD_PATH commit -a -m \"$CUSTOM_COMMIT_COMMENT\""
-
     cmd "make -C $DVTM_BUILD_PATH"
-
     cmd "make -C $DVTM_BUILD_PATH install"
 
     log "Install customized dvtm...done"
