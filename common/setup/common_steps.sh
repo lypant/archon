@@ -137,6 +137,7 @@ commonCloneProjectRepository()
     cloneProjectRepo
     checkoutCurrentBranch
     copyOverProjectFiles
+    createVariantLink
 }
 
 commonSetupProject()

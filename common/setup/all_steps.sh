@@ -580,6 +580,16 @@ copyOverProjectFiles()
     log "Copy over $PROJECT_NAME files...done"
 }
 
+createVariantLink()
+{
+    local target="$USER1_HOME/$PROJECT_NAME/$VARIANT"
+    local name="$USER1_HOME/$PROJECT_NAME/$VARIANT_LINK_NAME"
+
+    log "Create variant link..."
+    createLink "$target" "$name"
+    log "Create variant link...done"
+}
+
 #=======================================
 # Individual setup
 #=======================================
