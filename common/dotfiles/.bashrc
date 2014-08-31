@@ -7,10 +7,12 @@
 #===============================================================================
 [[ $- != *i* ]] && return
 
-#===============================================================================
-# Load files containing variables to be exported
-#===============================================================================
-source "$HOME/archon/variant/setup/individual_exports.conf"
+#=======================================
+# Exported variables
+#=======================================
+
+# Add more dirs to path
+export PATH=$PATH:/$HOME/archon/variant/scripts
 
 #===============================================================================
 # Shell
@@ -24,12 +26,6 @@ PS1='[\u@\h \W]\$'
 #=======================================
 # Aliases
 #=======================================
-
-#===================
-# Data partition remounting
-#===================
-alias drw="sudo mount -U \"$DATA_PARTITION_UUID\" -o remount,nouser,noexec,rw"
-alias dro="sudo mount -U \"$DATA_PARTITION_UUID\" -o remount,auto,nouser,noexec,ro"
 
 #===================
 # ls
@@ -88,13 +84,6 @@ complete -cf sudo
 
 # git
 source "/usr/share/git/completion/git-completion.bash"
-
-#=======================================
-# Exported variables
-#=======================================
-
-# Add more dirs to path
-export PATH=$PATH:/$HOME/archon/variant/scripts
 
 #===============================================================================
 # Color themes
