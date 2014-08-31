@@ -827,6 +827,7 @@ setVirtualboxSharedFolder()
 
 setDataPartition()
 {
+    local mntDir="/mnt/$DATA_PARTITION_DIR_NAME"
     local entry="UUID=$DATA_PARTITION_UUID"
     entry="$entry /mnt/$DATA_PARTITION_DIR_NAME"
     entry="$entry $DATA_PARTITION_TYPE"
@@ -835,9 +836,9 @@ setDataPartition()
     entry="$entry $DATA_PARTITION_PASS"
 
     log "Set data partition..."
-    cmd "echo -e \"'\n'$entry\" >> $FSTAB_FILE"
-    createLink "/mnt/$DATA_PARTITION_DIR_NAME"\
-               "$USER1_HOME/$DATA_PARTITION_DIR_NAME"
+    cmd "echo -e \"\n$entry\" >> $FSTAB_FILE"
+    createDir "$mntDir"
+    createLink "$mntDir" "$USER1_HOME/$DATA_PARTITION_DIR_NAME"
     log "Set data partition...done"
 }
 
