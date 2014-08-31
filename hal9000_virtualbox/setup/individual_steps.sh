@@ -66,14 +66,15 @@ individualPreCustomize()
 individualCustomize()
 {
     # Console based software
-    installJdk
-    installAndroidEnv
+    #installJdk                     # Do not test on virtualbox
+    #installAndroidEnv              # Do not test on virtualbox
     installVirtualboxGuestAdditions
 
     # Dotfiles
     installXbindkeysDotfile
 
     # Configuration
+    setDataPartition
     #setMkinitcpioModules        # Not needed for virtualbox
     setVirtualboxSharedFolder
 }

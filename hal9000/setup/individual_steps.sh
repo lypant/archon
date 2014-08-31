@@ -74,6 +74,7 @@ individualCustomize()
     installXbindkeysDotfile
 
     # Configuration
+    setDataPartition
     setMkinitcpioModules    # Requires linux image recreation
 }
 
