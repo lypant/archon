@@ -72,6 +72,7 @@ individualCustomize()
 
     # Configuration
     setVirtualboxSharedFolder
+    setDataPartition
 }
 
 individualPostCustomize()

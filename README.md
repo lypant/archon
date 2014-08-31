@@ -10,4 +10,5 @@ Instruction
 curl -L https://github.com/lypant/archon/tarball/common | tar xz
 
 TODO:
+! Add individual_exports.conf files for all variants if experiment is successful
 - Split collors definintion from .bashrc into separate file (existing bash.conf?)

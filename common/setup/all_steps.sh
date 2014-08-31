@@ -825,6 +825,22 @@ setVirtualboxSharedFolder()
     log "Set virtualbox shared folder...done"
 }
 
+setDataPartition()
+{
+    local entry="UUID=$DATA_PARTITION_UUID"
+    entry="$entry /mnt/$DATA_PARTITION_DIR_NAME"
+    entry="$entry $DATA_PARTITION_TYPE"
+    entry="$entry $DATA_PARTITION_MNT_OPTIONS"
+    entry="$entry $DATA_PARTITION_DUMP"
+    entry="$entry $DATA_PARTITION_PASS"
+
+    log "Set data partition..."
+    cmd "echo -e \"'\n'$entry\" >> $FSTAB_FILE"
+    createLink "/mnt/$DATA_PARTITION_DIR_NAME"\
+               "$USER1_HOME/$DATA_PARTITION_DIR_NAME"
+    log "Set data partition...done"
+}
+
 #=========
 # Dotfiles
 #=========

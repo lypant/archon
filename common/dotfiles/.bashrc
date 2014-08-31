@@ -8,6 +8,11 @@
 [[ $- != *i* ]] && return
 
 #===============================================================================
+# Load files containing variables to be exported
+#===============================================================================
+source "$HOME/archon/variant/setup/individual_exports.conf"
+
+#===============================================================================
 # Shell
 #===============================================================================
 
@@ -19,6 +24,12 @@ PS1='[\u@\h \W]\$'
 #=======================================
 # Aliases
 #=======================================
+
+#===================
+# Data partition remounting
+#===================
+alias drw="sudo mount -U \"$DATA_PARTITION_UUID\" -o remount,nouser,noexec,rw"
+alias dro="sudo mount -U \"$DATA_PARTITION_UUID\" -o remount,auto,nouser,noexec,ro"
 
 #===================
 # ls
