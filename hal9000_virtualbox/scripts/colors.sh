@@ -1,1 +1,0 @@
-../../hal9000/scripts/colors.sh

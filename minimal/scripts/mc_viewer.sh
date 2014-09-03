@@ -1,1 +1,0 @@
-../../common/scripts/mc_viewer.sh

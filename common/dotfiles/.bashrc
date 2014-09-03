@@ -46,14 +46,14 @@ if [[ -z "$DISPLAY" ]]; then
 
     # Do not use fancy characters to draw outline
     # Use vim as editor
-    # Use mc_viewer.sh script as viewer - vim with additional parameters
-    alias mc='EDITOR=vim VIEWER=$HOME/archon/variant/scripts/mc_viewer.sh mc -a'
+    # Use mc_viewer script as viewer - vim with additional parameters
+    alias mc='EDITOR=vim VIEWER=mc_viewer mc -a'
 else
     # Aliases for GUI
 
     # Use vim as editor
-    # Use mc_viewer.sh script as viewer - vim with additional parameters
-    alias mc='EDITOR=vim VIEWER=$HOME/archon/variant/scripts/mc_viewer.sh mc'
+    # Use mc_viewer script as viewer - vim with additional parameters
+    alias mc='EDITOR=vim VIEWER=mc_viewer mc'
 fi
 
 #===================
