@@ -68,7 +68,6 @@ individualCustomize()
     # Console based software
     installJdk
     installAndroidEnv
-    installVirtualboxGuestAdditions
 
     # Dotfiles
     installXbindkeysDotfile
