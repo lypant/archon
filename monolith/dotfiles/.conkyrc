@@ -6,7 +6,7 @@ net_avg_samples 2
 no_buffers yes
 out_to_console yes
 out_to_x no
-total_runtimes 0
+total_run_times 0
 update_interval 1.0
 use_spacer left
 pad_percents 3
