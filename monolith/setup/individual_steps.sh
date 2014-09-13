@@ -26,7 +26,7 @@ individualInstallEnv()
 
 individualPreInstall()
 {
-    :
+    installArchlinuxKeyring
 }
 
 individualPartitioning()
