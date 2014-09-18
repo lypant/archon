@@ -55,6 +55,13 @@ I686_FS_SRC="$ISO_CONTENTS_DIR/arch/i686"
 # Functions
 #-------------------------------------------------------------------------------
 
+updatePackageList()
+{
+    echo "Update package list..."
+    sudo pacman -Syy
+    echo "Update package list...done"
+}
+
 checkPackages()
 {
     echo "Check packages..."
@@ -227,6 +234,7 @@ prepareFileSystemI686()
 createCustomIso()
 {
     echo "Create custom ISO..."
+    updatePackageList
     checkPackages
     # Exit on error
     set -o errexit
