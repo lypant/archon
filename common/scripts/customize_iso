@@ -40,17 +40,6 @@ MD5_NAME="airootfs.md5"
 IMG_NAME="airootfs.img"
 USQ_NAME="squashfs-root"
 
-ORIGINAL_NAME="${ORIGINAL_ISO##*/}"
-ISO_YEAR="${ORIGINAL_NAME:10:4}"
-ISO_MONTH="${ORIGINAL_NAME:15:2}"
-ISO_VERSION="ARCH_$ISO_YEAR$ISO_MONTH"
-
-ISO_CONTENTS_DIR="$WORKSPACE/iso_contents"
-X86_64_FS_DIR="$WORKSPACE/x86_64_fs"
-I686_FS_DIR="$WORKSPACE/i686_fs"
-X86_64_FS_SRC="$ISO_CONTENTS_DIR/arch/x86_64"
-I686_FS_SRC="$ISO_CONTENTS_DIR/arch/i686"
-
 #-------------------------------------------------------------------------------
 # Functions
 #-------------------------------------------------------------------------------
@@ -256,6 +245,7 @@ query()
     echo "Workspace:    $WORKSPACE"
     echo "Custom src:   $CUSTOM_SRC"
     echo "Custom dst:   $CUSTOM_DST"
+    echo "ISO ver:      $ISO_VERSION"
 
     read -p "Create new iso? [y/N]?" response
     case $response in
@@ -320,6 +310,21 @@ while getopts ":ho:n:w:s:d:" opt; do
             ;;
     esac
 done
+
+#-------------------------------------------------------------------------------
+# Dependent on command line options
+#-------------------------------------------------------------------------------
+
+ORIGINAL_NAME="${ORIGINAL_ISO##*/}"
+ISO_YEAR="${ORIGINAL_NAME:10:4}"
+ISO_MONTH="${ORIGINAL_NAME:15:2}"
+ISO_VERSION="ARCH_$ISO_YEAR$ISO_MONTH"
+
+ISO_CONTENTS_DIR="$WORKSPACE/iso_contents"
+X86_64_FS_DIR="$WORKSPACE/x86_64_fs"
+I686_FS_DIR="$WORKSPACE/i686_fs"
+X86_64_FS_SRC="$ISO_CONTENTS_DIR/arch/x86_64"
+I686_FS_SRC="$ISO_CONTENTS_DIR/arch/i686"
 
 query
 
