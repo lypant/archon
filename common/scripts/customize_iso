@@ -6,6 +6,8 @@
 #
 # DESCRIPTION:  Creates ISO based on provided Arch Linux ISO,
 #               adding provided custom content
+#
+# TODO:         Add workspace cleanup, so more ISOs can be created consecutively
 #===============================================================================
 
 # Setup shell - detect unset variables
@@ -226,6 +228,8 @@ createCustomIso()
 {
     echo "Create custom ISO..."
     checkPackages
+    # Exit on error
+    set -o errexit
     createIsoMountPoint
     mountIso
     createWorkspaceDir
@@ -308,9 +312,6 @@ while getopts ":ho:n:w:s:d:" opt; do
             ;;
     esac
 done
-
-# After getopts it is ok to set exit on error shell option
-set -o errexit
 
 query
 
