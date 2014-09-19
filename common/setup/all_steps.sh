@@ -567,7 +567,8 @@ initAlsa()
 {
     log "Init alsa..."
     cmd "alsactl init"
-    err "$?" "$FUNCNAME" "failed to init alsa"
+    # Alsa can answer with error 99 but work fine
+    #err "$?" "$FUNCNAME" "failed to init alsa"
     log "Init alsa...done"
 }
 
