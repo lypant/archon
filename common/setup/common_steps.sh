@@ -195,15 +195,13 @@ commonCustomize()
     setBootloaderKernelParams
     disableSyslinuxBootMenu
     setConsoleLoginMessage
-    #setMkinitcpioModules    # Requires linux image recreation  # Individual
+    #setMkinitcpioModules   # Requires linux image recreation  # Individual
     setMkinitcpioHooks      # Requires linux image recreation
     initAlsa                # Initialize all devices to a default state
-    # TODO: This step should be individual
-    unmuteAlsa              # This should be enough on real HW
-    setPcmModuleLoading
+    #unmuteAlsa             # Individual
     disablePcSpeaker
 
-    #setVirtualboxSharedFolder          # Individual
+    #setVirtualboxSharedFolder  # Individual
 }
 
 commonPostCustomize()
