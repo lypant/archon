@@ -358,6 +358,8 @@ configureSyslinux()
     log "Configure syslinux..."
     archChroot "syslinux-install_update -i -a -m"
     err "$?" "$FUNCNAME" "failed to update syslinux"
+    # Caused problems on monolith, so add delay
+    delay "$BOOTLOADER_UPDATE_DELAY"
     archChroot "sed -i \\\"$subst\\\" $file"
     err "$?" "$FUNCNAME" "failed to replace parition path"
     log "Configure syslinux...done"
