@@ -354,10 +354,21 @@ configureSyslinux()
     local dst="$ROOT_PARTITION_HDD$ROOT_PARTITION_NB"
     local subst="s|$src|$dst|g"
     local file="/boot/syslinux/syslinux.cfg"
+    local cnt=0
 
     log "Configure syslinux..."
     archChroot "syslinux-install_update -i -a -m"
     err "$?" "$FUNCNAME" "failed to update syslinux"
+
+    # Workaround for monolith - if udev is mounted, unmount it
+    cnt=$(mount | grep udev | wc -l)
+    if [[ "$cnt" -gt 0 ]]; then
+        log "Udev detected"
+	    cmd "umount /mnt/dev"
+    else
+        log "Udev not detected"
+    fi
+
     # Caused problems on monolith, so add delay
     delay "$BOOTLOADER_UPDATE_DELAY"
     archChroot "sed -i \\\"$subst\\\" $file"
