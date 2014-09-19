@@ -41,6 +41,21 @@ cmd()
     return ${PIPESTATUS[0]}
 }
 
+# Checks provided error code. Terminates script when it is nonzero.
+# Usage: err "$?" "$FUNCNAME" "message to be shown and logged"
+err()
+{
+    local error="$1"
+    local funcname="$2"
+    local msg="$3"
+
+    if [[ "$error" -ne 0 ]]; then
+        log "$funcname: $msg: $error"
+        log "Aborting!"
+        exit 1
+    fi
+}
+
 uncommentVar()
 {
 	local var="$1"
@@ -80,6 +95,7 @@ updatePackageList()
 {
     log "Update package list..."
     cmd "pacman -Syy"
+    err "$?" "$FUNCNAME" "failed to update package list"
     log "Update package list...done"
 }
 
@@ -87,6 +103,7 @@ installPackage()
 {
     log "Installing package $@..."
     cmd "pacman -S $@ --noconfirm"
+    err "$?" "$FUNCNAME" "failed to install package"
     log "Installing package $@...done"
 }
 
@@ -125,6 +142,8 @@ createPartition()
 	w
 	EOF
 
+    err "$?" "$FUNCNAME" "failed to create partition"
+
     delay $PARTITION_OPERATIONS_DELAY
 }
 
@@ -140,6 +159,8 @@ setPartitionBootable()
 	w
 	EOF
 
+    err "$?" "$FUNCNAME" "failed to set partition bootable"
+
     delay $PARTITION_OPERATIONS_DELAY
 }
 
@@ -149,6 +170,7 @@ downloadFile()
     local dst=$2
 
     cmd "curl -so $dst --create-dirs $src"
+    err "$?" "$FUNCNAME" "failed to download file"
 }
 
 archChroot()
@@ -163,6 +185,7 @@ setLocale()
 
     log "Set locale for  $1..."
     archChroot "sed -i \\\"$subst\\\" $file"
+    err "$?" "$FUNCNAME" "failed to set locale"
     log "Set locale for $1...done"
 }
 
@@ -175,6 +198,7 @@ addUser()
 
     log "Add user..."
     cmd "useradd -m -g $mainGroup -G $additionalGroups -s $shell $name"
+    err "$?" "$FUNCNAME" "failed to add user"
     log "Add user...done"
 }
 
@@ -201,6 +225,7 @@ setSudoer()
 
     log "Set sudoer..."
     cmd "echo \"$name ALL=(ALL) ALL\" >> /etc/sudoers"
+    err "$?" "$FUNCNAME" "failed to set sudoer"
     log "Set sudoer...done"
 }
 
@@ -211,17 +236,20 @@ changeHomeOwnership()
 
     log "Change home dir ownership..."
     cmd "chown -R $userName:users $userHome"
+    err "$?" "$FUNCNAME" "failed to change home ownership"
     log "Change home dir ownership...done"
 }
 
 enableService()
 {
     cmd "systemctl enable $1"
+    err "$?" "$FUNCNAME" "failed to enable service $1"
 }
 
 startService()
 {
     cmd "systemctl start $1"
+    err "$?" "$FUNCNAME" "failed to start service $1"
 }
 
 createLink()
@@ -350,10 +378,14 @@ installAurPackage()
 
         cd $buildDir
         cmd "curl \"$pkgFile\" | tar xz"
+        err "$?" "$FUNCNAME" "failed to download package file"
 
         cd $buildDir/$p
+        err "$?" "$FUNCNAME" "failed to enter package dir"
+
         # TODO: Consider another solution to avoid --asroot
         cmd "makepkg -si --asroot --noconfirm"
+        err "$?" "$FUNCNAME" "failed to install package"
     done
 }
 

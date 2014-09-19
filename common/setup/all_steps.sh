@@ -94,6 +94,7 @@ createSwap()
 {
     log "Create swap..."
     cmd "mkswap $PARTITION_PREFIX$SWAP_PARTITION_HDD$SWAP_PARTITION_NB"
+    err "$?" "$FUNCNAME" "failed to create swap"
     log "Create swap...done"
 }
 
@@ -101,6 +102,7 @@ activateSwap()
 {
     log "Activate swap..."
     cmd "swapon $PARTITION_PREFIX$SWAP_PARTITION_HDD$SWAP_PARTITION_NB"
+    err "$?" "$FUNCNAME" "failed to activate swap"
     log "Activate swap...done"
 }
 
@@ -109,6 +111,7 @@ createBootFileSystem()
     log "Create boot file system..."
     cmd "mkfs.$BOOT_PARTITION_FS"\
         "$PARTITION_PREFIX$BOOT_PARTITION_HDD$BOOT_PARTITION_NB"
+    err "$?" "$FUNCNAME" "failed to create boot file system"
     log "Create boot file system...done"
 }
 
@@ -117,6 +120,7 @@ createRootFileSystem()
     log "Create root file system..."
     cmd "mkfs.$ROOT_PARTITION_FS"\
         " $PARTITION_PREFIX$ROOT_PARTITION_HDD$ROOT_PARTITION_NB"
+    err "$?" "$FUNCNAME" "failed to create root file system"
     log "Create root file system...done"
 }
 
@@ -125,6 +129,7 @@ mountRootPartition()
     log "Mount root partition..."
     cmd "mount $PARTITION_PREFIX$ROOT_PARTITION_HDD$ROOT_PARTITION_NB"\
         " $ROOT_PARTITION_MOUNT_POINT"
+    err "$?" "$FUNCNAME" "failed to mount root partition"
     log "Mount root partition...done"
 }
 
@@ -132,8 +137,10 @@ mountBootPartition()
 {
     log "Mount boot partition..."
     cmd "mkdir $BOOT_PARTITION_MOUNT_POINT"
+    err "$?" "$FUNCNAME" "failed to create boot partition mount point"
     cmd "mount $PARTITION_PREFIX$BOOT_PARTITION_HDD$BOOT_PARTITION_NB"\
         " $BOOT_PARTITION_MOUNT_POINT"
+    err "$?" "$FUNCNAME" "failed to mount boot partition"
     log "Mount boot partition...done"
 }
 
@@ -141,6 +148,7 @@ unmountPartitions()
 {
     log "Unmount partitions..."
     cmd "umount -R $LIVECD_MOUNT_POINT"
+    err "$?" "$FUNCNAME" "failed to unmount partitions"
     log "Unmount partitions...done"
 }
 
@@ -155,8 +163,10 @@ rankMirrors()
     log "Rank mirrors..."
     # Backup original file
     cmd "cp $MIRROR_LIST_FILE $MIRROR_LIST_FILE_BACKUP"
+    err "$?" "$FUNCNAME" "failed to backup mirrors file"
     cmd "rankmirrors -n $MIRROR_COUNT $MIRROR_LIST_FILE_BACKUP >"\
         "$MIRROR_LIST_FILE"
+    err "$?" "$FUNCNAME" "failed to rank mirrors"
     log "Rank mirrors...done"
 }
 
@@ -167,6 +177,7 @@ downloadMirrorList()
     log "Download mirror list..."
     # Backup original file
     cmd "cp $MIRROR_LIST_FILE $MIRROR_LIST_FILE_BACKUP"
+    err "$?" "$FUNCNAME" "failed to backup mirrors file"
     downloadFile $MIRROR_LIST_URL $MIRROR_LIST_FILE
     uncommentVar "Server" $MIRROR_LIST_FILE
     log "Download mirror list...done"
@@ -176,6 +187,7 @@ installBaseSystem()
 {
     log "Install base system..."
     cmd "pacstrap -i $ROOT_PARTITION_MOUNT_POINT $BASE_SYSTEM_PACKAGES"
+    err "$?" "$FUNCNAME" "failed to install base system"
     log "Install base system...done"
 }
 
@@ -184,6 +196,7 @@ generateFstab()
     log "Generate fstab..."
     cmd "genfstab -L -p $ROOT_PARTITION_MOUNT_POINT >>"\
         " $ROOT_PARTITION_MOUNT_POINT/etc/fstab"
+    err "$?" "$FUNCNAME" "failed to generate fstab"
     log "Generate fstab...done"
 }
 
@@ -192,6 +205,7 @@ setTmpfsTmpSize()
     log "Set tmpfs tmp size..."
     cmd "echo \"tmpfs /tmp tmpfs size=$TMPFS_TMP_SIZE,rw 0 0\" >>"\
         " $ROOT_PARTITION_MOUNT_POINT$FSTAB_FILE"
+    err "$?" "$FUNCNAME" "failed to set tmpfs tmp size"
     log "Set tmpfs tmp size...done"
 }
 
@@ -199,6 +213,7 @@ setHostName()
 {
     log "Set host name..."
     archChroot "echo $HOST_NAME > /etc/hostname"
+    err "$?" "$FUNCNAME" "failed to set host name"
     log "Set host name...done"
 }
 
@@ -214,6 +229,7 @@ generateLocales()
 {
     log "Generate locales..."
     archChroot "locale-gen"
+    err "$?" "$FUNCNAME" "failed to generate locales"
     log "Generate locales...done"
 }
 
@@ -221,6 +237,7 @@ setLanguage()
 {
     log "Set language..."
     archChroot "echo LANG=$LOCALIZATION_LANGUAGE_EN >> /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set language"
     log "Set language...done"
 }
 
@@ -228,6 +245,7 @@ setLocalizationCtype()
 {
     log "Set localization ctype..."
     archChroot "echo LC_CTYPE=$LOCALIZATION_CTYPE >> /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set localization ctype"
     log "Set localization ctype...done"
 }
 
@@ -235,6 +253,7 @@ setLocalizationNumeric()
 {
     log "Set localization numeric..."
     archChroot "echo LC_NUMERIC=$LOCALIZATION_NUMERIC >> /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set localization numeric"
     log "Set localization numeric...done"
 }
 
@@ -242,6 +261,7 @@ setLocalizationTime()
 {
     log "Set localization time..."
     archChroot "echo LC_TIME=$LOCALIZATION_TIME >> /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set localization time"
     log "Set localization time...done"
 }
 
@@ -249,6 +269,7 @@ setLocalizationCollate()
 {
     log "Set localization collate..."
     archChroot "echo LC_COLLATE=$LOCALIZATION_COLLATE >> /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set localization collate"
     log "Set localization collate...done"
 }
 
@@ -256,6 +277,7 @@ setLocalizationMonetary()
 {
     log "Set localization monetary..."
     archChroot "echo LC_MONETARY=$LOCALIZATION_MONETARY >> /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set localization monetary"
     log "Set localization monetary...done"
 }
 
@@ -264,6 +286,7 @@ setLocalizationMeasurement()
     log "Set localization measurenent..."
     archChroot\
         "echo LC_MEASUREMENT=$LOCALIZATION_MEASUREMENT >> /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set localization measurement"
     log "Set localization measurement...done"
 }
 
@@ -272,6 +295,7 @@ setTimeZone()
     log "Set time zone..."
     archChroot\
         "ln -s /usr/share/zoneinfo/$LOCALIZATION_TIME_ZONE /etc/localtime"
+    err "$?" "$FUNCNAME" "failed to set time zone"
     log "Set time zone...done"
 }
 
@@ -279,6 +303,7 @@ setHardwareClock()
 {
     log "Set hardware clock..."
     archChroot "hwclock $LOCALIZATION_HW_CLOCK"
+    err "$?" "$FUNCNAME" "failed to set hardware clock"
     log "Set hardware clock...done"
 }
 
@@ -286,6 +311,7 @@ setConsoleKeymap()
 {
     log "Set console keymap..."
     archChroot "echo KEYMAP=$CONSOLE_KEYMAP > /etc/vconsole.conf"
+    err "$?" "$FUNCNAME" "failed to set console keymap"
     log "Set console keymap...done"
 }
 
@@ -293,6 +319,7 @@ setConsoleFont()
 {
     log "Set console font..."
     archChroot "echo FONT=$CONSOLE_FONT >> /etc/vconsole.conf"
+    err "$?" "$FUNCNAME" "failed to set console font"
     log "Set console font...done"
 }
 
@@ -300,6 +327,7 @@ setConsoleFontmap()
 {
     log "Set console fontmap..."
     archChroot "echo FONT_MAP=$CONSOLE_FONTMAP >> /etc/vconsole.conf"
+    err "$?" "$FUNCNAME" "failed to set console fontmap"
     log "Set console fontmap...done"
 }
 
@@ -308,7 +336,7 @@ setWiredNetwork()
     log "Set wired network..."
     archChroot\
         "systemctl enable $NETWORK_SERVICE@$NETWORK_INTERFACE_WIRED.service"
-
+    err "$?" "$FUNCNAME" "failed to set wired network"
     log "Set wired network...done"
 }
 
@@ -316,6 +344,7 @@ installBootloader()
 {
     log "Install bootloader..."
     archChroot "pacman -S $BOOTLOADER_PACKAGE --noconfirm"
+    err "$?" "$FUNCNAME" "failed to install bootloader"
     log "Install bootloader...done"
 }
 
@@ -328,7 +357,9 @@ configureSyslinux()
 
     log "Configure syslinux..."
     archChroot "syslinux-install_update -i -a -m"
+    err "$?" "$FUNCNAME" "failed to update syslinux"
     archChroot "sed -i \\\"$subst\\\" $file"
+    err "$?" "$FUNCNAME" "failed to replace parition path"
     log "Configure syslinux...done"
 }
 
@@ -376,6 +407,7 @@ setMultilibRepository()
     # Use repository for multilib support - to allow 32B apps on 64B system
     # Needed for Android development
     cmd "sed -i '/\[multilib\]/,/Include/ s|^#\(.*\)|\1|' /etc/pacman.conf"
+    err "$?" "$FUNCNAME" "failed to set multilib repository"
     log "Set multilib repository...done"
 }
 
@@ -456,7 +488,9 @@ configureGitUser()
 {
     log "Configure git user..."
     cmd "git config --global user.email \"$GIT_USER_EMAIL\""
+    err "$?" "$FUNCNAME" "failed to set git user email"
     cmd "git config --global user.name \"$GIT_USER_NAME\""
+    err "$?" "$FUNCNAME" "failed to set git user name"
     log "Configure git user...done"
 }
 
@@ -472,6 +506,7 @@ setBootloaderKernelParams()
 
     log "Set bootloader kernel params..."
     cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to set bootloader kernel params"
     log "Set bootloader kernel params...done"
 }
 
@@ -492,6 +527,7 @@ setConsoleLoginMessage()
     # Set new welcome message, if present
     if [ ! -z "$CONSOLE_LOGIN_MSG" ];then
         cmd "echo $CONSOLE_LOGIN_MSG > /etc/issue"
+        err "$?" "$FUNCNAME" "failed to set welcome message"
     else
         log "Console welcome message not set, /etc/issue file deleted"
     fi
@@ -509,6 +545,7 @@ setMkinitcpioModules()
 
     log "Setting mkinitcpio modules..."
     cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to set mkinitcpio modules"
     log "Setting mkinitcpio modules...done"
 }
 
@@ -522,6 +559,7 @@ setMkinitcpioHooks()
 
     log "Set mkinitcpio hooks..."
     cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to set mkinitcpio hooks"
     log "Set mkinitcpio hooks...done"
 }
 
@@ -529,6 +567,7 @@ initAlsa()
 {
     log "Init alsa..."
     cmd "alsactl init"
+    err "$?" "$FUNCNAME" "failed to init alsa"
     log "Init alsa...done"
 }
 
@@ -536,6 +575,7 @@ unmuteAlsa()
 {
     log "Unmute alsa..."
     cmd "amixer sset Master unmute"
+    err "$?" "$FUNCNAME" "failed to unmute alsa"
     log "Unmute alsa...done"
 }
 
@@ -543,6 +583,7 @@ setPcmModuleLoading()
 {
     log "Set snd-pcm-oss module loading..."
     cmd "echo $SND_PCM_OSS_MODULE >> $KERNEL_MODULES_PATH/$SND_PCM_OSS_FILE"
+    err "$?" "$FUNCNAME" "failed to set pcm module loading"
     log "Set snd-pcm-oss module loading...done"
 }
 
@@ -551,6 +592,7 @@ disablePcSpeaker()
     log "Disable pc speaker..."
     cmd "echo \"blacklist $PCSPEAKER_MODULE\" >>"\
         " $MODPROBE_PATH/$NO_PCSPEAKER_FILE"
+    err "$?" "$FUNCNAME" "failed to disable pc speaker"
     log "Disable pc speaker...done"
 }
 
@@ -562,6 +604,7 @@ cloneProjectRepo()
 {
     log "Clone $PROJECT_NAME repo..."
     cmd "git clone $PROJECT_REPO_URL $USER1_HOME/$PROJECT_NAME"
+    err "$?" "$FUNCNAME" "failed to clone project repo"
     log "Clone $PROJECT_NAME repo...done"
 }
 
@@ -570,6 +613,7 @@ checkoutCurrentBranch()
     log "Checkout current branch..."
     # Execute git commands from destination path
     cmd "git -C $USER1_HOME/$PROJECT_NAME checkout $PROJECT_BRANCH"
+    err "$?" "$FUNCNAME" "failed to checkout current branch"
     log "Checkout current branch...done"
 }
 
@@ -577,6 +621,7 @@ copyOverProjectFiles()
 {
     log "Copy over $PROJECT_NAME files..."
     cmd "cp -r $PROJECT_ROOT_PATH $USER1_HOME"
+    err "$?" "$FUNCNAME" "failed to copy over project files"
     log "Copy over $PROJECT_NAME files...done"
 }
 
@@ -587,6 +632,7 @@ createVariantLink()
 
     log "Create variant link..."
     createLink "$target" "$name"
+    err "$?" "$FUNCNAME" "failed to create variant link"
     log "Create variant link...done"
 }
 
@@ -643,8 +689,11 @@ installCustomizedDvtm()
     log "Install customized dvtm..."
 
     cmd "git clone $DVTM_GIT_REPO $DVTM_BUILD_PATH"
+    err "$?" "$FUNCNAME" "failed to clone dvtm repo"
     cmd "git -C $DVTM_BUILD_PATH checkout -b $DVTM_CUSTOM_BRANCH"
+    err "$?" "$FUNCNAME" "failed to checkout custom dvtm branch"
     cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to change dvtm color"
 
     # Change default mod key - 'g' is not convenient to be used with CTRL key
     src="#define MOD CTRL('g')"
@@ -653,9 +702,13 @@ installCustomizedDvtm()
     file="$DVTM_BUILD_PATH/config.def.h"
 
     cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to change dvtm default mod key"
     cmd "git -C $DVTM_BUILD_PATH commit -a -m \"$CUSTOM_COMMIT_COMMENT\""
+    err "$?" "$FUNCNAME" "failed to commit changes"
     cmd "make -C $DVTM_BUILD_PATH"
+    err "$?" "$FUNCNAME" "failed to make dvtm"
     cmd "make -C $DVTM_BUILD_PATH install"
+    err "$?" "$FUNCNAME" "failed to install dvtm"
 
     log "Install customized dvtm...done"
 }
@@ -687,6 +740,7 @@ installAndroidEnv()
     installAurPackage $ANDROID_ENV_PACKAGES
     # Needed to update sdk manually using 'android' tool
     cmd "chmod -R 755 /opt/android-sdk"
+    err "$?" "$FUNCNAME" "failed to change android-sdk file permissions"
     log "Install android env...done"
 }
 
@@ -699,12 +753,14 @@ installVirtualboxGuestAdditions()
 
     # Load required modules
     cmd "modprobe -a $VIRTUALBOX_GUEST_UTILS_MODULES"
+    err "$?" "$FUNCNAME" "failed to load virtualbox guest utils modules"
 
     # Setup modules to be loaded on startup
     if [ ! -z "$VIRTUALBOX_GUEST_UTILS_MODULES" ]; then
         for module in $VIRTUALBOX_GUEST_UTILS_MODULES
         do
             cmd "echo $module >> $VIRTUALBOX_GUEST_UTILS_MODULES_FILE"
+            err "$?" "$FUNCNAME" "failed to set modules to be loaded on startup"
         done
     fi
 
@@ -744,16 +800,22 @@ installCustomizedDwm()
     log "Installing customized dwm..."
     # Clone project from git
     cmd "git clone $DWM_GIT_REPO $DWM_BUILD_PATH"
+    err "$?" "$FUNCNAME" "failed to clone dwm repo"
     # Newest commit was not working... use specific, working version
     cmd "git -C $DWM_BUILD_PATH checkout $DWM_BASE_COMMIT -b $DWM_CUSTOM_BRANCH"
+    err "$?" "$FUNCNAME" "failed to checkout specific dwm branch"
     # Apply patch with customizations
     cmd "git -C $DWM_BUILD_PATH apply $patch"
+    err "$?" "$FUNCNAME" "failed to apply dwm patch"
     # Add changes introduced with patch. Use add . since new files may be added.
     cmd "git -C $DWM_BUILD_PATH add ."
+    err "$?" "$FUNCNAME" "failed to add changes introduced with patch"
     # Save configuration as new commit
     cmd "git -C $DWM_BUILD_PATH commit -m \"$CUSTOM_COMMIT_COMMENT\""
+    err "$?" "$FUNCNAME" "failed to commit dwm changes"
     # Install
     cmd "make -C $DWM_BUILD_PATH clean install"
+    err "$?" "$FUNCNAME" "failed to install dwm"
     log "Installing customized dwm...done"
 }
 
@@ -810,8 +872,10 @@ setVirtualboxSharedFolder()
     log "Set virtualbox shared folder..."
     # Create /media folder
     cmd "mkdir /media"
+    err "$?" "$FUNCNAME" "failed to create media folder"
     # Add user1 to vboxsf group
     cmd "gpasswd -a $USER1_NAME vboxsf"
+    err "$?" "$FUNCNAME" "failed to add user to vboxsf group"
     # Enable vboxservice service
     enableService "vboxservice"
     # Start vboxservice (needed for link creation)
@@ -822,6 +886,7 @@ setVirtualboxSharedFolder()
     createLink\
         "/media/sf_$VIRTUALBOX_SHARED_FOLDER_NAME"\
         "$USER1_HOME/$VIRTUALBOX_SHARED_FOLDER_NAME"
+    err "$?" "$FUNCNAME" "failed to create shared folder link"
     log "Set virtualbox shared folder...done"
 }
 
@@ -837,8 +902,11 @@ setDataPartition()
 
     log "Set data partition..."
     cmd "echo -e \"\n$entry\" >> $FSTAB_FILE"
+    err "$?" "$FUNCNAME" "failed to add entry to fstab"
     createDir "$mntDir"
+    err "$?" "$FUNCNAME" "failed to create mount dir"
     createLink "$mntDir" "$USER1_HOME/$DATA_PARTITION_DIR_NAME"
+    err "$?" "$FUNCNAME" "failed to create link"
     log "Set data partition...done"
 }
 
@@ -852,6 +920,7 @@ installBashprofileDotfile()
 {
     log "Install bash_profile dotfile..."
     installDotfile ".bash_profile" ""
+    err "$?" "$FUNCNAME" "failed to install bash_profile dotfile"
     log "Install bash_profile dotfile...done"
 }
 
@@ -859,6 +928,7 @@ installBashrcDotfile()
 {
     log "Install bashrc dotfile..."
     installDotfile ".bashrc" ""
+    err "$?" "$FUNCNAME" "failed to install bashrc dotfile"
     log "Install bashrc dotfile...done"
 }
 
@@ -866,6 +936,7 @@ installDircolorssolarizedDotfile()
 {
     log "Install .dir_colors_solarized dotfile..."
     installDotfile ".dir_colors_solarized" ""
+    err "$?" "$FUNCNAME" "failed to install dir_colors_solarized dotfile"
     log "Install .dir_colors_solarized dotfile...done"
 }
 
@@ -875,6 +946,7 @@ installVimrcDotfile()
 {
     log "Install vimrc dotfile..."
     installDotfile ".vimrc" ""
+    err "$?" "$FUNCNAME" "failed to install vimrc dotfile"
     log "Install vimrc dotfile...done"
 }
 
@@ -882,6 +954,7 @@ installVimsolarizedDotfile()
 {
     log "Install solarized.vim dotfile..."
     installDotfile "solarized.vim" ".vim/colors"
+    err "$?" "$FUNCNAME" "failed to install solarized.vim dotfile"
     log "Install solarized.vim dotfile...done"
 }
 
@@ -891,6 +964,7 @@ installMcsolarizedDotfile()
 {
     log "Install mc_solarized.ini dotfile..."
     installDotfile "mc_solarized.ini" ".config/mc"
+    err "$?" "$FUNCNAME" "failed to install mc_solarized.ini dotfile"
     log "Install mc_solarized.ini dotfile...done"
 }
 
@@ -900,6 +974,7 @@ installGitconfigDotfile()
 {
     log "Install .gitconfig dotfile..."
     installDotfile ".gitconfig" ""
+    err "$?" "$FUNCNAME" "failed to install gitconfig dotfile"
     log "Install .gitconfig dotfile...done"
 }
 
@@ -909,6 +984,7 @@ installCmusColorThemeDotfile()
 {
     log "Install cmus color theme dotfile..."
     installDotfile "solarized.theme" ".cmus"
+    err "$?" "$FUNCNAME" "failed to install cmus color theme dotfile"
     log "Install cmus color theme dotfile...done"
 }
 
@@ -918,6 +994,7 @@ installXinitrcDotfile()
 {
     log "Install .xinitrc dotfile..."
     installDotfile ".xinitrc" ""
+    err "$?" "$FUNCNAME" "failed to install xinitrc dotfile"
     log "Install .xinitrc dotfile...done"
 }
 
@@ -925,6 +1002,7 @@ installXresourcesDotfile()
 {
     log "Install .Xresources dotfile..."
     installDotfile ".Xresources" ""
+    err "$?" "$FUNCNAME" "failed to install Xresources dotfile"
     log "Install .Xresources dotfile...done"
 }
 
@@ -932,6 +1010,7 @@ installConkyDotfile()
 {
     log "Install .conkyrc dotfile..."
     installDotfile ".conkyrc" ""
+    err "$?" "$FUNCNAME" "failed to install conkyrc dotfile"
     log "Install .conkyrc dotfile...done"
 }
 
@@ -939,6 +1018,7 @@ installXbindkeysDotfile()
 {
     log "Install .xbindkeysrc dotfile..."
     installDotfile ".xbindkeysrc" ""
+    err "$?" "$FUNCNAME" "failed to install xbindkeys dotfile"
     log "Install .xbindkeysrc dotfile...done"
 }
 
@@ -950,6 +1030,7 @@ recreateImage()
 {
     log "Recreate linux image..."
     cmd "mkinitcpio -p linux"
+    err "$?" "$FUNCNAME" "failed to recreate image"
     log "Recreate linux image...done"
 }
 
