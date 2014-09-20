@@ -374,8 +374,6 @@ configureSyslinux()
         log "Udev not detected"
     fi
 
-    # Caused problems on monolith, so add delay
-    delay "$BOOTLOADER_UPDATE_DELAY"
     archChroot "sed -i \\\"$subst\\\" $file"
     err "$?" "$FUNCNAME" "failed to replace parition path"
     log "Configure syslinux...done"
