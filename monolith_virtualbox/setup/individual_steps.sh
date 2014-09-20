@@ -36,7 +36,7 @@ individualPartitioning()
 
 individualInstall()
 {
-    :
+    replacSyslinuxKernelVersion
 }
 
 individualPostInstall()

@@ -393,6 +393,8 @@ replacSyslinuxKernelVersion()
 
     src="initramfs-linux.img"
     dst="initramfs-${KERNEL_VERSION}.img"
+    subst="s|$src|$dst|g"
+
     archChroot "sed -i \\\"$subst\\\" $file"
     err "$?" "$FUNCNAME" "failed to replace INITRD entry"
 

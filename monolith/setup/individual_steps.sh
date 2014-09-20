@@ -31,7 +31,7 @@ individualPreInstall()
 
 individualPartitioning()
 {
-    :
+    replacSyslinuxKernelVersion
 }
 
 individualInstall()
