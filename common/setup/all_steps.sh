@@ -185,10 +185,13 @@ downloadMirrorList()
 
 installBaseSystem()
 {
+    # Replace linux package with cutom version, if it is used...
+    local basePkgs=$(pacman -Sqg base | sed "s|^linux$|$KERNEL_VERSION|")
+    # ...change new lines into spaces
+    basePkgs=$(echo $basePkgs | tr '\n' ' ')
+
     log "Install base system..."
-    cmd "pacstrap -i $ROOT_PARTITION_MOUNT_POINT"\
-        "$(pacman -Sqg base | sed \"s|^linux$|$KERNEL_VERSION|\")"\
-        "base-devel"
+    cmd "pacstrap -i $ROOT_PARTITION_MOUNT_POINT $basePkgs base-devel"
     err "$?" "$FUNCNAME" "failed to install base system"
     log "Install base system...done"
 }
