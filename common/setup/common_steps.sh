@@ -72,6 +72,7 @@ commonInstall()
     setWiredNetwork
     installBootloader
     configureSyslinux
+    replacSyslinuxKernelVersion
     setRootPassword
 }
 

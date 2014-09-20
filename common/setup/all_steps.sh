@@ -379,6 +379,26 @@ configureSyslinux()
     log "Configure syslinux...done"
 }
 
+replacSyslinuxKernelVersion()
+{
+    local src="vmlinuz-linux"
+    local dst="vmlinuz-$KERNEL_VERSION"
+    local subst="s|$src|$dst|g"
+    local file="/boot/syslinux/syslinux.cfg"
+
+    log "Replace syslinux kernel version..."
+
+    archChroot "sed -i \\\"$subst\\\" $file"
+    err "$?" "$FUNCNAME" "failed to replace LINUX entry"
+
+    src="initramfs-linux.img"
+    dst="initramfs-${KERNEL_VERSION}.img"
+    archChroot "sed -i \\\"$subst\\\" $file"
+    err "$?" "$FUNCNAME" "failed to replace INITRD entry"
+
+    log "Replace syslinux kernel version...done"
+}
+
 setRootPassword()
 {
     local ASK=1
