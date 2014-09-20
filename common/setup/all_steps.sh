@@ -187,17 +187,10 @@ installBaseSystem()
 {
     log "Install base system..."
     cmd "pacstrap -i $ROOT_PARTITION_MOUNT_POINT"\
-        "$(pacman -Sqg base | sed \"s|^linux$|$KERNEL_VERSION|\")"
+        "$(pacman -Sqg base | sed \"s|^linux$|$KERNEL_VERSION|\")"\
+        "base-devel"
     err "$?" "$FUNCNAME" "failed to install base system"
     log "Install base system...done"
-}
-
-installBaseDevel()
-{
-    log "Install base devel..."
-    cmd "pacstrap -i $ROOT_PARTITION_MOUNT_POINT base-devel"
-    err "$?" "$FUNCNAME" "failed to install base system"
-    log "Install base devel...done"
 }
 
 generateFstab()

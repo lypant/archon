@@ -51,7 +51,6 @@ commonInstall()
     #rankMirrors
     downloadMirrorList
     installBaseSystem
-    installBaseDevel
     generateFstab
     # Needed before reboot to install AUR packages nicely
     #setTmpfsTmpSize    # Individual
