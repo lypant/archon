@@ -1043,7 +1043,7 @@ installXbindkeysDotfile()
 recreateImage()
 {
     log "Recreate linux image..."
-    cmd "mkinitcpio -p linux"
+    cmd "mkinitcpio -p $KERNEL_VERSION"
     err "$?" "$FUNCNAME" "failed to recreate image"
     log "Recreate linux image...done"
 }
