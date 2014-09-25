@@ -32,6 +32,7 @@ commonPreInstall()
 
 commonPartitioning()
 {
+    checkSystemHdd
     createSwapPartition
     createBootPartition
     createRootPartition

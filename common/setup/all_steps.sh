@@ -45,6 +45,21 @@ installLivecdVim()
 # Partitioning
 #=======================================
 
+checkSystemHdd()
+{
+    # Get number of lines of lsblk command for system hdd
+    local hdd="$PARTITION_PREFIX/$SYSTEM_HDD"
+    local cnt=$(lsblk $hdd | wc -l)
+
+    log "Check system hdd..."
+    if [[ "$cnt" -gt 2 ]]; then
+        # There are some partitions already created, stop script execution
+        log "Disk $hdd already contains some partitions"
+        exit 1
+    fi
+    log "Check system hdd...done"
+}
+
 createSwapPartition()
 {
     log "Create swap partition..."
