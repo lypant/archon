@@ -65,6 +65,9 @@ individualPreCustomize()
 
 individualCustomize()
 {
+    # System
+    replaceMesaLibgl
+
     # Console based software
     #installJdk                     # Do not test on virtualbox
     #installAndroidEnv              # Do not test on virtualbox

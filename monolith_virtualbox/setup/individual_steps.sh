@@ -64,6 +64,9 @@ individualPreCustomize()
 
 individualCustomize()
 {
+    # System
+    replaceMesaLibgl
+
     installVirtualboxGuestAdditions
     setVirtualboxSharedFolder
 }

@@ -65,6 +65,9 @@ individualPreCustomize()
 
 individualCustomize()
 {
+    # System
+    replaceMesaLibgl
+
     # Console based software
     installJdk
     installAndroidEnv

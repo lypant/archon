@@ -101,10 +101,18 @@ updatePackageList()
 
 installPackage()
 {
-    log "Installing package $@..."
+    log "Install package $@..."
     cmd "pacman -S $@ --noconfirm"
     err "$?" "$FUNCNAME" "failed to install package"
-    log "Installing package $@...done"
+    log "Install package $@...done"
+}
+
+removePackage()
+{
+    log "Remove package $@..."
+    cmd "pacman -Rdd $@ --noconfirm"
+    err "$?" "$FUNCNAME" "failed to remove package"
+    log "Remove package $@...done"
 }
 
 # Delay is given in seconds

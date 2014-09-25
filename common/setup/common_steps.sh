@@ -152,7 +152,7 @@ commonCustomize()
 {
     # System
     installXorgBasic
-    installXorgAdditional
+    #installXorgAdditional	# Individual
     installAlsa
 
     # Console based software

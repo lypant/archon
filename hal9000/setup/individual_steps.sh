@@ -65,6 +65,9 @@ individualPreCustomize()
 
 individualCustomize()
 {
+    # System
+    installXorgAdditional
+
     # Console based software
     installJdk
     installAndroidEnv

@@ -701,6 +701,14 @@ installXorgAdditional()
     log "Install xorg additional...done"
 }
 
+replaceMesaLibgl()
+{
+    log "Replace mesa-libgl..."
+    removePackage "mesa-libgl"
+    installPackage "nvidia-304xx-libgl"
+    log "Replace mesa-libgl...done"
+}
+
 #===================
 # Individual software packages
 #===================

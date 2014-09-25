@@ -64,7 +64,8 @@ individualPreCustomize()
 
 individualCustomize()
 {
-    :
+    # System
+    installXorgAdditional
 }
 
 individualPostCustomize()
