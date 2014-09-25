@@ -47,7 +47,7 @@ index 0000000..bece655
 +    }
 +}
 diff --git a/config.def.h b/config.def.h
-index 875885b..3bbe729 100644
+index 875885b..cf310e6 100644
 --- a/config.def.h
 +++ b/config.def.h
 @@ -1,18 +1,40 @@
@@ -97,7 +97,15 @@ index 875885b..3bbe729 100644
  /* tagging */
  static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
  
-@@ -29,17 +51,21 @@ static const Rule rules[] = {
+@@ -22,24 +44,27 @@ static const Rule rules[] = {
+ 	 *	WM_NAME(STRING) = title
+ 	 */
+ 	/* class      instance    title       tags mask     isfloating   monitor */
+-	{ "Gimp",     NULL,       NULL,       0,            True,        -1 },
+-	{ "Firefox",  NULL,       NULL,       1 << 8,       False,       -1 },
++	{ NULL,     NULL,       NULL,       0,            False,        -1 },
+ };
+ 
  /* layout(s) */
  static const float mfact      = 0.55; /* factor of master area size [0.05..0.95] */
  static const int nmaster      = 1;    /* number of clients in master area */
@@ -123,7 +131,7 @@ index 875885b..3bbe729 100644
  #define TAGKEYS(KEY,TAG) \
  	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
  	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
-@@ -52,7 +78,7 @@ static const Layout layouts[] = {
+@@ -52,7 +77,7 @@ static const Layout layouts[] = {
  /* commands */
  static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
  static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, NULL };
@@ -132,7 +140,7 @@ index 875885b..3bbe729 100644
  
  static Key keys[] = {
  	/* modifier                     key        function        argument */
-@@ -71,6 +97,8 @@ static Key keys[] = {
+@@ -71,6 +96,8 @@ static Key keys[] = {
  	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
  	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
  	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
