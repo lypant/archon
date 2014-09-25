@@ -72,6 +72,9 @@ individualCustomize()
     installJdk
     installAndroidEnv
 
+    # GUI based software
+    installXbindkeys
+
     # Dotfiles
     installXbindkeysDotfile
 

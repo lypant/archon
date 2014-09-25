@@ -175,7 +175,7 @@ commonCustomize()
     installDmenu
     installOpera
     installConky
-    installXbindkeys
+    #installXbindkeys       # Individual
     installWmname           # Fix misbehaving Java apps in dwm
     installVlc
 
