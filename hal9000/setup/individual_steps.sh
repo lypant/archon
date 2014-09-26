@@ -80,6 +80,8 @@ individualCustomize()
 
     # Configuration
     setDataPartition
+
+    setMkinitcpioModules    # Requires linux image recreation
 }
 
 individualPostCustomize()
