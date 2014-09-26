@@ -66,7 +66,7 @@ individualPreCustomize()
 individualCustomize()
 {
     # System
-    replaceMesaLibgl
+    removeMesaLibgl
 
     # Console based software
     installJdk
