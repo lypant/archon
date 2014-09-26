@@ -174,6 +174,7 @@ commonCustomize()
     installCustomizedDwm    # Use customized version instead
     installDmenu
     installOpera
+    installFlashPlugin
     installConky
     #installXbindkeys       # Individual
     installWmname           # Fix misbehaving Java apps in dwm

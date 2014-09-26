@@ -894,6 +894,13 @@ installOpera()
     log "Install opera...done"
 }
 
+installFlashPlugin()
+{
+    log "Install flash plugin..."
+    installPackage $FLASHPLUGIN_PACKAGES
+    log "Install flash plugin...done"
+}
+
 installConky()
 {
     log "Install conky..."
