@@ -716,12 +716,20 @@ installXorgAdditional()
     log "Install xorg additional...done"
 }
 
+# TODO: Remove if removeMesaLibgl is enough
 replaceMesaLibgl()
 {
     log "Replace mesa-libgl..."
     removePackage "mesa-libgl"
     installPackage "nvidia-304xx-libgl"
     log "Replace mesa-libgl...done"
+}
+
+removeMesaLibgl()
+{
+    log "Remove mesa-libgl..."
+    removePackage "mesa-libgl"
+    log "Remove mesa-libgl...done"
 }
 
 #===================

@@ -66,6 +66,7 @@ individualPreCustomize()
 individualCustomize()
 {
     # System
+    removeMesaLibgl
     installXorgAdditional
 
     # Console based software
