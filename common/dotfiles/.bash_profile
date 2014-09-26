@@ -24,5 +24,5 @@
 # Log out after exiting dvtm
 # Note: Add exec before "startx" to to log out after exiting X
 #=======================================
-[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && startx &> ~/.xlog && dvtm && exit
+[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && startx -- -keeptty > ~/.xlog && dvtm && exit
 
