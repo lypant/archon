@@ -159,6 +159,7 @@ commonCustomize()
     # Console based software
     installVim
     installMc
+    installVifm
     #installDvtm            # Official repo version not good enough
     installCustomizedDvtm   # Use customized version instead
     installElinks

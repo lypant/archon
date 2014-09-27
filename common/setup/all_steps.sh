@@ -518,6 +518,13 @@ installMc()
     log "Install mc...done"
 }
 
+installVifm()
+{
+    log "Install vifm..."
+    installPackage $VIFM_PACKAGES
+    log "Install vifm...done"
+}
+
 installGit()
 {
     log "Install git..."
