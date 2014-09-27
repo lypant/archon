@@ -1043,6 +1043,22 @@ installMcsolarizedDotfile()
     log "Install mc_solarized.ini dotfile...done"
 }
 
+# vifm
+
+installVifmrcDotfile()
+{
+    log "Install vifmrc dotfile..."
+    installDotfile "vifmrc" ".vifm"
+    log "Install vifmrc dotfile...done"
+}
+
+installVifmSolarizedDotfile()
+{
+    log "Instal vifm solarized dotfile..."
+    installDotfile "solarized-dark" ".vifm/colors"
+    log "Instal vifm solarized dotfile...done"
+}
+
 # git
 
 installGitconfigDotfile()

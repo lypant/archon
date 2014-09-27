@@ -188,6 +188,8 @@ commonCustomize()
     installVimrcDotfile
     installVimsolarizedDotfile
     installMcsolarizedDotfile
+    installVifmrcDotfile
+    installVifmSolarizedDotfile
     installGitconfigDotfile
     installCmusColorThemeDotfile
     installXinitrcDotfile
