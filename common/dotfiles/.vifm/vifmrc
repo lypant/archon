@@ -188,6 +188,9 @@ filetype *.html,*.htm links,mozilla,uzbl-browser %f %i &
 filetype *.o nm %f | less
 
 " Image
+filextype *.bmp,*.jpg,*.jpeg,*.png,*.gif
+        \ {View in feh}
+        \ feh -FZ %d --start-at %d/%c 2>/dev/null
 filextype *.bmp,*.jpg,*.jpeg,*.png,*.gif,*.xpm
         \ {View in sxiv}
         \ sxiv,
@@ -313,3 +316,9 @@ nmap <f5> :copy<cr>
 nmap <f6> :move<cr>
 nmap <f7> :mkdir<space>
 nmap <f8> :delete<cr>
+
+" My settings
+
+" Show hidden files by default
+windo normal zo
+
