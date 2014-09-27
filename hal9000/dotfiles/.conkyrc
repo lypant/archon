@@ -17,9 +17,10 @@ U ${upspeed enp4s0} :: \
 C1${cpu cpu1}% :: \
 C2${cpu cpu2}% :: \
 M${memperc}% :: \
-/boot${fs_used_perc /boot/}% :: \
-/${fs_used_perc /}% :: \
-swap$swapperc% :: \
-V${mixer Vol}% :: \
+S$swapperc% :: \
+B${fs_used_perc /boot/}% :: \
+R${fs_used_perc /}% :: \
+D${fs_used_perc /mnt/data}% :: \
+V${exec amixer get Master | awk -F'[]%[]' '/%/ { printf "%3d", $2 }'}% :: \
 ${time %d %b %Y %H:%M}
 
