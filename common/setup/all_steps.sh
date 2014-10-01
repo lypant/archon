@@ -945,6 +945,13 @@ installFeh()
     log "Install feh...done"
 }
 
+installEvince()
+{
+    log "Install evince..."
+    installPackage $EVINCE_PACKAGES
+    log "Install evince...done"
+}
+
 #===================
 # Individual configuration
 #===================

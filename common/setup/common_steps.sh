@@ -181,6 +181,7 @@ commonCustomize()
     installWmname           # Fix misbehaving Java apps in dwm
     installVlc
     installFeh
+    installEvince
 
     # Dotfiles
     installBashprofileDotfile

@@ -153,7 +153,7 @@ command vgrep vim "+grep %a"
 " program.
 
 " Pdf
-filetype *.pdf zathura %f,apvlv %f,xpdf %f
+filetype *.pdf zathura %f,apvlv %f,xpdf %f,evince %f &
 fileview *.pdf pdftotext -nopgbrk %c -
 
 " PostScript
