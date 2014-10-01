@@ -397,3 +397,14 @@ installAurPackage()
     done
 }
 
+changeOutputLevels()
+{
+    local src="StandardOutput=journal+console"
+    local dst="StandardOutput=null\nStandardError=journal+console"
+    local subst="s|$src|$dst|"
+    local file="$1"
+
+    cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to change output levels for $file"
+}
+

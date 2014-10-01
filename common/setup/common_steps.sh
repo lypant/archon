@@ -201,10 +201,12 @@ commonCustomize()
 
     # Configuration
     setBootloaderKernelParams
+    hideSysctlConsoleMessages
     disableSyslinuxBootMenu
     setConsoleLoginMessage
     #setMkinitcpioModules   # Requires linux image recreation  # Individual
     setMkinitcpioHooks      # Requires linux image recreation
+    setBootConsoleOutputLevels
     initAlsa                # Initialize all devices to a default state
     #unmuteAlsa             # Individual
     disablePcSpeaker
