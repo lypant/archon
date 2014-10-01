@@ -15,6 +15,6 @@ TEXT
 C${cpu cpu1}% :: \
 M${memperc}% :: \
 swap$swapperc% :: \
-V${mixer Pcm}% :: \
+V${exec amixer get Master | grep "Left" | awk -F'[]%[]' '/%/ { printf "%3d", $2 }'}% :: \
 ${time %H:%M}
 
