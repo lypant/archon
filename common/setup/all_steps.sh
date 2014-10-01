@@ -938,6 +938,13 @@ installVlc()
     log "Install vlc...done"
 }
 
+installFeh()
+{
+    log "Install feh..."
+    installPackage $FEH_PACKAGES
+    log "Install feh...done"
+}
+
 #===================
 # Individual configuration
 #===================

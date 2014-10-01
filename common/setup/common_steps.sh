@@ -180,6 +180,7 @@ commonCustomize()
     #installXbindkeys       # Individual
     installWmname           # Fix misbehaving Java apps in dwm
     installVlc
+    installFeh
 
     # Dotfiles
     installBashprofileDotfile
