@@ -12,13 +12,15 @@ use_spacer left
 pad_percents 3
 
 TEXT
+${exec cmus_status} :: \
+V${exec amixer get Master | awk -F'[]%[]' '/%/ { printf "%3d", $2 }'}% :: \
+${time %d %b %Y %H:%M}\
+;\
 D ${downspeed enp0s3} :: \
 U ${upspeed enp0s3} :: \
 C${cpu cpu1}% :: \
 M${memperc}% :: \
-/boot${fs_used_perc /boot/}% :: \
+S$swapperc% :: \
 /${fs_used_perc /}% :: \
-swap$swapperc% :: \
-V${mixer Pcm}% :: \
-${time %d %b %Y %H:%M}
+/boot${fs_used_perc /boot/}% :: \
 
