@@ -14,3 +14,6 @@ curl -L https://github.com/lypant/archon/tarball/common | tar xz
 or with custom image containing additional scripts:
 ./github_download -b common
 
+2014_12_09
+Create new branch "kiss"
+
