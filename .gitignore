@@ -1,0 +1,14 @@
+# This is a comment
+
+# Do not version variant link
+variant
+
+# Do not version tags file
+tags
+
+# Do not version logs created during system installation
+*/logs/
+
+# Do not version dotfiles backup
+*/dotfiles/backup/
+
