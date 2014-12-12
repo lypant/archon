@@ -20,21 +20,41 @@ source functions.sh
 # Installation
 #-------------------------------------------------------------------------------
 
-createLogDir()
-{
-    mkdir ../logs
-}
-
 setLivecdFont()
 {
-   setfont Lat2-Terminus16 
+   setfont Lat2-Terminus16
 }
 
-# TODO: Remove when basic include and execution mechanism is tested
-helloArch()
+createLogDir()
 {
-    log "Introduce yourself..."
-    cmd "echo Hello Arch!"
-    log "Introduce yourself...done"
+    local logDir="../logs"
+    mkdir -p $logDir
+    if [[ "$?" -ne 0 ]]; then
+        echo "Failed to create log dir $logDir"
+        echo "Aborting script!"
+        exit 1
+    fi
+}
+
+updatePackageList()
+{
+    log "Update package list..."
+    cmd "pacman -Syy"
+    err "$?" "$FUNCNAME" "failed to update package list"
+    log "Update package list...done"
+}
+
+installArchlinuxKeyring()
+{
+    log "Install archlinux keyring..."
+    installPackage archlinux-keyring
+    log "Install archlinux keyring...done"
+}
+
+installLivecdVim()
+{
+    log "Install livecd vim..."
+    installPackage vim
+    log "Install livecd vim...done"
 }
 

@@ -28,9 +28,15 @@ LOG_FILE="../logs/install.log"
 
 install()
 {
-    createLogDir
+    log "Install..."
+
     setLivecdFont
-    helloArch
+    createLogDir
+    updatePackageList
+    installArchlinuxKeyring
+    installLivecdVim
+
+    log "Install...done"
 }
 
 #-------------------------------------------------------------------------------

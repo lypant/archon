@@ -1,14 +1,10 @@
 # This is a comment
 
-# Do not version variant link
-variant
-
-# Do not version tags file
+# Tags file
 tags
 
-# Do not version logs created during system installation
+# Logs created during system installation
 */logs/
 
-# Do not version dotfiles backup
-*/dotfiles/backup/
-
+# Vim temporary files
+*.swp

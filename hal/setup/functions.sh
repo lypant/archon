@@ -56,3 +56,31 @@ err()
     fi
 }
 
+uncommentVar()
+{
+    local var="$1"
+    local file="$2"
+
+    cmd "sed -i \"s|^#\(${var}.*\)$|\1|\" ${file}"
+}
+
+commentVar()
+{
+    local var="$1"
+    local file="$2"
+
+    cmd "sed -i \"s|^\(${var}.*\)$|#\1|\" ${file}"
+}
+
+#-------------------------------------------------------------------------------
+# Composite functions
+#-------------------------------------------------------------------------------
+
+installPackage()
+{
+    log "Install package $@..."
+    cmd "pacman -S $@ --noconfirm"
+    err "$?" "$FUNCNAME" "failed to install package"
+    log "Install package $@...done"
+}
+
