@@ -85,36 +85,21 @@ checkSystemHdd()
 createSwapPartition()
 {
     log "Create swap partition..."
-    createPartition\
-        "/dev/$SYSTEM_HDD"\ # hdd
-        "p"\                # partition type
-        "1"\                # partition nb
-        "+4G"\              # partition size
-        "82"                # partition code
+    createPartition /dev/$SYSTEM_HDD p 1 +4G 82
     log "Create swap partition...done"
 }
 
 createBootPartition()
 {
     log "Create boot partition..."
-    createPartition\
-        "/dev/$SYSTEM_HDD"\ # hdd
-        "p"\                # partition type
-        "2"\                # partition nb
-        "+512M"\            # partition size
-        "83"                # partition code
+    createPartition /dev/$SYSTEM_HDD p 2 +512M 83
     log "Create boot partition...done"
 }
 
 createRootPartition()
 {
     log "Create root partition..."
-    createPartition\
-        "/dev/$SYSTEM_HDD"\ # hdd
-        "p"\                # partition type
-        "3"\                # partition nb
-        ""\                 # partition size
-        "83"                # partition code
+    createPartition /dev/$SYSTEM_HDD p 3 "" 83
     log "Create root partition...done"
 }
 
