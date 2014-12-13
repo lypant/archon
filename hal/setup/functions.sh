@@ -97,7 +97,7 @@ checkPartitionsCount()
         ret=1
     fi
 
-    return ret
+    return $ret
 }
 
 createPartition()
