@@ -88,7 +88,7 @@ checkInitialPartitions()
 
     log "Check initial partitions..."
     checkPartitionsCount $hdd 0
-    err "$?" "$FUNCNAME" "Disk $hdd already contains some partitions"
+    err "$?" "$FUNCNAME" "Disk $hdd does not have expected partitions count"
     log "Check initial partitions...done"
 }
 
@@ -122,7 +122,6 @@ checkCreatedPartitions()
     err "$?" "$FUNCNAME" "Disk $hdd does not contain required partitions"
     log "Check created partitions...done"
 }
-
 
 setBootPartitionBootable()
 {
