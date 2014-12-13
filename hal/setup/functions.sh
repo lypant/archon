@@ -84,3 +84,48 @@ installPackage()
     log "Install package $@...done"
 }
 
+createPartition()
+{
+    local disk="$1"         # e.g. /dev/sda
+    local partType="$2"     # "p" for prtimary, "e" for extented
+    local partNb="$3"       # e.g. "1" for "/dev/sda1"
+    local partSize="$4"     # e.g. "+1G" for 1GiB, "" for remaining space
+    local partCode="$5"     # e.g. "82" for swap, "83" for Linux, etc.
+    local partCodeNb=""     # No partition nb for code setting for 1st partition
+
+    # For first partition, provide partition number when entering
+    # partition code
+    if [[ $partNb -ne 1 ]]; then
+        partCodeNb=$partNb
+    fi
+
+    cat <<-EOF | fdisk $disk
+	n
+	$partType
+	$partNb
+	
+	$partSize
+	t
+	$partCodeNb
+	$partCode
+	w
+	EOF
+
+    err "$?" "$FUNCNAME" "failed to create partition"
+}
+
+# Best executed when all (at least two) partitions are created
+setPartitionBootable()
+{
+    local disk="$1"     # e.g. /dev/sda
+    local partNb="$2"   # e.g. "1" for "/dev/sda1"
+
+    cat <<-EOF | fdisk $disk
+	a
+	$partNb
+	w
+	EOF
+
+    err "$?" "$FUNCNAME" "failed to set partition bootable"
+}
+

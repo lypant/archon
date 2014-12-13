@@ -28,6 +28,10 @@ LOG_FILE="../logs/install.log"
 
 install()
 {
+    #---------------------------------------
+    # Livecd steps
+    #---------------------------------------
+
     setLivecdFont
     createLogDir
     log "Install..."
@@ -35,6 +39,16 @@ install()
     updatePackageList
     installArchlinuxKeyring
     installLivecdVim
+
+    #---------------------------------------
+    # Disks, partitions and file systems
+    #---------------------------------------
+
+    checkSystemHdd
+    createSwapPartition
+    createBootPartition
+    createRootPartition
+    setBootPartitionBootable
 
     log "Install...done"
 }

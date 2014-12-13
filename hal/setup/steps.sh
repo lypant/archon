@@ -20,6 +20,10 @@ source functions.sh
 # Installation
 #-------------------------------------------------------------------------------
 
+#---------------------------------------
+# Livecd steps
+#---------------------------------------
+
 setLivecdFont()
 {
    setfont Lat2-Terminus16
@@ -56,5 +60,68 @@ installLivecdVim()
     log "Install livecd vim..."
     installPackage vim
     log "Install livecd vim...done"
+}
+
+#---------------------------------------
+# Disks, partitions and file systems
+#---------------------------------------
+
+SYSTEM_HDD="sdc"
+
+checkSystemHdd()
+{
+    local hdd="/dev/$SYSTEM_HDD"
+    local cnt=$(lsblk $hdd | wc -l)
+
+    log "Check system hdd..."
+    if [[ "cnt" -gt 2 ]]; then
+        # There are some partitions already created, stop script execution
+        log "Disk $hdd already contains some partitions"
+        exit 1
+    fi
+    log "Check system hdd...done"
+}
+
+createSwapPartition()
+{
+    log "Create swap partition..."
+    createPartition\
+        "/dev/$SYSTEM_HDD"\ # hdd
+        "p"\                # partition type
+        "1"\                # partition nb
+        "+4G"\              # partition size
+        "82"                # partition code
+    log "Create swap partition...done"
+}
+
+createBootPartition()
+{
+    log "Create boot partition..."
+    createPartition\
+        "/dev/$SYSTEM_HDD"\ # hdd
+        "p"\                # partition type
+        "2"\                # partition nb
+        "+512M"\            # partition size
+        "83"                # partition code
+    log "Create boot partition...done"
+}
+
+createRootPartition()
+{
+    log "Create root partition..."
+    createPartition\
+        "/dev/$SYSTEM_HDD"\ # hdd
+        "p"\                # partition type
+        "3"\                # partition nb
+        ""\                 # partition size
+        "83"                # partition code
+    log "Create root partition...done"
+}
+
+setBootPartitionBootable()
+{
+    log "Set boot partition bootable..."
+    setPartitionBootable /dev/$SYSTEM_HDD 2
+    log "Set boot partition bootable...done"
 }
 
