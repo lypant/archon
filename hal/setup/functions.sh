@@ -84,6 +84,22 @@ installPackage()
     log "Install package $@...done"
 }
 
+checkPartitionsCount()
+{
+    local hdd=$1
+    local cnt=$2
+    local lines=$(lsblk $hdd | wc -l)
+    local ptns=$(($lines - 2))
+    local ret=0
+
+    if [[ "$cnt" -ne "$ptns" ]]; then
+        log "Expected:$cnt; found:$ptns"
+        ret=1
+    fi
+
+    return ret
+}
+
 createPartition()
 {
     local disk="$1"         # e.g. /dev/sda

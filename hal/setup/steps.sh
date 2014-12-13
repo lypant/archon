@@ -68,18 +68,28 @@ installLivecdVim()
 
 SYSTEM_HDD="sdc"
 
-checkSystemHdd()
+#checkSystemHdd()
+#{
+#    local hdd="/dev/$SYSTEM_HDD"
+#    local cnt=$(lsblk $hdd | wc -l)
+#
+#    log "Check system hdd..."
+#    if [[ "cnt" -gt 2 ]]; then
+#        # There are some partitions already created, stop script execution
+#        log "Disk $hdd already contains some partitions"
+#        exit 1
+#    fi
+#    log "Check system hdd...done"
+#}
+
+checkInitialPartitions()
 {
     local hdd="/dev/$SYSTEM_HDD"
-    local cnt=$(lsblk $hdd | wc -l)
 
-    log "Check system hdd..."
-    if [[ "cnt" -gt 2 ]]; then
-        # There are some partitions already created, stop script execution
-        log "Disk $hdd already contains some partitions"
-        exit 1
-    fi
-    log "Check system hdd...done"
+    log "Check initial partitions..."
+    checkPartitionsCount $hdd 0
+    err "$?" "$FUNCNAME" "Disk $hdd already contains some partitions"
+    log "Check initial partitions...done"
 }
 
 createSwapPartition()
@@ -102,6 +112,17 @@ createRootPartition()
     createPartition /dev/$SYSTEM_HDD p 3 "" 83
     log "Create root partition...done"
 }
+
+checkCreatedPartitions()
+{
+    local hdd="/dev/$SYSTEM_HDD"
+
+    log "Check created partitions..."
+    checkPartitionsCount $hdd 3
+    err "$?" "$FUNCNAME" "Disk $hdd does not contain required partitions"
+    log "Check created partitions...done"
+}
+
 
 setBootPartitionBootable()
 {

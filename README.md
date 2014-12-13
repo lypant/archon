@@ -17,3 +17,6 @@ or with custom image containing additional scripts:
 2014_12_09
 Create new branch "kiss"
 
+NOTES:
+- fdisk does not return error code when provided partition parameters
+  are invalid - perform additional checks after partition creation?

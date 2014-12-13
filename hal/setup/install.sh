@@ -44,10 +44,12 @@ install()
     # Disks, partitions and file systems
     #---------------------------------------
 
-    checkSystemHdd
+    #checkSystemHdd
+    checkInitialPartitions
     createSwapPartition
     createBootPartition
     createRootPartition
+    checkCreatedPartitions
     setBootPartitionBootable
 
     log "Install...done"
