@@ -116,3 +116,61 @@ setBootPartitionBootable()
     log "Set boot partition bootable...done"
 }
 
+createSwap()
+{
+    log "Create swap..."
+    cmd "mkswap /dev/${SYSTEM_HDD}1"
+    err "$?" "$FUNCNAME" "failed to create swap"
+    log "Create swap...done"
+}
+
+activateSwap()
+{
+    log "Activate swap..."
+    cmd "swapon /dev/${SYSTEM_HDD}1"
+    err "$?" "$FUNCNAME" "failed to activate swap"
+    log "Activate swap...done"
+}
+
+createBootFileSystem()
+{
+    log "Create boot file system..."
+    cmd "mkfs.ext2 /dev/${SYSTEM_HDD}2"
+    err "$?" "$FUNCNAME" "failed to create boot file system"
+    log "Create boot file system...done"
+}
+
+createRootFileSystem()
+{
+    log "Create root file system..."
+    cmd "mkfs.ext4 /dev/${SYSTEM_HDD}3"
+    err "$?" "$FUNCNAME" "failed to create root file system"
+    log "Create root file system...done"
+}
+
+mountRootPartition()
+{
+    log "Mount root partition..."
+    cmd "mount /dev/${SYSTEM_HDD}3 /mnt"
+    err "$?" "$FUNCNAME" "failed to mount root partition"
+    log "Mount root partition...done"
+}
+
+mountBootPartition()
+{
+    log "Mount boot partition..."
+    cmd "mkdir /mnt/boot"
+    err "$?" "$FUNCNAME" "failed to create boot partition mount point"
+    cmd "mount /dev/${SYSTEM_HDD}2 /mnt/boot"
+    err "$?" "$FUNCNAME" "failed to mount boot partition"
+    log "Mount boot partition...done"
+}
+
+unmountPartitions()
+{
+    log "Unmount partitions..."
+    cmd "umount -R /mnt"
+    err "$?" "$FUNCNAME" "failed to unmount partitions"
+    log "Unmount partitions...done"
+}
+

@@ -50,6 +50,14 @@ install()
     createRootPartition
     checkCreatedPartitions
     setBootPartitionBootable
+    createSwap
+    activateSwap
+    createBootFileSystem
+    createRootFileSystem
+    mountRootPartition
+    mountBootPartition
+
+    unmountPartitions
 
     log "Install...done"
 }
