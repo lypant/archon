@@ -145,3 +145,12 @@ setPartitionBootable()
     err "$?" "$FUNCNAME" "failed to set partition bootable"
 }
 
+downloadFile()
+{
+    local src=$1
+    local dst=$2
+
+    cmd "curl -so $dst --create-dirs $src"
+    err "$?" "$FUNCNAME" "failed to download file"
+}
+

@@ -174,3 +174,40 @@ unmountPartitions()
     log "Unmount partitions...done"
 }
 
+#---------------------------------------
+# Installation
+#---------------------------------------
+
+# Note: rankMirrors takes longer time but
+# might provide faster servers than downloadMirrorList
+rankMirrors()
+{
+    local file="/etc/pacman.d/mirrorlist"
+    local bkp="$file.bkp"
+
+    log "Rank mirrors..."
+    # Backup original file
+    cmd "cp $file $bkup"
+    err "$?" "$FUNCNAME" "failed to backup mirrors file"
+    cmd "rankmirrors -n 5 $bkup > $file"
+    err "$?" "$FUNCNAME" "failed to rank mirrors"
+    log "Rank mirrors...done"
+}
+
+# Note: downloadMirrorList is faster than rankMirrors but
+# might give slower servers
+downloadMirrorList()
+{
+    local file="/etc/pacman.d/mirrorlist"
+    local bkp="$file.bkp"
+    local url="https://www.archlinux.org/mirrorlist/?country=PL"
+
+    log "Download mirror list..."
+    # Backup original file
+    cmd "cp $file $bkp"
+    err "$?" "$FUNCNAME" "failed to backup mirrors file"
+    downloadFile $url $file
+    uncommentVar "Server" $file
+    log "Download mirror list...done"
+}
+

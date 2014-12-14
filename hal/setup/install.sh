@@ -57,6 +57,17 @@ install()
     mountRootPartition
     mountBootPartition
 
+    #---------------------------------------
+    # Installation
+    #---------------------------------------
+
+    #rankMirrors
+    downloadMirrorList
+
+    #---------------------------------------
+    #
+    #---------------------------------------
+
     unmountPartitions
 
     log "Install...done"
