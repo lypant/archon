@@ -44,7 +44,6 @@ install()
     # Disks, partitions and file systems
     #---------------------------------------
 
-    #checkSystemHdd
     checkInitialPartitions
     createSwapPartition
     createBootPartition

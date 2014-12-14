@@ -68,20 +68,6 @@ installLivecdVim()
 
 SYSTEM_HDD="sdc"
 
-#checkSystemHdd()
-#{
-#    local hdd="/dev/$SYSTEM_HDD"
-#    local cnt=$(lsblk $hdd | wc -l)
-#
-#    log "Check system hdd..."
-#    if [[ "cnt" -gt 2 ]]; then
-#        # There are some partitions already created, stop script execution
-#        log "Disk $hdd already contains some partitions"
-#        exit 1
-#    fi
-#    log "Check system hdd...done"
-#}
-
 checkInitialPartitions()
 {
     local hdd="/dev/$SYSTEM_HDD"
