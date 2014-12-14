@@ -187,9 +187,9 @@ rankMirrors()
 
     log "Rank mirrors..."
     # Backup original file
-    cmd "cp $file $bkup"
+    cmd "cp $file $bkp"
     err "$?" "$FUNCNAME" "failed to backup mirrors file"
-    cmd "rankmirrors -n 5 $bkup > $file"
+    cmd "rankmirrors -n 5 $bkp > $file"
     err "$?" "$FUNCNAME" "failed to rank mirrors"
     log "Rank mirrors...done"
 }
