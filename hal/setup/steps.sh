@@ -211,3 +211,11 @@ downloadMirrorList()
     log "Download mirror list...done"
 }
 
+installBaseSystem()
+{
+    log "Install base system..."
+    cmd "pacstrap -i /mnt base base-devel"
+    err "$?" "$FUNCNAME" "failed to install base system"
+    log "Install base system...done"
+}
+
