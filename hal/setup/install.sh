@@ -31,7 +31,6 @@ install()
     #---------------------------------------
     # Livecd steps
     #---------------------------------------
-
     setLivecdFont
     createLogDir
     log "Install..."
@@ -43,7 +42,6 @@ install()
     #---------------------------------------
     # Disks, partitions and file systems
     #---------------------------------------
-
     checkInitialPartitions
     createSwapPartition
     createBootPartition
@@ -58,20 +56,71 @@ install()
     mountBootPartition
 
     #---------------------------------------
-    # Installation
+    # Base system installation
     #---------------------------------------
-
     #rankMirrors
     downloadMirrorList
     installBaseSystem
 
     #---------------------------------------
-    #
+    # Base system configuration
     #---------------------------------------
+    generateFstab
+    setHostName
 
-    unmountPartitions
+    #---------------------------------------
+    # Localization
+    #---------------------------------------
+    setLocales
+    generateLocales
+    setLanguage
+    setLocalizationCtype
+    setLocalizationNumeric
+    setLocalizationTime
+    setLocalizationCollate
+    setLocalizationMonetary
+    setLocalizationMeasurement
 
+    #---------------------------------------
+    # Time
+    #---------------------------------------
+    setTimeZone
+    setHardwareClock
+
+    #---------------------------------------
+    # Console
+    #---------------------------------------
+    setConsoleKeymap
+    setConsoleFont
+    setConsoleFontmap
+
+    #---------------------------------------
+    # Network
+    #---------------------------------------
+    setWiredNetwork
+
+    #---------------------------------------
+    # Bootloader
+    #---------------------------------------
+    installBootloader
+    configureBootloader
+
+    #---------------------------------------
+    # Root account
+    #---------------------------------------
+    setRootPassword
+
+    #---------------------------------------
+    # Additional steps
+    #---------------------------------------
+    setTmpfsTmpSize # To install large AUR packages in customization script
     log "Install...done"
+
+    #---------------------------------------
+    # Post-install steps
+    #---------------------------------------
+    copyProjectFiles
+    unmountPartitions
 }
 
 #-------------------------------------------------------------------------------
@@ -79,3 +128,4 @@ install()
 #-------------------------------------------------------------------------------
 
 install
+

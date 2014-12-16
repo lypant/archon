@@ -81,7 +81,7 @@ checkInitialPartitions()
 createSwapPartition()
 {
     log "Create swap partition..."
-    createPartition /dev/$SYSTEM_HDD p 1 +4G 82
+    createPartition /dev/$SYSTEM_HDD p 1 +8G 82
     log "Create swap partition...done"
 }
 
@@ -166,16 +166,8 @@ mountBootPartition()
     log "Mount boot partition...done"
 }
 
-unmountPartitions()
-{
-    log "Unmount partitions..."
-    cmd "umount -R /mnt"
-    err "$?" "$FUNCNAME" "failed to unmount partitions"
-    log "Unmount partitions...done"
-}
-
 #---------------------------------------
-# Installation
+# Base system installation
 #---------------------------------------
 
 # Note: rankMirrors takes longer time but
@@ -217,5 +209,247 @@ installBaseSystem()
     cmd "pacstrap -i /mnt base base-devel"
     err "$?" "$FUNCNAME" "failed to install base system"
     log "Install base system...done"
+}
+
+#---------------------------------------
+# Base system configuration
+#---------------------------------------
+
+generateFstab()
+{
+    log "Generate fstab..."
+    cmd "genfstab -L -p /mnt >> /mnt/etc/fstab"
+    err "$?" "$FUNCNAME" "failed to generate fstab"
+    log "Generate fstab...done"
+}
+
+setHostName()
+{
+    log "Set host name..."
+    archChroot "echo $VARIANT > /etc/hostname"
+    err "$?" "$FUNCNAME" "failed to set host name"
+    log "Set host name...done"
+}
+
+#---------------------------------------
+# Localization
+#---------------------------------------
+
+setLocales()
+{
+    log "Set locales..."
+    setLocale "en_US.UTF-8"
+    setLocale "pl_PL.UTF-8"
+    log "Set locales...done"
+}
+
+generateLocales()
+{
+    log "Generate locales..."
+    archChroot "locale-gen"
+    err "$?" "$FUNCNAME" "failed to generate locales"
+    log "Generate locales...done"
+}
+
+setLanguage()
+{
+    log "Set language..."
+    archChroot "echo LANG=en_US.UTF-8 >> /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set language"
+    log "Set language...done"
+}
+
+setLocalizationCtype()
+{
+    log "Set localization ctype..."
+    archChroot "echo LC_CTYPE=pl_PL.UTF-8 >> /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set localization ctype"
+    log "Set localization ctype...done"
+}
+
+setLocalizationNumeric()
+{
+    log "Set localization numeric..."
+    archChroot "echo LC_NUMERIC=pl_PL.UTF-8 >> /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set localization numeric"
+    log "Set localization numeric...done"
+}
+
+setLocalizationTime()
+{
+    log "Set localization time..."
+    archChroot "echo LC_TIME=pl_PL.UTF-8 >> /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set localization time"
+    log "Set localization time...done"
+}
+
+setLocalizationCollate()
+{
+    log "Set localization collate..."
+    archChroot "echo LC_COLLATE=C >> /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set localization collate"
+    log "Set localization collate...done"
+}
+
+setLocalizationMonetary()
+{
+    log "Set localization monetary..."
+    archChroot "echo LC_MONETARY=pl_PL.UTF-8 >> /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set localization monetary"
+    log "Set localization monetary...done"
+}
+
+setLocalizationMeasurement()
+{
+    log "Set localization measurenent..."
+    archChroot "echo LC_MEASUREMENT=pl_PL.UTF-8 >> /etc/locale.conf"
+    err "$?" "$FUNCNAME" "failed to set localization measurement"
+    log "Set localization measurement...done"
+}
+
+#---------------------------------------
+# Time
+#---------------------------------------
+
+setTimeZone()
+{
+    log "Set time zone..."
+    archChroot "ln -s /usr/share/zoneinfo/Europe/Warsaw /etc/localtime"
+    err "$?" "$FUNCNAME" "failed to set time zone"
+    log "Set time zone...done"
+}
+
+setHardwareClock()
+{
+    log "Set hardware clock..."
+    archChroot "hwclock --systohc --utc"
+    err "$?" "$FUNCNAME" "failed to set hardware clock"
+    log "Set hardware clock...done"
+}
+
+#---------------------------------------
+# Console
+#---------------------------------------
+
+setConsoleKeymap()
+{
+    log "Set console keymap..."
+    archChroot "echo KEYMAP=pl > /etc/vconsole.conf"
+    err "$?" "$FUNCNAME" "failed to set console keymap"
+    log "Set console keymap...done"
+}
+
+setConsoleFont()
+{
+    log "Set console font..."
+    archChroot "echo FONT=Lat2-Terminus16 >> /etc/vconsole.conf"
+    err "$?" "$FUNCNAME" "failed to set console font"
+    log "Set console font...done"
+}
+
+setConsoleFontmap()
+{
+    log "Set console fontmap..."
+    archChroot "echo FONT_MAP=8859-2 >> /etc/vconsole.conf"
+    err "$?" "$FUNCNAME" "failed to set console fontmap"
+    log "Set console fontmap...done"
+}
+
+#---------------------------------------
+# Network
+#---------------------------------------
+
+setWiredNetwork()
+{
+    log "Set wired network..."
+    archChroot "systemctl enable dhcpcd@enp4s0.service"
+    #archChroot "systemctl enable dhcpcd@enp0s3.service"
+    err "$?" "$FUNCNAME" "failed to set wired network"
+    log "Set wired network...done"
+}
+
+#---------------------------------------
+# Bootloader
+#---------------------------------------
+
+installBootloader()
+{
+    log "Install bootloader..."
+    archChroot "pacman -S syslinux --noconfirm"
+    err "$?" "$FUNCNAME" "failed to install bootloader"
+    log "Install bootloader...done"
+}
+
+configureBootloader()
+{
+    local src="sda3"
+    local dst="sdc3"
+    local subst="s|$src|$dst|g"
+    local file="/boot/syslinux/syslinux.cfg"
+    local cnt=0
+
+    log "Configure bootloader..."
+    archChroot "syslinux-install_update -i -a -m"
+    err "$?" "$FUNCNAME" "failed to update syslinux"
+
+    archChroot "sed -i \\\"$subst\\\" $file"
+    err "$?" "$FUNCNAME" "failed to replace parition path"
+    log "Configure bootloader...done"
+}
+
+#---------------------------------------
+# Root account
+#---------------------------------------
+
+setRootPassword()
+{
+    local ASK=1
+
+    log "Set root password..."
+
+    while [ $ASK -ne 0 ]; do
+        archChroot "passwd"
+        ASK=$?
+    done
+
+    log "Set root password...done"
+}
+
+#---------------------------------------
+# Additional steps
+#---------------------------------------
+
+# TODO: Move this step to customization script???
+setTmpfsTmpSize()
+{
+    # Size of /tmp partition - e.g. RAM size + SWAP size
+    log "Set tmpfs tmp size..."
+    cmd "echo \"tmpfs /tmp tmpfs size=16G,rw 0 0\" >> /mnt/etc/fstab"
+    err "$?" "$FUNCNAME" "failed to set tmpfs tmp size"
+    log "Set tmpfs tmp size...done"
+}
+
+#---------------------------------------
+# Post-install steps
+#---------------------------------------
+
+copyProjectFiles()
+{
+    # Do not perform typical logging in this function...
+    # This would spoil nice logs copied to new system
+    mkdir -p /mnt/root/archon
+    cp -R /root/archon/* /mnt/root/archon
+
+    # This is only for livecd output and logs consistency
+    log "Copy project files..."
+    log "Copy project files...done"
+}
+
+unmountPartitions()
+{
+    log "Unmount partitions..."
+    cmd "umount -R /mnt"
+    err "$?" "$FUNCNAME" "failed to unmount partitions"
+    log "Unmount partitions...done"
 }
 

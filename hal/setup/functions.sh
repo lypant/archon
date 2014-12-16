@@ -154,3 +154,19 @@ downloadFile()
     err "$?" "$FUNCNAME" "failed to download file"
 }
 
+archChroot()
+{
+    cmd arch-chroot /mnt /bin/bash -c \""$@"\"
+}
+
+setLocale()
+{
+    local subst="s|^#\\\\\(${1}.*\\\\\)$|\1|"
+    local file="/etc/locale.gen"
+
+    log "Set locale for  $1..."
+    archChroot "sed -i \\\"$subst\\\" $file"
+    err "$?" "$FUNCNAME" "failed to set locale"
+    log "Set locale for $1...done"
+}
+
