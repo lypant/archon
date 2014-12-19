@@ -457,6 +457,10 @@ unmountPartitions()
 # Customization
 #-------------------------------------------------------------------------------
 
+#---------------------------------------
+# Preparation steps
+#---------------------------------------
+
 configurePacman()
 {
     log "Configure pacman..."
@@ -497,6 +501,52 @@ setSudoRights()
     cmd "echo \"adam ALL=(ALL) ALL\" >> /etc/sudoers"
     err "$?" "$FUNCNAME" "failed to set sudoer"
     log "Set sudo rights...done"
+}
+
+#---------------------------------------
+# Git and archon files
+#---------------------------------------
+
+installGit()
+{
+    log "Install git..."
+    installPackage git
+    log "Install git...done"
+}
+
+configureGitUser()
+{
+    log "Configure git user..."
+    cmd "git config --global user.email \"lypant@tlen.pl\""
+    err "$?" "$FUNCNAME" "failed to set git user email"
+    cmd "git config --global user.name \"lypant\""
+    err "$?" "$FUNCNAME" "failed to set git user name"
+    log "Configure git user...done"
+}
+
+cloneArchonRepo()
+{
+    log "Clone archon repo..."
+    cmd "git clone https://github.com/lypant/archon /home/adam/archon"
+    err "$?" "$FUNCNAME" "failed to clone project repo"
+    log "Clone archon repo...done"
+}
+
+checkoutCurrentBranch()
+{
+    log "Checkout current branch..."
+    # Execute git commands from destination path
+    cmd "git -C /home/adam/archon checkout kiss"
+    err "$?" "$FUNCNAME" "failed to checkout current branch"
+    log "Checkout current branch...done"
+}
+
+copyOverArchonFiles()
+{
+    log "Copy over archon files..."
+    cmd "cp -r /root/archon /home/adam"
+    err "$?" "$FUNCNAME" "failed to copy over project files"
+    log "Copy over archon files...done"
 }
 
 #---------------------------------------

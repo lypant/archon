@@ -28,9 +28,12 @@ LOG_FILE="../logs/customize.log"
 
 customize()
 {
+    #---------------------------------------
+    # Preparation steps
+    #---------------------------------------
     log "Customize..."
-
     configurePacman
+    updatePackageList
 
     #---------------------------------------
     # User account
@@ -40,14 +43,20 @@ customize()
     setSudoRights
 
     #---------------------------------------
+    # Git and archon files
+    #---------------------------------------
+    installGit
+    configureGitUser
+    cloneArchonRepo
+    checkoutCurrentBranch
+    copyOverArchonFiles
+
+    #---------------------------------------
     # Final steps
     #---------------------------------------
     changeHomeOwnership
-
     log "Customize...done"
-
-    # TODO: Uncomment as soon as archon dir is created in home dir
-    #copyProjectLogFiles
+    copyProjectLogFiles
 }
 
 #-------------------------------------------------------------------------------
