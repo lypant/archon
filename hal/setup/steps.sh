@@ -453,3 +453,64 @@ unmountPartitions()
     log "Unmount partitions...done"
 }
 
+#-------------------------------------------------------------------------------
+# Customization
+#-------------------------------------------------------------------------------
+
+configurePacman()
+{
+    log "Configure pacman..."
+    # Present total download percentage instead of single package percentage
+    uncommentVar "TotalDownload" "/etc/pacman.conf"
+    log "Configure pacman...done"
+}
+
+#---------------------------------------
+# User account
+#---------------------------------------
+
+addUser()
+{
+    log "Add user..."
+    cmd "useradd -m -g users -G wheel,storage,power /bin/bash adam"
+    log "Add user...done"
+}
+
+setUserPassword()
+{
+    local ask=1
+
+    log "Set user password..."
+
+    while [ $ask -ne 0 ]; do
+        log "Provide password for user adam"
+        cmd "passwd adam"
+    done
+
+    log "Set user password...done"
+}
+
+setSudoRights()
+{
+    log "Set sudo rights..."
+    cmd "echo \"adam ALL=(ALL) ALL\" >> /etc/sudoers"
+    err "$?" "$FUNCNAME" "failed to set sudoer"
+    log "Set sudo rights...done"
+}
+
+#---------------------------------------
+# Final steps
+#---------------------------------------
+
+changeHomeOwnership()
+{
+    log "Change home dir ownership..."
+    cmd "chown -R adam:users /home/adam"
+    log "Change home dir ownership...done"
+}
+
+copyProjectLogFiles()
+{
+    cp -r ../logs /home/adam/archon/$VARIANT
+}
+
