@@ -46,7 +46,8 @@ customize()
 
     log "Customize...done"
 
-    copyProjectLogFiles
+    # TODO: Uncomment as soon as archon dir is created in home dir
+    #copyProjectLogFiles
 }
 
 #-------------------------------------------------------------------------------

@@ -472,7 +472,7 @@ configurePacman()
 addUser()
 {
     log "Add user..."
-    cmd "useradd -m -g users -G wheel,storage,power /bin/bash adam"
+    cmd "useradd -m -g users -G wheel,storage,power -s /bin/bash adam"
     log "Add user...done"
 }
 
@@ -485,6 +485,7 @@ setUserPassword()
     while [ $ask -ne 0 ]; do
         log "Provide password for user adam"
         cmd "passwd adam"
+        ask=$?
     done
 
     log "Set user password...done"
