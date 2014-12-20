@@ -549,6 +549,46 @@ copyOverArchonFiles()
     log "Copy over archon files...done"
 }
 
+createVariantLink()
+{
+    log "Create variant link..."
+    createLink "/home/adam/archon/$VARIANT" "/home/adam/archon/variant"
+    err "$?" "$FUNCNAME" "failed to create variant link"
+    log "Create variant link...done"
+}
+
+#---------------------------------------
+# Console programs
+#---------------------------------------
+
+installVim()
+{
+    log "Install vim..."
+    installPackage vim
+    log "Install vim...done"
+}
+
+installCtags()
+{
+    log "Install ctags..."
+    installPackage ctags
+    log "Install ctags...done"
+}
+
+installMc()
+{
+    log "Install mc..."
+    installPackage mc
+    log "Install mc...done"
+}
+
+installTmux()
+{
+    log "Install tmux..."
+    installPackage tmux
+    log "Install tmux...done"
+}
+
 #---------------------------------------
 # Final steps
 #---------------------------------------

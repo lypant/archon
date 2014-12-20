@@ -50,6 +50,15 @@ customize()
     cloneArchonRepo
     checkoutCurrentBranch
     copyOverArchonFiles
+    createVariantLink
+
+    #---------------------------------------
+    # Console programs
+    #---------------------------------------
+    installVim
+    installCtags
+    installMc
+    installTmux
 
     #---------------------------------------
     # Final steps

@@ -170,3 +170,20 @@ setLocale()
     log "Set locale for $1...done"
 }
 
+createLink()
+{
+    local linkTarget=$1
+    local linkName=$2
+    local retval=0
+
+    if [[ -e $linkTarget ]]; then
+        cmd "ln -s $linkTarget $linkName"
+        retval=$?
+    else
+        log "Link target does not exist!"
+        retval=1
+    fi
+
+    return $retval
+}
+
