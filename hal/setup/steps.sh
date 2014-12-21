@@ -590,6 +590,50 @@ installTmux()
 }
 
 #---------------------------------------
+# Sound
+#---------------------------------------
+
+installAlsa()
+{
+    log "Install alsa..."
+    installPackage alsa-utils
+    log "Install alsa...done"
+}
+
+initAlsa()
+{
+    local ret=0
+
+    log "Init alsa..."
+    cmd "alsactl init"
+    ret="$?"
+    # Alsa can answer with error 99 but work fine
+    if [[ "$ret" -e 99 ]]; then
+        log "alsactl init returned error code 99; accepting it as 0"
+        ret=0
+    fi
+    err "$ret "$FUNCNAME" "failed to init alsa"
+    log "Init alsa...done"
+}
+
+# TODO: Is this step necessary - verify on real HW and on VM
+unmuteAlsa()
+{
+    log "Unmute alsa..."
+    cmd "amixer sset Master unmute"
+    err "$?" "$FUNCNAME" "failed to unmute alsa"
+    log "Unmute alsa...done"
+}
+
+installCmus()
+{
+    log "Install cmus..."
+    installPackage cmus libmad
+    log "Install cmus...done"
+}
+
+
+#---------------------------------------
 # Final steps
 #---------------------------------------
 

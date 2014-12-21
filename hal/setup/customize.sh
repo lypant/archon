@@ -61,6 +61,14 @@ customize()
     installTmux
 
     #---------------------------------------
+    # Sound
+    #---------------------------------------
+    installAlsa
+    initAlsa
+    unmuteAlsa      # TODO: Check if this is needed
+    installCmus
+
+    #---------------------------------------
     # Final steps
     #---------------------------------------
     changeHomeOwnership
