@@ -31,6 +31,7 @@ customize()
     #---------------------------------------
     # Preparation steps
     #---------------------------------------
+    createLogDir
     log "Customize..."
     configurePacman
     updatePackageList

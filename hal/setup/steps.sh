@@ -608,12 +608,13 @@ initAlsa()
     cmd "alsactl init"
     ret="$?"
     # Alsa can answer with error 99 but work fine
-    if [[ "$ret" -e 99 ]]; then
+    if [[ "$ret" -eq 99 ]]; then
         log "alsactl init returned error code 99; accepting it as 0"
         ret=0
     fi
-    err "$ret "$FUNCNAME" "failed to init alsa"
+    err "$ret" "$FUNCNAME" "failed to init alsa"
     log "Init alsa...done"
+
 }
 
 # TODO: Is this step necessary - verify on real HW and on VM
