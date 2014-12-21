@@ -55,13 +55,6 @@ installArchlinuxKeyring()
     log "Install archlinux keyring...done"
 }
 
-installLivecdVim()
-{
-    log "Install livecd vim..."
-    installPackage vim
-    log "Install livecd vim...done"
-}
-
 #---------------------------------------
 # Disks, partitions and file systems
 #---------------------------------------

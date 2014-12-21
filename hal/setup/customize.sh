@@ -81,5 +81,5 @@ customize()
 # Execute customization function
 #-------------------------------------------------------------------------------
 
-customize
+time customize
 

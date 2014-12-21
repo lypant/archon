@@ -37,7 +37,6 @@ install()
 
     updatePackageList
     installArchlinuxKeyring
-    installLivecdVim
 
     #---------------------------------------
     # Disks, partitions and file systems
@@ -127,5 +126,5 @@ install()
 # Execute installation function
 #-------------------------------------------------------------------------------
 
-install
+time install
 
