@@ -21,10 +21,10 @@ source functions.sh
 #-------------------------------------------------------------------------------
 
 #---------------------------------------
-# Livecd steps
+# Preparations
 #---------------------------------------
 
-setLivecdFont()
+setTemporaryFont()
 {
    setfont Lat2-Terminus16
 }
@@ -617,14 +617,14 @@ initAlsa()
 
 }
 
-# TODO: Is this step necessary - verify on real HW and on VM
-unmuteAlsa()
-{
-    log "Unmute alsa..."
-    cmd "amixer sset Master unmute"
-    err "$?" "$FUNCNAME" "failed to unmute alsa"
-    log "Unmute alsa...done"
-}
+# Deprecated - not needed on HAL HW nor on VM
+#unmuteAlsa()
+#{
+#    log "Unmute alsa..."
+#    cmd "amixer sset Master unmute"
+#    err "$?" "$FUNCNAME" "failed to unmute alsa"
+#    log "Unmute alsa...done"
+#}
 
 installCmus()
 {

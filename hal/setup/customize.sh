@@ -29,8 +29,9 @@ LOG_FILE="../logs/customize.log"
 customize()
 {
     #---------------------------------------
-    # Preparation steps
+    # Preparations
     #---------------------------------------
+    setTemporaryFont
     createLogDir
     log "Customize..."
     configurePacman
@@ -66,7 +67,6 @@ customize()
     #---------------------------------------
     installAlsa
     initAlsa
-    unmuteAlsa      # TODO: Check if this is needed
     installCmus
 
     #---------------------------------------

@@ -127,6 +127,8 @@ createPartition()
 	w
 	EOF
 
+    sync
+
     err "$?" "$FUNCNAME" "failed to create partition"
 }
 

@@ -29,9 +29,9 @@ LOG_FILE="../logs/install.log"
 install()
 {
     #---------------------------------------
-    # Livecd steps
+    # Preparations
     #---------------------------------------
-    setLivecdFont
+    setTemporaryFont
     createLogDir
     log "Install..."
 
