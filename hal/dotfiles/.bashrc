@@ -107,17 +107,17 @@ source "/usr/share/git/completion/git-completion.bash"
 #---------------------------------------
 
 # Load colors definition
-#source "$HOME/archon/variant/colors/solarized/bash.conf"
+source "$HOME/archon/variant/colors/solarized/bash.conf"
 
 #---------------------------------------
 # Choice
 #---------------------------------------
 if [[ "$TERM" = "linux" ]]; then
     #Set desired theme here
-    #CONSOLE_THEME="solarized"
+    CONSOLE_THEME="solarized"
 
     # No color theme
-    CONSOLE_THEME=""
+    #CONSOLE_THEME=""
 fi
 
 #---------------------------------------

@@ -648,6 +648,15 @@ installBashrcDotfile()
     log "Install .bashrc dotfile...done"
 }
 
+
+installDirColorsSolarizedDotfile()
+{
+    log "Install .dir_colors_solarized dotfile..."
+    installDotfile ".dir_colors_solarized" ""
+    err "$?" "$FUNCNAME" "failed to install dir_colors_solarized dotfile"
+    log "Install .dir_colors_solarized dotfile...done"
+}
+
 #---------------------------------------
 # Final steps
 #---------------------------------------
