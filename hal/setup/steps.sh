@@ -726,6 +726,14 @@ installGitconfigDotfile()
     log "Install .gitconfig dotfile...done"
 }
 
+installCmusColorThemeDotfile()
+{
+    log "Install cmus solarized.theme dotfile..."
+    installDotfile "solarized.theme" ".cmus"
+    err "$?" "$FUNCNAME" "failed to install cmus color theme dotfile"
+    log "Install cmus solarized.theme dotfile...done"
+}
+
 #---------------------------------------
 # Final steps
 #---------------------------------------

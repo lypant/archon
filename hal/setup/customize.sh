@@ -88,6 +88,7 @@ customize()
     installVimSolarizedDotfile
     installMcSolarizedDotfile
     installGitconfigDotfile
+    installCmusColorThemeDotfile
 
     #---------------------------------------
     # Final steps
