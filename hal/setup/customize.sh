@@ -70,6 +70,12 @@ customize()
     installCmus
 
     #---------------------------------------
+    # Dotfiles
+    #---------------------------------------
+    installBashprofileDotfile
+    installBashrcDotfile
+
+    #---------------------------------------
     # Final steps
     #---------------------------------------
     changeHomeOwnership

@@ -628,6 +628,27 @@ installCmus()
 
 
 #---------------------------------------
+# Dotfiles
+#---------------------------------------
+
+installBashprofileDotfile()
+{
+    log "Install .bash_profile dotfile..."
+    installDotfile ".bash_profile" ""
+    err "$?" "$FUNCNAME" "failed to install .bash_profile dotfile"
+    log "Install .bash_profile dotfile...done"
+}
+
+
+installBashrcDotfile()
+{
+    log "Install .bashrc dotfile..."
+    installDotfile ".bashrc" ""
+    err "$?" "$FUNCNAME" "failed to install .bashrc dotfile"
+    log "Install .bashrc dotfile...done"
+}
+
+#---------------------------------------
 # Final steps
 #---------------------------------------
 

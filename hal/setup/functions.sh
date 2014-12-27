@@ -192,3 +192,98 @@ createLink()
     return $retval
 }
 
+createDir()
+{
+    local dir="$1"
+    local retval=0
+
+    # Check if backup dir exists
+    if [[ ! -d $dir ]]; then
+        cmd "mkdir -p $dir"
+        retval="$?"
+    fi
+
+    return $retval
+}
+
+backupFile()
+{
+    local original=$1
+    local backup=$2
+    local retval=0
+
+    # If original file exists, copy it to backup dir
+    if [[ -e $original ]]; then
+        cmd "cp $original $backup"
+        retval=$?
+    fi
+
+    return $retval
+}
+
+installDotfile()
+{
+    local dotfileName="$1"
+    local dotfileHomePath="$2"
+    local dotfile=""
+    local nested=0
+    local now=`date +"%Y%m%d_%H%M"`
+    local dotfilesSrcDir="/home/adam/archon/$VARIANT/dotfiles"
+    local dotfilesBkpDir="$dotfilesSrcDir/backup"
+
+    # Avoid extra slash when path is empty
+    if [[ -z "$dotfileHomePath" ]]; then
+        dotfile="$dotfileName"
+        nested=0
+    else
+        dotfile="$dotfileHomePath/$dotfileName"
+        nested=1
+    fi
+
+    # Ensure that dotfiles backup dir exists
+    createDir "$dotfilesBkpDir"
+    retval="$?"
+    if [[ $retval -ne 0  ]]; then
+        log "$FUNCNAME: failed to create dotfiles backup dir: $retval"
+        return 2
+    fi
+
+    # Backup original dotfile, if it exists
+    backupFile "/home/adam/$dotfile" "$dotfilesBkpDir/$dotfile"_"$now"
+    retval="$?"
+    if [[ $retval -ne 0  ]]; then
+        log "$FUNCNAME: failed to backup dotfile $dotfile: $retval"
+        return 3
+    fi
+
+    # Remove original dotfile
+    cmd "rm -f /home/adam/$dotfile"
+    retval="$?"
+    if [[ $retval -ne 0  ]]; then
+        log "$FUNCNAME: failed to delete original dotfile"\
+            " /home/adam/$dotfile: $retval"
+        return 4
+    fi
+
+    # Ensure that for nested dotfile the path exists
+    if [[ $nested -eq 1 ]]; then
+        cmd "mkdir -p /home/adam/$dotfileHomePath"
+        retval="$?"
+        if [[ $retval -ne 0  ]]; then
+            log "$FUNCNAME: failed to create path for nested dotfile: $retval"
+            return 5
+        fi
+    fi
+
+    # Create link to new dotfile
+    createLink "$dotfilesSrcDir/$dotfile" "/home/adam/$dotfile"
+    retval="$?"
+    if [[ $retval -ne 0  ]]; then
+        log "$FUNCNAME: failed to create link to new dotfile"\
+            "$dotfilesSrcDir/$dotfile: $retval"
+        return 6
+    fi
+
+    return $retval
+}
+
