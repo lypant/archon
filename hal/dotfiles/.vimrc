@@ -1,8 +1,8 @@
 " This is a vimrc comment
 
 " Load pathogen plugin - for easier managment of other plugins
-"execute pathogen#infect()
-"filetype plugin indent on
+execute pathogen#infect()
+filetype plugin indent on
 
 " Set Leader character
 let mapleader=","

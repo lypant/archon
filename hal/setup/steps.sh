@@ -561,6 +561,16 @@ installVim()
     log "Install vim...done"
 }
 
+installPathogen()
+{
+    log "Install pathogen..."
+    createDir "/home/adam/.vim/autoload"
+    createDir "/home/adam/.vim/bundle"
+    downloadFile "https://tpo.pe/pathogen.vim"\
+        "/home/adam/.vim/autoload/pathogen.vim"
+    log "Install pathogen...done"
+}
+
 installCtags()
 {
     log "Install ctags..."

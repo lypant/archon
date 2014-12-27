@@ -155,7 +155,7 @@ downloadFile()
     local src=$1
     local dst=$2
 
-    cmd "curl -so $dst --create-dirs $src"
+    cmd "curl -LSso $dst --create-dirs $src"
     err "$?" "$FUNCNAME" "failed to download file"
 }
 

@@ -58,6 +58,7 @@ customize()
     # Console programs
     #---------------------------------------
     installVim
+    installPathogen
     installCtags
     installMc
     installTmux
