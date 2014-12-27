@@ -734,6 +734,14 @@ installCmusColorThemeDotfile()
     log "Install cmus solarized.theme dotfile...done"
 }
 
+installTmuxConfDotfile()
+{
+    log "Install .tmux.conf dotfile..."
+    installDotfile ".tmux.conf" ""
+    err "$?" "$FUNCNAME" "failed to install .tmux.conf dotfile"
+    log "Install .tmux.conf dotfile...done"
+}
+
 #---------------------------------------
 # Final steps
 #---------------------------------------

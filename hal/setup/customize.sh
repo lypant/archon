@@ -89,6 +89,7 @@ customize()
     installMcSolarizedDotfile
     installGitconfigDotfile
     installCmusColorThemeDotfile
+    installTmuxConfDotfile
 
     #---------------------------------------
     # Final steps
