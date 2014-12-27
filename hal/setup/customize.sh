@@ -86,6 +86,7 @@ customize()
     installDirColorsSolarizedDotfile
     installVimrcDotfile
     installVimSolarizedDotfile
+    installMcSolarizedDotfile
 
     #---------------------------------------
     # Final steps

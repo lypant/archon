@@ -710,6 +710,14 @@ installVimSolarizedDotfile()
     log "Install solarized.vim dotfile...done"
 }
 
+installMcSolarizedDotfile()
+{
+    log "Install mc_solarized.ini dotfile..."
+    installDotfile "mc_solarized.ini" ".config/mc"
+    err "$?" "$FUNCNAME" "failed to install mc_solarized.ini dotfile"
+    log "Install mc_solarized.ini dotfile...done"
+}
+
 #---------------------------------------
 # Final steps
 #---------------------------------------
