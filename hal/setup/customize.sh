@@ -87,6 +87,7 @@ customize()
     installVimrcDotfile
     installVimSolarizedDotfile
     installMcSolarizedDotfile
+    installGitconfigDotfile
 
     #---------------------------------------
     # Final steps

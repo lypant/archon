@@ -718,6 +718,14 @@ installMcSolarizedDotfile()
     log "Install mc_solarized.ini dotfile...done"
 }
 
+installGitconfigDotfile()
+{
+    log "Install .gitconfig dotfile..."
+    installDotfile ".gitconfig" ""
+    err "$?" "$FUNCNAME" "failed to install gitconfig dotfile"
+    log "Install .gitconfig dotfile...done"
+}
+
 #---------------------------------------
 # Final steps
 #---------------------------------------
