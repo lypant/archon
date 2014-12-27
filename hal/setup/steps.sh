@@ -674,6 +674,14 @@ installVimrcDotfile()
     log "Install .vimrc dotfile...done"
 }
 
+installVimSolarizedDotfile()
+{
+    log "Install solarized.vim dotfile..."
+    installDotfile "solarized.vim" ".vim/bundle/solarized/colors"
+    err "$?" "$FUNCNAME" "failed to install solarized.vim dotfile"
+    log "Install solarized.vim dotfile...done"
+}
+
 #---------------------------------------
 # Final steps
 #---------------------------------------

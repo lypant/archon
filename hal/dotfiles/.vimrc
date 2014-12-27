@@ -134,7 +134,7 @@ set shiftwidth=4
 set softtabstop=4
 
 " Set color scheme
-"colorscheme solarized
+colorscheme solarized
 
 " Set dark backgound
 set background=dark
