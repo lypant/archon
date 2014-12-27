@@ -648,13 +648,20 @@ installBashrcDotfile()
     log "Install .bashrc dotfile...done"
 }
 
-
 installDirColorsSolarizedDotfile()
 {
     log "Install .dir_colors_solarized dotfile..."
     installDotfile ".dir_colors_solarized" ""
     err "$?" "$FUNCNAME" "failed to install dir_colors_solarized dotfile"
     log "Install .dir_colors_solarized dotfile...done"
+}
+
+installVimrcDotfile()
+{
+    log "Install .vimrc dotfile..."
+    installDotfile ".vimrc" ""
+    err "$?" "$FUNCNAME" "failed to install .vimrc dotfile"
+    log "Install .vimrc dotfile...done"
 }
 
 #---------------------------------------

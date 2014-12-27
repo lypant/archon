@@ -75,6 +75,8 @@ customize()
     installBashprofileDotfile
     installBashrcDotfile
     installDirColorsSolarizedDotfile
+    installVimrcDotfile
+
     #---------------------------------------
     # Final steps
     #---------------------------------------
