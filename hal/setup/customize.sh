@@ -57,9 +57,17 @@ customize()
     #---------------------------------------
     # Console programs
     #---------------------------------------
+
+    #-------------------
+    # vim
+    #-------------------
     installVim
     installPathogen
+    installNerdTree
+    installNerdCommenter
+    installTagbar
     installCtags
+
     installMc
     installTmux
 

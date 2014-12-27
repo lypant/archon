@@ -146,11 +146,11 @@ set colorcolumn=80
 set tags=tags;
 
 " Map NERDTree toggling
-"map <F5> :NERDTreeToggle<CR>
-"map <F6> :NERDTreeFocus<CR>
+map <F5> :NERDTreeToggle<CR>
+map <F6> :NERDTreeFocus<CR>
 
 " Map Tagbar to F8
-"nmap <F8> :TagbarToggle<CR>
+nmap <F8> :TagbarToggle<CR>
 
 " Do not wrap long lines
 set nowrap

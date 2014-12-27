@@ -554,6 +554,10 @@ createVariantLink()
 # Console programs
 #---------------------------------------
 
+#-------------------
+# vim
+#-------------------
+
 installVim()
 {
     log "Install vim..."
@@ -569,6 +573,30 @@ installPathogen()
     downloadFile "https://tpo.pe/pathogen.vim"\
         "/home/adam/.vim/autoload/pathogen.vim"
     log "Install pathogen...done"
+}
+
+installNerdTree()
+{
+    log "Install nerdtree..."
+    cmd "git -C /home/adam/.vim/bundle"\
+        "clone https://github.com/scrooloose/nerdtree.git"
+    log "Install nerdtree...done"
+}
+
+installNerdCommenter()
+{
+    log "Install nerdcommenter..."
+    cmd "git -C /home/adam/.vim/bundle"\
+        "clone https://github.com/scrooloose/nerdcommenter.git"
+    log "Install nerdcommenter...done"
+}
+
+installTagbar()
+{
+    log "Install tagbar..."
+    cmd "git -C /home/adam/.vim/bundle"\
+        "clone https://github.com/majutsushi/tagbar.git"
+    log "Install tagbar...done"
 }
 
 installCtags()
