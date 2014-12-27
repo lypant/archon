@@ -16,7 +16,7 @@
 #---------------------------------------
 # Launch terminal multipxer
 # Log out after exiting terminal multiplexer
-[[ -z $DISPLAY ]] && tmux && exit
+[[ -z $DISPLAY ]] && [[ -z $TMUX ]] && tmux && exit
 
 #---------------------------------------
 # GUI mode
