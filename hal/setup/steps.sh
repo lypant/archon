@@ -784,8 +784,9 @@ setConsoleLoginMessage()
 # This requires image recreation for changes to take effect
 setMkinitcpioHooks()
 {
+    local hooks="base udev autodetect modconf block filesystems keyboard"
     local src="^HOOKS.*$"
-    local dst="HOOKS=base udev autodetect modconf block filesystems keyboard"
+    local dst="HOOKS=\\\"$hooks\\\""
     local subst="s|$src|$dst|"
     local file="/etc/mkinitcpio.conf"
 
