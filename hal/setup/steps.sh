@@ -16,6 +16,9 @@ set -o nounset errexit
 # Include functions definitions
 source functions.sh
 
+# Include variables to be exported in .bashrc
+source bash_exports.conf
+
 #-------------------------------------------------------------------------------
 # Installation
 #-------------------------------------------------------------------------------
@@ -850,7 +853,7 @@ setBootConsoleOutputLevels()
 setDataPartition()
 {
     local mntDir="/mnt/data"
-    local entry="UUID=52c77b30-87eb-4f70-8c73-f01910ea56ee"
+    local entry="UUID=$DATA_PARTITION_UUID"
     entry="$entry /mnt/data"
     entry="$entry ext4"
     entry="$entry auto,nouser,noexec,ro"
