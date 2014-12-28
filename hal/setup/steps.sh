@@ -781,6 +781,14 @@ setConsoleLoginMessage()
     log "Set console login message...done"
 }
 
+setLastLoginMessage()
+{
+    log "Set last login message..."
+    # Do not display last login message
+    cmd "touch /home/adam/.hushlogin"
+    log "Set last login message...done"
+}
+
 # This requires image recreation for changes to take effect
 setMkinitcpioHooks()
 {

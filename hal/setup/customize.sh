@@ -98,6 +98,7 @@ customize()
     hideSysctlConsoleMessages
     disableSyslinuxBootMenu
     setConsoleLoginMessage
+    setLastLoginMessage
     setMkinitcpioHooks                      # Requires image recreation
     setBootConsoleOutputLevels
 
