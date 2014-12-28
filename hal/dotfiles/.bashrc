@@ -17,7 +17,7 @@
 #---------------------------------------
 
 # Add more dirs to path
-#export PATH=$PATH:/$HOME/archon/variant/scripts
+export PATH=$PATH:/$HOME/archon/variant/bin
 
 #-------------------------------------------------------------------------------
 # Shell
@@ -54,20 +54,20 @@ alias lz='ll -rS'               # sort by size
 #-------------------
 # mc
 #-------------------
-#if [[ -z "$DISPLAY" ]]; then
-#    # Aliases for console
-#
-#    # Do not use fancy characters to draw outline
-#    # Use vim as editor
-#    # Use mc_viewer.sh script as viewer - vim with additional parameters
-#    alias mc='EDITOR=vim VIEWER=$HOME/archon/variant/scripts/mc_viewer.sh mc -a'
-#else
-#    # Aliases for GUI
-#
-#    # Use vim as editor
-#    # Use mc_viewer.sh script as viewer - vim with additional parameters
-#    alias mc='EDITOR=vim VIEWER=$HOME/archon/variant/scripts/mc_viewer.sh mc'
-#fi
+if [[ -z "$DISPLAY" ]]; then
+    # Aliases for console
+
+    # Do not use fancy characters to draw outline
+    # Use vim as editor
+    # Use mc_viewer script as viewer - vim with additional parameters
+    alias mc='EDITOR=vim VIEWER=$HOME/archon/variant/bin/mc_viewer mc -a'
+else
+    # Aliases for GUI
+
+    # Use vim as editor
+    # Use mc_viewer script as viewer - vim with additional parameters
+    alias mc='EDITOR=vim VIEWER=$HOME/archon/variant/bin/mc_viewer mc'
+fi
 
 #-------------------
 # mkdir
