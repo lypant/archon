@@ -101,6 +101,7 @@ customize()
     setConsoleLoginMessage
     setLastLoginMessage
     setMkinitcpioHooks                      # Requires image recreation
+    setMkinitcpioModules                    # Requires imafe recreation
     setBootConsoleOutputLevels
 
     #---------------------------------------

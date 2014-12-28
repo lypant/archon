@@ -812,6 +812,22 @@ setMkinitcpioHooks()
     log "Set mkinitcpio hooks...done"
 }
 
+# This requires image recreation for changes to take effect
+setMkinitcpioModules()
+{
+    # TODO: Verify modules after adding GUI and graphics driver
+    local modules="nouveau"
+    local src="^MODULES.*$"
+    local dst="MODULES=\\\"$modules\\\""
+    local subst="s|$src|$dst|"
+    local file="/etc/mkinitcpio.conf"
+
+    log "Set mkinitcpio modules..."
+    cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to set mkinitcpio modules"
+    log "Set mkinitcpio modules...done"
+}
+
 setBootConsoleOutputLevels()
 {
     local srcPath="/usr/lib/systemd/system"
