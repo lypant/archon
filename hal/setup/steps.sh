@@ -759,6 +759,28 @@ setBootloaderKernelParams()
     log "Set bootloader kernel params...done"
 }
 
+hideSysctlConsoleMessages()
+{
+    log "Hide sysctl console messages..."
+    cmd "echo 'kernel.printk = 3 3 3 3' >> '/etc/sysctl.d/20-quiet-printk.conf'"
+    log "Hide sysctl console messages...done"
+}
+
+disableSyslinuxBootMenu()
+{
+    log "Disable syslinux boot menu..."
+    commentVar "UI" "/boot/syslinux/syslinux.cfg"
+    log "Disable syslinux boot menu...done"
+}
+
+setConsoleLoginMessage()
+{
+    log "Set console login message..."
+    # Clear screen on login
+    cmd "clear > /etc/issue"
+    log "Set console login message...done"
+}
+
 #---------------------------------------
 # Final steps
 #---------------------------------------

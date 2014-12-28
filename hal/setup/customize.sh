@@ -95,6 +95,9 @@ customize()
     # Boot process configuration
     #---------------------------------------
     setBootloaderKernelParams
+    hideSysctlConsoleMessages
+    disableSyslinuxBootMenu
+    setConsoleLoginMessage
 
     #---------------------------------------
     # Final steps
