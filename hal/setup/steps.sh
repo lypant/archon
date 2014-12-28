@@ -781,9 +781,31 @@ setConsoleLoginMessage()
     log "Set console login message...done"
 }
 
+# This requires image recreation for changes to take effect
+setMkinitcpioHooks()
+{
+    local src="^HOOKS.*$"
+    local dst="HOOKS=base udev autodetect modconf block filesystems keyboard"
+    local subst="s|$src|$dst|"
+    local file="/etc/mkinitcpio.conf"
+
+    log "Set mkinitcpio hooks..."
+    cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to set mkinitcpio hooks"
+    log "Set mkinitcpio hooks...done"
+}
+
 #---------------------------------------
 # Final steps
 #---------------------------------------
+
+recreateImage()
+{
+    log "Recreate image..."
+    cmd "mkinitcpio -p linux"
+    err "$?" "$FUNCNAME" "failed to recreate image"
+    log "Recreate image...done"
+}
 
 changeHomeOwnership()
 {

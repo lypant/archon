@@ -98,10 +98,12 @@ customize()
     hideSysctlConsoleMessages
     disableSyslinuxBootMenu
     setConsoleLoginMessage
+    setMkinitcpioHooks                      # Requires image recreation
 
     #---------------------------------------
     # Final steps
     #---------------------------------------
+    recreateImage
     changeHomeOwnership
     log "Customize...done"
     copyProjectLogFiles
