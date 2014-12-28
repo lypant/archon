@@ -92,6 +92,11 @@ customize()
     installTmuxConfDotfile
 
     #---------------------------------------
+    # Boot process configuration
+    #---------------------------------------
+    setBootloaderKernelParams
+
+    #---------------------------------------
     # Final steps
     #---------------------------------------
     changeHomeOwnership

@@ -743,6 +743,23 @@ installTmuxConfDotfile()
 }
 
 #---------------------------------------
+# Boot process configuration
+#---------------------------------------
+
+setBootloaderKernelParams()
+{
+    local src="APPEND root.*$"
+    local dst="APPEND root=/dev/sdc3 rw vga=0x0369 quiet loglevel=0"
+    local subst="s|$src|$dst|"
+    local file="/boot/syslinux/syslinux.cfg"
+
+    log "Set bootloader kernel params..."
+    cmd "sed -i \"$subst\" $file"
+    err "$?" "$FUNCNAME" "failed to set bootloader kernel params"
+    log "Set bootloader kernel params...done"
+}
+
+#---------------------------------------
 # Final steps
 #---------------------------------------
 
