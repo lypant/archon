@@ -795,6 +795,21 @@ setMkinitcpioHooks()
     log "Set mkinitcpio hooks...done"
 }
 
+setBootConsoleOutputLevels()
+{
+    local srcPath="/usr/lib/systemd/system"
+    local dstPath="/etc/systemd/system"
+    local file1="systemd-fsck-root.service"
+    local file2="systemd-fsck@.service"
+
+    log "Set boot console output levels..."
+    cmd "cp $srcPath/$file1 $dstPath"
+    cmd "cp $srcPath/$file2 $dstPath"
+    changeOutputLevels "$dstPath/$file1"
+    changeOutputLevels "$dstPath/$file2"
+    log "Set boot console output levels...done"
+}
+
 #---------------------------------------
 # Final steps
 #---------------------------------------

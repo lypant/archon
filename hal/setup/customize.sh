@@ -99,6 +99,7 @@ customize()
     disableSyslinuxBootMenu
     setConsoleLoginMessage
     setMkinitcpioHooks                      # Requires image recreation
+    setBootConsoleOutputLevels
 
     #---------------------------------------
     # Final steps
