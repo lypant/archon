@@ -657,6 +657,14 @@ initAlsa()
 #    log "Unmute alsa...done"
 #}
 
+disablePcSpeaker()
+{
+    log "Disable pc speaker..."
+    cmd "echo \"blacklist pcspkr\" >> /etc/modprobe.d/no_pcspeaker.conf"
+    err "$?" "$FUNCNAME" "failed to disable pc speaker"
+    log "Disable pc speaker...done"
+}
+
 installCmus()
 {
     log "Install cmus..."

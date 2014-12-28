@@ -76,6 +76,7 @@ customize()
     #---------------------------------------
     installAlsa
     initAlsa
+    disablePcSpeaker
     installCmus
 
     #---------------------------------------
