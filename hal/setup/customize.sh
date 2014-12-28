@@ -105,6 +105,11 @@ customize()
     setBootConsoleOutputLevels
 
     #---------------------------------------
+    # Data partition
+    #---------------------------------------
+    setDataPartition
+
+    #---------------------------------------
     # Final steps
     #---------------------------------------
     recreateImage

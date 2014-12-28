@@ -844,6 +844,30 @@ setBootConsoleOutputLevels()
 }
 
 #---------------------------------------
+# Data partition
+#---------------------------------------
+
+setDataPartition()
+{
+    local mntDir="/mnt/data"
+    local entry="UUID=52c77b30-87eb-4f70-8c73-f01910ea56ee"
+    entry="$entry /mnt/data"
+    entry="$entry ext4"
+    entry="$entry auto,nouser,noexec,ro"
+    entry="$entry 0"    # dump backup utility: 0 - don't, 1 - do backup
+    entry="$entry 2"    # fsck: 0- don't check, 1- highiest prio, 2- other prio
+
+    log "Set data partition..."
+    cmd "echo -e \"\n$entry\" >> /etc/fstab"
+    err "$?" "$FUNCNAME" "failed to add entry to fstab"
+    createDir "$mntDir"
+    err "$?" "$FUNCNAME" "failed to create mount dir"
+    createLink "$mntDir" "/home/adam/data"
+    err "$?" "$FUNCNAME" "failed to create link"
+    log "Set data partition...done"
+}
+
+#---------------------------------------
 # Final steps
 #---------------------------------------
 
