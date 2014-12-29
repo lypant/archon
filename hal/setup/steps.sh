@@ -368,6 +368,18 @@ setWiredNetwork()
 # Bootloader
 #---------------------------------------
 
+# TODO: Remove when not needed
+#       Problem was observed during syslinux installation:
+#       error: failed to initialize alpm library
+#       (database is incorrect version: /var/lib/pacman)
+#       error: try running pacman-db-upgrade
+tempAlpmWorkaround()
+{
+    log "Temp alpm workaround..."
+    archChroot "pacman-db-upgrade"
+    log "Temp alpm workaround...done"
+}
+
 installBootloader()
 {
     log "Install bootloader..."
