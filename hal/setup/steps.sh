@@ -760,7 +760,8 @@ installTmuxConfDotfile()
 setBootloaderKernelParams()
 {
     local src="APPEND root.*$"
-    local dst="APPEND root=/dev/sdc3 rw vga=0x0369 quiet loglevel=0"
+    local dst="APPEND root=/dev/sdc3 rw vga=0x0369 quiet"\
+              "loglevel=0 rd.udev.log-priority=3"
     local subst="s|$src|$dst|"
     local file="/boot/syslinux/syslinux.cfg"
 
