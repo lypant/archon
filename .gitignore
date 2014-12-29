@@ -12,3 +12,6 @@ tags
 # Archon variant link
 variant
 
+# Archon dotfiles backup
+hal/dotfiles/backup/
+
