@@ -10,7 +10,7 @@
 
 # Treat unset variables as an error when peforming parameter expansion
 # Exit immediately on errors
-set -o nounset errexit
+set -o nounset -o errexit
 
 #-------------------------------------------------------------------------------
 # Basic functions
