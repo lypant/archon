@@ -7,7 +7,7 @@
 # DESCRIPTION:  Creates ISO based on provided Arch Linux ISO,
 #               adding provided custom content
 #
-# TODO:         Add workspace cleanup, so more ISOs can be created consecutively
+# TODO:         Add switch to chose i686 or/and x86_64 architecture
 #===============================================================================
 
 # Setup shell - detect unset variables
@@ -19,8 +19,8 @@ set -o nounset
 
 ORIGINAL_ISO="~/shared/archlinux-2014.08.01-dual.iso"
 NEW_ISO="~/shared/custom-archlinux-2014.08.01-dual.iso"
-WORKSPACE="~/forge/arch_iso"
-CUSTOM_SRC="~/scripts"
+WORKSPACE="~/forge/customize_iso"
+CUSTOM_SRC="~/bin"
 CUSTOM_DST="/root"
 
 #-------------------------------------------------------------------------------
@@ -73,6 +73,13 @@ createIsoMountPoint()
     echo "Create ISO mount point...done"
 }
 
+removeIsoMountPoint()
+{
+    echo "Remove ISO mount point..."
+    eval "sudo rmdir $ISO_MNT_PNT"
+    echo "Remove ISO mount point...done"
+}
+
 mountIso()
 {
     echo "Mount ISO..."
@@ -92,6 +99,13 @@ createWorkspaceDir()
     echo "Create workspace directory..."
     eval "mkdir -p $WORKSPACE"
     echo "Create workspace directory...done"
+}
+
+removeWorkspace()
+{
+    echo "Remove workspace..."
+    eval "rm -rf $WORKSPACE"
+    echo "Remove workspace...done"
 }
 
 copyIsoContents()
@@ -120,6 +134,13 @@ createFsImgMountPoint()
     echo "Create file systen image mount point..."
     eval "sudo mkdir -p $FS_MNT_PNT"
     echo "Create file systen image mount point...done"
+}
+
+removeFsImgMountPoint()
+{
+    echo "Remove file system image mount point..."
+    eval "sudo rmdir $FS_MNT_PNT"
+    echo "Remove file system image mount point...done"
 }
 
 mountFsImage()
@@ -200,6 +221,7 @@ prepareFileSystem()
     mountFsImage $newFsDir
     copyCustomContent
     unmountFsImage
+    removeFsImgMountPoint
     squashNewFs $newFsDir
     generateNewFsChecksum $newFsDir
     removeOriginalFsFiles $originalFsDir
@@ -232,9 +254,11 @@ createCustomIso()
     createWorkspaceDir
     copyIsoContents
     unmountIso
+    removeIsoMountPoint
     prepareFileSystemX86_64
     prepareFileSystemI686
     generateNewIso
+    removeWorkspace
     echo "Create custom ISO...done"
 }
 
