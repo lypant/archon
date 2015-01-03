@@ -1,0 +1,267 @@
+#!/bin/bash
+#===============================================================================
+# FILE:         iso2usb
+#
+# USAGE:        ./iso2usb
+#
+# DESCRIPTION:  Formats given USB device.
+#               Copies given ISO image contents to specified USB device, so it
+#               can be used as USB boot media.
+#               Installs Syslinux and MBR on the USB device.
+#
+# TODO:         Add step to set partition as bootable
+#===============================================================================
+
+# Setup shell - detect unset variables; exit on errors
+set -o nounset -o errexit
+
+#-------------------------------------------------------------------------------
+# Settings adjustable using command line options
+#-------------------------------------------------------------------------------
+
+ISO_IMG="~/shared/custom-archlinux-2015.01.01-dual.iso"
+USB_DEVICE="/dev/sdc"
+USB_NB="1"
+PART_LABEL="ARCH_201501"
+
+#-------------------------------------------------------------------------------
+# Settings adjustable by editing this script
+#-------------------------------------------------------------------------------
+
+MNT_DIR="/mnt/iso2usb"
+ISO_MNT="$MNT_DIR/iso"
+USB_MNT="$MNT_DIR/usb"
+SYSLINUX_PATH="$USB_MNT/arch/boot/syslinux"
+
+#-------------------------------------------------------------------------------
+# Not editable (unless changed in Arch Linux)
+#-------------------------------------------------------------------------------
+
+MBR_FILE="/usr/lib/syslinux/bios/mbr.bin"
+
+#-------------------------------------------------------------------------------
+# Functions
+#-------------------------------------------------------------------------------
+
+updatePackageList()
+{
+    echo "Update package list..."
+    sudo pacman -Syy
+    echo "Update package list...done"
+}
+
+checkPackages()
+{
+    echo "Check packages..."
+
+    for pkg in "dosfstools"
+    do
+        pacman -Qsq $pkg &>/dev/null
+        if [[ "$?" -ne 0 ]]; then
+            eval "sudo pacman -S --noconfirm $pkg"
+        fi
+    done
+
+    echo "Check packages...done"
+}
+
+formatPartition()
+{
+    echo "Format partition..."
+    eval "sudo mkfs.msdos -n $PART_LABEL $USB_PART"
+    echo "Format partition...done"
+}
+
+createMountDir()
+{
+    echo "Create mount dir..."
+    eval "sudo mkdir -p $MNT_DIR"
+    echo "Create mount dir...done"
+}
+
+removeMountDir()
+{
+    echo "Remove mount dir..."
+    eval "sudo rmdir $MNT_DIR"
+    echo "Remove mount dir...done"
+}
+
+createIsoMountDir()
+{
+    echo "Create iso mount dir..."
+    eval "sudo mkdir -p $ISO_MNT"
+    echo "Create iso mount dir...done"
+}
+
+removeIsoMountDir()
+{
+    echo "Remove iso mount dir..."
+    eval "sudo rmdir $ISO_MNT"
+    echo "Remove iso mount dir...done"
+}
+
+createUsbMountDir()
+{
+    echo "Create usb mount dir..."
+    eval "sudo mkdir -p $USB_MNT"
+    echo "Create usb mount dir...done"
+}
+
+removeUsbMountDir()
+{
+    echo "Remove usb mount dir..."
+    eval "sudo rmdir $USB_MNT"
+    echo "Remove usb mount dir...done"
+}
+
+mountIso()
+{
+    echo "Mount iso..."
+    eval "sudo mount -o loop $ISO_IMG $ISO_MNT"
+    echo "Mount iso...done"
+}
+
+unmountIso()
+{
+    echo "Unount iso..."
+    eval "sudo umount $ISO_MNT"
+    echo "Unount iso...done"
+}
+
+mountUsb()
+{
+    echo "Mount usb..."
+    eval "sudo mount $USB_PART $USB_MNT"
+    echo "Mount usb...done"
+}
+
+unmountUsb()
+{
+    echo "Unount usb..."
+    eval "sudo umount $USB_MNT"
+    echo "Unount usb...done"
+}
+
+copyFiles()
+{
+    echo "Copy files..."
+    eval "sudo cp -a $ISO_MNT/* $USB_MNT"
+    eval "sync"
+    echo "Copy files...done"
+}
+
+installSyslinux()
+{
+    echo "Install syslinux..."
+    eval "sudo extlinux --install $SYSLINUX_PATH"
+    echo "Install syslinux...done"
+}
+
+installMbr()
+{
+    echo "Install MBR..."
+    eval "sudo dd bs=440 count=1 conv=notrunc if=$MBR_FILE of=$USB_DEVICE"
+    eval "sync"
+    echo "Install MBR...done"
+}
+
+perform()
+{
+    updatePackageList
+    checkPackages
+    formatPartition
+    createMountDir
+    createIsoMountDir
+    createUsbMountDir
+    mountIso
+    mountUsb
+    copyFiles
+    unmountIso
+    installSyslinux
+    installMbr
+    unmountUsb
+    removeUsbMountDir
+    removeIsoMountDir
+    removeMountDir
+}
+
+query()
+{
+    echo "ISO image:            $ISO_IMG"
+    echo "USB device:           $USB_DEVICE"
+    echo "USB partition number: $USB_NB"
+    echo "Partition label:      $PART_LABEL"
+
+    read -p "Proceed? [y/N]?" response
+    case $response in
+        [Yy]*)
+            time { perform ; }
+            ;;
+        *)
+            echo "Cancelled"
+            exit 0
+            ;;
+    esac
+}
+
+usage()
+{
+cat << EOF
+Formats given USB device.
+Copies given ISO image contents to specified USB device, so it
+can be used as USB boot media.
+Installs Syslinux and MBR on the USB device.
+
+Note: USB device needs to be formatted and the partition has to be bootable.
+
+Usage: ${0##*/} [-h] [-i ISO_IMG] [-d USB_DEVICE] [-p USB_NB USB] [-l PART_LABEL]
+    -h display this help and exit
+    -i ISO_IMG ISO file to be copied to USB partition ($ISO_IMG)
+    -d USB_DEVICE USB device path, without partition number ($USB_DEVICE)
+    -p USB_NB USB partition number, where image will be copied,
+    -l PART_LABEL partition label, should match given Arch iso, ($PART_LABEL)
+       e.g. 1 in /dev/sdc1 ($USB_NB)
+EOF
+}
+
+#-------------------------------------------------------------------------------
+# Execution
+#-------------------------------------------------------------------------------
+
+while getopts ":hi:d:p:l:" opt; do
+    case $opt in
+        h)
+            usage
+            exit 0
+            ;;
+        i)
+            ISO_IMG="$OPTARG"
+            ;;
+        d)
+            USB_DEVICE="$OPTARG"
+            ;;
+        p)
+            USB_NB="$OPTARG"
+            ;;
+        l)
+            PART_LABEL="$OPTARG"
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG"
+            exit 1
+            ;;
+        :)
+            echo "Option -$OPTARG requires an argument"
+            exit 2
+            ;;
+    esac
+done
+
+#-------------------------------------------------------------------------------
+# Dependent on command line options
+#-------------------------------------------------------------------------------
+
+USB_PART="${USB_DEVICE}${USB_NB}"
+
+query
+
