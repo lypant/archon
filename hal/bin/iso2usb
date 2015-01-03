@@ -20,7 +20,7 @@ set -o nounset
 #-------------------------------------------------------------------------------
 
 ISO_IMG="~/shared/custom-archlinux-2015.01.01-dual.iso"
-USB_DEVICE="/dev/sdc"
+USB_DEVICE="/dev/sdd"
 USB_NB="1"
 PART_LABEL="ARCH_201501"
 
