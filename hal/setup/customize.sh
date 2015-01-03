@@ -75,7 +75,7 @@ customize()
     # Sound
     #---------------------------------------
     installAlsa
-    initAlsa
+    #initAlsa                               # TODO: Deprecate? Caused problems during installation on both VBox and HW
     disablePcSpeaker
     installCmus
 
