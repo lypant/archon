@@ -12,8 +12,8 @@
 # TODO:         Add step to set partition as bootable
 #===============================================================================
 
-# Setup shell - detect unset variables; exit on errors
-set -o nounset -o errexit
+# Setup shell - detect unset variables
+set -o nounset
 
 #-------------------------------------------------------------------------------
 # Settings adjustable using command line options
@@ -169,6 +169,8 @@ perform()
 {
     updatePackageList
     checkPackages
+    # Exit on error
+    set -o errexit
     formatPartition
     createMountDir
     createIsoMountDir
