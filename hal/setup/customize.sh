@@ -72,6 +72,20 @@ customize()
     installTmux
 
     #---------------------------------------
+    # GUI programs
+    #---------------------------------------
+
+    #-------------------
+    # Xorg
+    #-------------------
+    installXorg
+
+    #-------------------
+    # Video driver
+    #-------------------
+    installVideoDriver
+
+    #---------------------------------------
     # Sound
     #---------------------------------------
     installAlsa
@@ -91,6 +105,9 @@ customize()
     installGitconfigDotfile
     installCmusColorThemeDotfile
     installTmuxConfDotfile
+
+    installXinitrcDotfile
+    installXresourcesDotfile
 
     #---------------------------------------
     # Boot process configuration

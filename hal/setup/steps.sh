@@ -565,7 +565,7 @@ createVariantLink()
     log "Create variant link...done"
 }
 
-#---------------------------------------
+#--------------------------------------
 # Console programs
 #---------------------------------------
 
@@ -633,6 +633,32 @@ installTmux()
     log "Install tmux..."
     installPackage tmux
     log "Install tmux...done"
+}
+
+#--------------------------------------
+# GUI programs
+#---------------------------------------
+
+#-------------------
+# Xorg
+#-------------------
+
+installXorg()
+{
+    log "Install Xorg..."
+    installPackage "xorg-server xorg-server-utils xorg-xinit"
+    log "Install Xorg...done"
+}
+
+#-------------------
+# Video driver
+#-------------------
+
+installVideoDriver()
+{
+    log "Install video driver..."
+    installPackage "xf86-video-nouveau"
+    log "Install video driver...done"
 }
 
 #---------------------------------------
@@ -763,6 +789,22 @@ installTmuxConfDotfile()
     installDotfile ".tmux.conf" ""
     err "$?" "$FUNCNAME" "failed to install .tmux.conf dotfile"
     log "Install .tmux.conf dotfile...done"
+}
+
+installXinitrcDotfile()
+{
+    log "Install .xinitrc dotfile..."
+    installDotfile ".xinitrc" ""
+    err "$?" "$FUNCNAME" "failed to install .xinitrc dotfile"
+    log "Install .xinitrc dotfile...done"
+}
+
+installXresourcesDotfile()
+{
+    log "Install .Xresources dotfile..."
+    installDotfile ".Xresources" ""
+    err "$?" "$FUNCNAME" "failed to install .Xresources dotfile"
+    log "Install .Xresources dotfile...done"
 }
 
 #---------------------------------------
