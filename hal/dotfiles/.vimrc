@@ -5,7 +5,7 @@ execute pathogen#infect()
 filetype plugin indent on
 
 " Set Leader character
-let mapleader=","
+"let mapleader=","
 
 " Vi compatibility is not needed
 set nocompatible
@@ -33,10 +33,6 @@ set showmatch
 
 " Hide highlight after searching
 nnoremap <leader><space> :noh<CR>
-
-" Use tab for finding matching parentheses
-nnoremap <tab> %
-vnoremap <tab> %
 
 " Set character encoding
 set encoding=utf-8
