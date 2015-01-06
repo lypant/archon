@@ -94,6 +94,7 @@ customize()
     # Programs
     #-------------------
     installCustomizedDwm
+    installDmenu
     installRxvtUnicode
 
     #---------------------------------------

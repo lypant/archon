@@ -704,6 +704,13 @@ installCustomizedDwm()
     log "Installing customized dwm...done"
 }
 
+installDmenu()
+{
+    log "Install dmenu..."
+    installPackage "dmenu"
+    log "Install dmenu...done"
+}
+
 installRxvtUnicode()
 {
     # Note: rxvt-unicode can be launched with command urxvt
