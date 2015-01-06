@@ -101,6 +101,7 @@ customize()
     installCustomizedDwm
     installDmenu
     installRxvtUnicode
+    installFirefox
 
     #---------------------------------------
     # Sound

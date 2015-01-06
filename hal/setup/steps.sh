@@ -731,6 +731,13 @@ installRxvtUnicode()
     log "Install rxvt unicode...done"
 }
 
+installFirefox()
+{
+    log "Install firefox..."
+    installPackage "firefox"
+    log "Install firefox...done"
+}
+
 #---------------------------------------
 # Sound
 #---------------------------------------
