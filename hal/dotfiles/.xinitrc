@@ -38,7 +38,7 @@ conky | while read -r; do xsetroot -name "$REPLY"; done &
 xbindkeys
 
 # Fix misbehaving Java applications by setting WM name
-#wmname LG3D
+wmname LG3D
 
 # Launch dwm
 exec dwm

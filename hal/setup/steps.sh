@@ -768,6 +768,15 @@ installEvince()
     log "Install evince...done"
 }
 
+# TODO: Craete another paragraph with modules used as fixes/workaronds etc?
+# To fix misbehaving Java windows
+installWmname()
+{
+    log "Install wmname..."
+    installPackage "wmname"
+    log "Install wmname...done"
+}
+
 #---------------------------------------
 # Sound
 #---------------------------------------

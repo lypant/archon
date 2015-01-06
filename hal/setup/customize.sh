@@ -108,6 +108,7 @@ customize()
     installVlc
     instalFeh
     installEvince
+    installWmname
 
     #---------------------------------------
     # Sound
