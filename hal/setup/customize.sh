@@ -106,6 +106,8 @@ customize()
     installRxvtUnicode
     installFirefox
     installVlc
+    instalFeh
+    installEvince
 
     #---------------------------------------
     # Sound

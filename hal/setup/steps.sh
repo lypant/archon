@@ -754,6 +754,20 @@ installVlc()
     log "Install vlc...done"
 }
 
+installFeh()
+{
+    log "Install feh..."
+    installPackage "feh"
+    log "Install feh...done"
+}
+
+installEvince()
+{
+    log "Install evince..."
+    installPackage "evince"
+    log "Install evince...done"
+}
+
 #---------------------------------------
 # Sound
 #---------------------------------------
