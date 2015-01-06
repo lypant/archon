@@ -16,15 +16,13 @@
 #---------------------------------------
 # Launch terminal multipxer
 # Log out after exiting terminal multiplexer
-[[ -z $DISPLAY ]] && [[ -z $TMUX ]] && tmux && exit
+#[[ -z $DISPLAY ]] && [[ -z $TMUX ]] && tmux && exit
 
 #---------------------------------------
 # GUI mode
 #---------------------------------------
 # Start X automatically after login
 # All output is redirected to log file for clean visual login effect
-# Exiting X leaves user logged in into console with terminal multiplexer
-# Log out after exiting terminal multiplexer
-# Note: Add exec before "startx" to to log out after exiting X
-#[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && startx -- -keeptty > ~/.xlog && tmux && exit
+# Exiting X logs user out
+[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && startx -- -keeptty > ~/.xlog && exit
 

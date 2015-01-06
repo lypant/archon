@@ -85,6 +85,17 @@ customize()
     #-------------------
     installVideoDriver
 
+    #-------------------
+    # Fonts
+    #-------------------
+    installGuiFonts
+
+    #-------------------
+    # Programs
+    #-------------------
+    installCustomizedDwm
+    installRxvtUnicode
+
     #---------------------------------------
     # Sound
     #---------------------------------------
