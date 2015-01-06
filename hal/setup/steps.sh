@@ -745,6 +745,15 @@ installFirefox()
     log "Install firefox...done"
 }
 
+installVlc()
+{
+    log "Install vlc..."
+    # TODO: Check whether libcddb is necessary
+    #installPackage "vlc libcddb"
+    installPackage "vlc"
+    log "Install vlc...done"
+}
+
 #---------------------------------------
 # Sound
 #---------------------------------------

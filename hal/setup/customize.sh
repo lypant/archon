@@ -6,6 +6,8 @@
 #
 # DESCRIPTION:  Installs basic Arch Linux system
 #               TODO: Describe in more details
+#
+# TODO:        Group together program installation and its dotfile, if possible
 #===============================================================================
 
 # Treat unset variables as an error when peforming parameter expansion
@@ -103,6 +105,7 @@ customize()
     installDmenu
     installRxvtUnicode
     installFirefox
+    installVlc
 
     #---------------------------------------
     # Sound
