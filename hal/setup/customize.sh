@@ -94,6 +94,7 @@ customize()
     # Config
     #-------------------
     installXbindkeys
+    installConky
 
     #-------------------
     # Programs
@@ -127,6 +128,7 @@ customize()
     installXinitrcDotfile
     installXresourcesDotfile
     installXbindkeysrcDotfile
+    installConkyDotfile
 
     #---------------------------------------
     # Boot process configuration

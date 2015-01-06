@@ -684,6 +684,13 @@ installXbindkeys()
     log "Install xbindkeys...done"
 }
 
+installConky()
+{
+    log "Install conky..."
+    installPackage "conky"
+    log "Install conky...done"
+}
+
 #-------------------
 # Programs
 #-------------------
@@ -890,6 +897,14 @@ installXbindkeysrcDotfile()
     installDotfile ".xbindkeysrc" ""
     err "$?" "$FUNCNAME" "failed to install .xbindkeys dotfile"
     log "Install .xbindkeysrc dotfile...done"
+}
+
+installConkyDotfile()
+{
+    log "Install .conkyrc dotfile..."
+    installDotfile ".conkyrc" ""
+    err "$?" "$FUNCNAME" "failed to install .conkyrc dotfile"
+    log "Install .conkyrc dotfile...done"
 }
 
 #---------------------------------------

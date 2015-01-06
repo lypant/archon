@@ -1,0 +1,31 @@
+# This is a comment
+
+# This conky config is meant to be used together with dwm status bar(s).
+# Dwm with double bar (also at the bottom) is required
+
+background no
+cpu_avg_samples 2
+net_avg_samples 2
+no_buffers yes
+out_to_console yes
+out_to_x no
+total_run_times 0
+update_interval 1.0
+use_spacer left
+pad_percents 3
+
+TEXT
+${exec cmus_status} :: \
+V${exec amixer get Master | awk -F'[]%[]' '/%/ { printf "%3d", $2 }'}% :: \
+${time %d %b %Y %H:%M}\
+;\
+D ${downspeed enp4s0} :: \
+U ${upspeed enp4s0} :: \
+C1${cpu cpu1}% :: \
+C2${cpu cpu2}% :: \
+M${memperc}% :: \
+S$swapperc% :: \
+/${fs_used_perc /}% :: \
+/boot${fs_used_perc /boot/}% :: \
+data${fs_used_perc /mnt/data}%
+
