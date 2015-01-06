@@ -91,6 +91,11 @@ customize()
     installGuiFonts
 
     #-------------------
+    # Config
+    #-------------------
+    installXbindkeys
+
+    #-------------------
     # Programs
     #-------------------
     installCustomizedDwm
@@ -120,6 +125,7 @@ customize()
 
     installXinitrcDotfile
     installXresourcesDotfile
+    installXbindkeysrcDotfile
 
     #---------------------------------------
     # Boot process configuration

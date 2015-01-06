@@ -673,6 +673,18 @@ installGuiFonts()
 }
 
 #-------------------
+# Config
+#-------------------
+
+# To be able to bind special keyboard keys to commands
+installXbindkeys()
+{
+    log "Install xbindkeys..."
+    installPackage "xbindkeys"
+    log "Install xbindkeys...done"
+}
+
+#-------------------
 # Programs
 #-------------------
 
@@ -863,6 +875,14 @@ installXresourcesDotfile()
     installDotfile ".Xresources" ""
     err "$?" "$FUNCNAME" "failed to install .Xresources dotfile"
     log "Install .Xresources dotfile...done"
+}
+
+installXbindkeysrcDotfile()
+{
+    log "Install .xbindkeysrc dotfile..."
+    installDotfile ".xbindkeysrc" ""
+    err "$?" "$FUNCNAME" "failed to install .xbindkeys dotfile"
+    log "Install .xbindkeysrc dotfile...done"
 }
 
 #---------------------------------------
