@@ -41,5 +41,5 @@ xsetroot -solid "#$SOLARIZED_BASE03"
 #wmname LG3D
 
 # Launch dwm
-#exec dwm
+exec dwm
 

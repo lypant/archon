@@ -661,6 +661,57 @@ installVideoDriver()
     log "Install video driver...done"
 }
 
+#-------------------
+# Fonts
+#-------------------
+
+installGuiFonts()
+{
+    log "Install gui fonts..."
+    installPackage "ttf-inconsolata ttf-dejavu terminus-font"
+    log "Install gui fonts...done"
+}
+
+#-------------------
+# Programs
+#-------------------
+
+installCustomizedDwm()
+{
+    local patch="/home/adam/archon/variant/patches/dwm_cdec978.diff"
+    local build_path="/home/adam/forge/dwm"
+    local comment="Adjustments done during archon installation"
+
+    log "Installing customized dwm..."
+    # Clone project from git
+    cmd "git clone http://git.suckless.org/dwm $build_path"
+    err "$?" "$FUNCNAME" "failed to clone dwm repo"
+    # Newest commit was not working... use specific, working version
+    cmd "git -C $build_path checkout cdec978 -b dwm_archon"
+    err "$?" "$FUNCNAME" "failed to checkout specific dwm branch"
+    # Apply patch with customizations
+    cmd "git -C $build_path apply $patch"
+    err "$?" "$FUNCNAME" "failed to apply dwm patch"
+    # Add changes introduced with patch. Use add . since new files may be added.
+    cmd "git -C $build_path add ."
+    err "$?" "$FUNCNAME" "failed to add changes introduced with patch"
+    # Save configuration as new commit
+    cmd "git -C $build_path commit -m \"$comment\""
+    err "$?" "$FUNCNAME" "failed to commit dwm changes"
+    # Install
+    cmd "make -C $build_path clean install"
+    err "$?" "$FUNCNAME" "failed to install dwm"
+    log "Installing customized dwm...done"
+}
+
+installRxvtUnicode()
+{
+    # Note: rxvt-unicode can be launched with command urxvt
+    log "Install rxvt unicode..."
+    installPackage "rxvt-unicode"
+    log "Install rxvt unicode...done"
+}
+
 #---------------------------------------
 # Sound
 #---------------------------------------
