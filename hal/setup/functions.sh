@@ -84,6 +84,14 @@ installPackage()
     log "Install package $@...done"
 }
 
+removePackage()
+{
+    log "Remove package $@..."
+    cmd "pacman -Rdd $@ --noconfirm"
+    err "$?" "$FUNCNAME" "failed to remove package"
+    log "Remove package $@...done"
+}
+
 checkPartitionsCount()
 {
     local hdd=$1

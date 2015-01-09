@@ -36,6 +36,7 @@ customize()
     setTemporaryFont
     createLogDir
     log "Customize..."
+    setMultilibRepository
     configurePacman
     updatePackageList
 
@@ -81,6 +82,7 @@ customize()
     # Xorg
     #-------------------
     installXorg
+    removeMesaLibgl
 
     #-------------------
     # Video driver

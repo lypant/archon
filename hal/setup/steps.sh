@@ -219,6 +219,15 @@ generateFstab()
     log "Generate fstab...done"
 }
 
+setTmpfsTmpSize()
+{
+    log "Set tmpfs tmp size..."
+    # Suggested tmpfs size: RAM size + SWAP size
+    cmd "echo \"tmpfs /tmp tmpfs size=16G,rw 0 0\" >> /mnt/etc/fstab"
+    err "$?" "$FUNCNAME" "failed to set tmpfs tmp size"
+    log "Set tmpfs tmp size...done"
+}
+
 setHostName()
 {
     log "Set host name..."
@@ -466,8 +475,18 @@ unmountPartitions()
 #-------------------------------------------------------------------------------
 
 #---------------------------------------
-# Preparation steps
+# Preparations
 #---------------------------------------
+
+# Use repository for multilib support - to allow 32B apps on 64B system
+# Needed for Android development
+setMultilibRepository()
+{
+    log "Set multilib repository..."
+    cmd "sed -i '/\[multilib\]/,/Include/ s|^#\(.*\)|\1|' /etc/pacman.conf"
+    err "$?" "$FUNCNAME" "failed to set multilib repository"
+    log "Set multilib repository...done"
+}
 
 configurePacman()
 {
@@ -648,6 +667,13 @@ installXorg()
     log "Install Xorg..."
     installPackage "xorg-server xorg-server-utils xorg-xinit"
     log "Install Xorg...done"
+}
+
+removeMesaLibgl()
+{
+    log "Remove mesa-libgl..."
+    removePackage "mesa-libgl"
+    log "Remove mesa-libgl...done"
 }
 
 #-------------------
