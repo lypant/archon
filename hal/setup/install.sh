@@ -65,7 +65,6 @@ install()
     # Base system configuration
     #---------------------------------------
     generateFstab
-    setTmpfsTmpSize
     setHostName
 
     #---------------------------------------

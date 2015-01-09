@@ -108,7 +108,7 @@ customize()
     installRxvtUnicode
     installFirefox
     installVlc
-    instalFeh
+    installFeh
     installEvince
     installWmname
 

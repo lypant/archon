@@ -219,15 +219,6 @@ generateFstab()
     log "Generate fstab...done"
 }
 
-setTmpfsTmpSize()
-{
-    log "Set tmpfs tmp size..."
-    # Suggested tmpfs size: RAM size + SWAP size
-    cmd "echo \"tmpfs /tmp tmpfs size=16G,rw 0 0\" >> /mnt/etc/fstab"
-    err "$?" "$FUNCNAME" "failed to set tmpfs tmp size"
-    log "Set tmpfs tmp size...done"
-}
-
 setHostName()
 {
     log "Set host name..."
@@ -424,10 +415,14 @@ setRootPassword()
 
     log "Set root password..."
 
+    # Disable exit on error - to get a chance of correcting misspelled password
+    set +o errexit
     while [ $ASK -ne 0 ]; do
         archChroot "passwd"
         ASK=$?
     done
+    # Enable exiting on error again
+    set -o errexit
 
     log "Set root password...done"
 }
@@ -436,7 +431,9 @@ setRootPassword()
 # Additional steps
 #---------------------------------------
 
-# TODO: Move this step to customization script???
+# Has to be done in install phase to allow larga AUR packages installation
+# during customizaation phase. OOM problems were observed on VirtualBox
+# installations without this.
 setTmpfsTmpSize()
 {
     # Size of /tmp partition - e.g. RAM size + SWAP size
@@ -513,11 +510,15 @@ setUserPassword()
 
     log "Set user password..."
 
+    # Disable exit on error - to get a chance of correcting misspelled password
+    set +o errexit
     while [ $ask -ne 0 ]; do
         log "Provide password for user adam"
         cmd "passwd adam"
         ask=$?
     done
+    # Enable exiting on error again
+    set -o errexit
 
     log "Set user password...done"
 }
