@@ -306,3 +306,25 @@ changeOutputLevels()
     err "$?" "$FUNCNAME" "failed to change output levels for $file"
 }
 
+installAurPackage()
+{
+    local buildDir="/tmp"
+    local url="https://aur.archlinux.org/packages"
+
+    for p in $@
+    do
+        local pkgFile="$url/${p:0:2}/$p/$p.tar.gz"
+
+        cd $buildDir
+        cmd "curl \"$pkgFile\" | tar xz"
+        err "$?" "$FUNCNAME" "failed to download package file"
+
+        cd $buildDir/$p
+        err "$?" "$FUNCNAME" "failed to enter package dir"
+
+        # TODO: Consider another solution to avoid --asroot
+        cmd "makepkg -si --asroot --noconfirm"
+        err "$?" "$FUNCNAME" "failed to install package"
+    done
+}
+

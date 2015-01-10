@@ -804,6 +804,26 @@ installWmname()
     log "Install wmname...done"
 }
 
+installJdk()
+{
+    log "Install jdk..."
+    installAurPackage "jdk"
+    log "Install jdk...done"
+}
+
+installAndroidEnv()
+{
+    log "Install android env"
+    installAurPackage "android-sdk"
+    installAurPackage "android-sdk-platform-tools"
+    installAurPackage "android-sdk-build-tools"
+    installAurPackage "android-studio"
+    # Needed to update sdk manually using 'android' tool
+    cmd "chmod -R 755 /opt/android-sdk"
+    err "$?" "$FUNCNAME" "failed to change android-sdk file permissions"
+    log "Install android env...done"
+}
+
 #---------------------------------------
 # Sound
 #---------------------------------------

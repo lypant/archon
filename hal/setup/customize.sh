@@ -111,6 +111,8 @@ customize()
     installFeh
     installEvince
     installWmname
+    installJdk
+    installAndroidEnv
 
     #---------------------------------------
     # Sound
