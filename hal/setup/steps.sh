@@ -804,26 +804,6 @@ installWmname()
     log "Install wmname...done"
 }
 
-installJdk()
-{
-    log "Install jdk..."
-    installAurPackage "jdk"
-    log "Install jdk...done"
-}
-
-installAndroidEnv()
-{
-    log "Install android env"
-    installAurPackage "android-sdk"
-    installAurPackage "android-sdk-platform-tools"
-    installAurPackage "android-sdk-build-tools"
-    installAurPackage "android-studio"
-    # Needed to update sdk manually using 'android' tool
-    cmd "chmod -R 755 /opt/android-sdk"
-    err "$?" "$FUNCNAME" "failed to change android-sdk file permissions"
-    log "Install android env...done"
-}
-
 #---------------------------------------
 # Sound
 #---------------------------------------
@@ -1132,5 +1112,35 @@ changeHomeOwnership()
 copyProjectLogFiles()
 {
     cp -r ../logs /home/adam/archon/$VARIANT
+}
+
+#-------------------------------------------------------------------------------
+# Supplementation
+#
+# Note: All steps will be executed using regular user account
+#-------------------------------------------------------------------------------
+
+#---------------------------------------
+# Android development environment
+#---------------------------------------
+
+installJdk()
+{
+    log "Install jdk..."
+    installAurPackage "jdk"
+    log "Install jdk...done"
+}
+
+installAndroidEnv()
+{
+    log "Install android env"
+    installAurPackage "android-sdk"
+    installAurPackage "android-sdk-platform-tools"
+    installAurPackage "android-sdk-build-tools"
+    installAurPackage "android-studio"
+    # Needed to update sdk manually using 'android' tool
+    cmd "sudo chmod -R 755 /opt/android-sdk"
+    err "$?" "$FUNCNAME" "failed to change android-sdk file permissions"
+    log "Install android env...done"
 }
 

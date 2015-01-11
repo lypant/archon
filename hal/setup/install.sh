@@ -113,6 +113,8 @@ install()
     #---------------------------------------
     # Additional steps
     #---------------------------------------
+    # TODO: Since AUR packages are installed in supplementation stage,
+    #       this can be moved to customization step
     setTmpfsTmpSize # To install large AUR packages in customization script
     log "Install...done"
 

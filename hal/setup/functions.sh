@@ -306,6 +306,8 @@ changeOutputLevels()
     err "$?" "$FUNCNAME" "failed to change output levels for $file"
 }
 
+# This function should be executed from regular user account (non-root).
+# This is caused by makepkg not allowing for roor-account execution
 installAurPackage()
 {
     local buildDir="/tmp"
@@ -322,8 +324,7 @@ installAurPackage()
         cd $buildDir/$p
         err "$?" "$FUNCNAME" "failed to enter package dir"
 
-        # TODO: Consider another solution to avoid --asroot
-        cmd "makepkg -si --asroot --noconfirm"
+        cmd "makepkg -si --noconfirm"
         err "$?" "$FUNCNAME" "failed to install package"
     done
 }
