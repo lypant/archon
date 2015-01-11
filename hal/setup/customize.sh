@@ -153,8 +153,9 @@ customize()
     setBootConsoleOutputLevels
 
     #---------------------------------------
-    # Data partition
+    # Partitions and file systems
     #---------------------------------------
+    setTmpfsTmpSize # To install large AUR packages in supplementation script
     setDataPartition
 
     #---------------------------------------

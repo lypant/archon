@@ -431,18 +431,6 @@ setRootPassword()
 # Additional steps
 #---------------------------------------
 
-# Has to be done in install phase to allow larga AUR packages installation
-# during customizaation phase. OOM problems were observed on VirtualBox
-# installations without this.
-setTmpfsTmpSize()
-{
-    # Size of /tmp partition - e.g. RAM size + SWAP size
-    log "Set tmpfs tmp size..."
-    cmd "echo \"tmpfs /tmp tmpfs size=16G,rw 0 0\" >> /mnt/etc/fstab"
-    err "$?" "$FUNCNAME" "failed to set tmpfs tmp size"
-    log "Set tmpfs tmp size...done"
-}
-
 #---------------------------------------
 # Post-install steps
 #---------------------------------------
@@ -1067,8 +1055,20 @@ setBootConsoleOutputLevels()
 }
 
 #---------------------------------------
-# Data partition
+# Partitions and file systems
 #---------------------------------------
+
+# Has to be done before AUR packages installation phase
+# to allow larga AUR packages installation
+# OOM problems were observed on VirtualBox installations without this.
+setTmpfsTmpSize()
+{
+    # Size of /tmp partition - e.g. RAM size + SWAP size
+    log "Set tmpfs tmp size..."
+    cmd "echo \"tmpfs /tmp tmpfs size=16G,rw 0 0\" >> /mnt/etc/fstab"
+    err "$?" "$FUNCNAME" "failed to set tmpfs tmp size"
+    log "Set tmpfs tmp size...done"
+}
 
 setDataPartition()
 {

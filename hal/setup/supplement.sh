@@ -25,7 +25,7 @@ VARIANT=$(cd ../; pwd)
 VARIANT=${VARIANT##*/}
 
 # Set log file name
-LOG_FILE="~/archon/variant/logs/supplement.log"
+LOG_FILE="/home/adam/archon/variant/logs/supplement.log"
 
 #-------------------------------------------------------------------------------
 # Define supplementation function
