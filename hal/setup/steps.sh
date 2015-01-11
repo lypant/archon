@@ -1065,7 +1065,7 @@ setTmpfsTmpSize()
 {
     # Size of /tmp partition - e.g. RAM size + SWAP size
     log "Set tmpfs tmp size..."
-    cmd "echo \"tmpfs /tmp tmpfs size=16G,rw 0 0\" >> /mnt/etc/fstab"
+    cmd "echo \"tmpfs /tmp tmpfs size=16G,rw 0 0\" >> /etc/fstab"
     err "$?" "$FUNCNAME" "failed to set tmpfs tmp size"
     log "Set tmpfs tmp size...done"
 }
