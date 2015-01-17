@@ -107,18 +107,16 @@ customize()
     installDmenu
     installRxvtUnicode
     installFirefox
+    installThunderbird
     installVlc
     installFeh
     installEvince
     installWmname
-    #installJdk
-    #installAndroidEnv
 
     #---------------------------------------
     # Sound
     #---------------------------------------
     installAlsa
-    #initAlsa                               # TODO: Deprecate? Caused problems during installation on both VBox and HW
     disablePcSpeaker
     installCmus
 

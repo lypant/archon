@@ -760,6 +760,13 @@ installFirefox()
     log "Install firefox...done"
 }
 
+installThunderbird()
+{
+    log "Install thunderbird..."
+    installPackage "thunderbird"
+    log "Install thunderbird...done"
+}
+
 installVlc()
 {
     log "Install vlc..."
