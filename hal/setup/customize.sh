@@ -107,6 +107,7 @@ customize()
     installDmenu
     installRxvtUnicode
     installFirefox
+    installFlashplugin
     installThunderbird
     installVlc
     installFeh

@@ -760,6 +760,13 @@ installFirefox()
     log "Install firefox...done"
 }
 
+installFlashplugin()
+{
+    log "Install flashplugin..."
+    installPackage "flashplugin"
+    log "Install flashplugin...done"
+}
+
 installThunderbird()
 {
     log "Install thunderbird..."
@@ -1092,7 +1099,7 @@ setDataPartition()
     err "$?" "$FUNCNAME" "failed to add entry to fstab"
     createDir "$mntDir"
     err "$?" "$FUNCNAME" "failed to create mount dir"
-    createLink "$mntDir" "/home/adam/data"
+    createLink "$mntDir" "/home/adam/Data"
     err "$?" "$FUNCNAME" "failed to create link"
     log "Set data partition...done"
 }
