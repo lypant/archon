@@ -17,15 +17,8 @@ set -o nounset -o errexit
 # Include steps definitions
 source steps.sh
 
-# TODO: Get rid of variant link/variable? Hardcode 'hal'? Make it consistent
-#       in all installation scripts
-
-# Determine variant name based on parent dir name
-VARIANT=$(cd ../; pwd)
-VARIANT=${VARIANT##*/}
-
 # Set log file name
-LOG_FILE="/home/adam/archon/variant/logs/supplement.log"
+LOG_FILE="/home/adam/archon/hal/logs/supplement.log"
 
 #-------------------------------------------------------------------------------
 # Define supplementation function

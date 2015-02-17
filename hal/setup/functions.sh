@@ -236,7 +236,7 @@ installDotfile()
     local dotfile=""
     local nested=0
     local now=`date +"%Y%m%d_%H%M"`
-    local dotfilesSrcDir="/home/adam/archon/$VARIANT/dotfiles"
+    local dotfilesSrcDir="/home/adam/archon/hal/dotfiles"
     local dotfilesBkpDir="$dotfilesSrcDir/backup"
 
     # Avoid extra slash when path is empty

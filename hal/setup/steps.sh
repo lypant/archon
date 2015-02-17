@@ -222,7 +222,7 @@ generateFstab()
 setHostName()
 {
     log "Set host name..."
-    archChroot "echo $VARIANT > /etc/hostname"
+    archChroot "echo hal > /etc/hostname"
     err "$?" "$FUNCNAME" "failed to set host name"
     log "Set host name...done"
 }
@@ -565,14 +565,6 @@ copyOverArchonFiles()
     log "Copy over archon files...done"
 }
 
-createVariantLink()
-{
-    log "Create variant link..."
-    createLink "/home/adam/archon/$VARIANT" "/home/adam/archon/variant"
-    err "$?" "$FUNCNAME" "failed to create variant link"
-    log "Create variant link...done"
-}
-
 #--------------------------------------
 # Console programs
 #---------------------------------------
@@ -712,7 +704,7 @@ installConky()
 
 installCustomizedDwm()
 {
-    local patch="/home/adam/archon/variant/patches/dwm_cdec978.diff"
+    local patch="/home/adam/archon/hal/patches/dwm_cdec978.diff"
     local build_path="/home/adam/forge/dwm"
     local comment="Adjustments done during archon installation"
 
@@ -1125,7 +1117,7 @@ changeHomeOwnership()
 
 copyProjectLogFiles()
 {
-    cp -r ../logs /home/adam/archon/$VARIANT
+    cp -r ../logs /home/adam/archon/hal
 }
 
 #-------------------------------------------------------------------------------

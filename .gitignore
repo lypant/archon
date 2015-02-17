@@ -9,9 +9,6 @@ tags
 # Vim temporary files
 *.swp
 
-# Archon variant link
-variant
-
 # Archon dotfiles backup
 hal/dotfiles/backup/
 

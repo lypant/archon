@@ -17,10 +17,6 @@ set -o nounset -o errexit
 # Include steps definitions
 source steps.sh
 
-# Determine variant name based on parent dir name
-VARIANT=$(cd ../; pwd)
-VARIANT=${VARIANT##*/}
-
 # Set log file name
 LOG_FILE="../logs/customize.log"
 
@@ -55,7 +51,6 @@ customize()
     cloneArchonRepo
     checkoutCurrentBranch
     copyOverArchonFiles
-    createVariantLink
 
     #---------------------------------------
     # Console programs

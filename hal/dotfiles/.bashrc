@@ -10,14 +10,14 @@
 #-------------------------------------------------------------------------------
 # Load files containing variables to be exported
 #-------------------------------------------------------------------------------
-source "$HOME/archon/variant/setup/bash_exports.conf"
+source "$HOME/archon/hal/setup/bash_exports.conf"
 
 #---------------------------------------
 # Exported variables
 #---------------------------------------
 
 # Add more dirs to path
-export PATH=$PATH:/$HOME/archon/variant/bin
+export PATH=$PATH:/$HOME/archon/hal/bin
 
 #-------------------------------------------------------------------------------
 # Shell
@@ -60,13 +60,13 @@ if [[ -z "$DISPLAY" ]]; then
     # Do not use fancy characters to draw outline
     # Use vim as editor
     # Use mc_viewer script as viewer - vim with additional parameters
-    alias mc='EDITOR=vim VIEWER=$HOME/archon/variant/bin/mc_viewer mc -a'
+    alias mc='EDITOR=vim VIEWER=$HOME/archon/hal/bin/mc_viewer mc -a'
 else
     # Aliases for GUI
 
     # Use vim as editor
     # Use mc_viewer script as viewer - vim with additional parameters
-    alias mc='EDITOR=vim VIEWER=$HOME/archon/variant/bin/mc_viewer mc'
+    alias mc='EDITOR=vim VIEWER=$HOME/archon/hal/bin/mc_viewer mc'
 fi
 
 #-------------------
@@ -107,7 +107,7 @@ source "/usr/share/git/completion/git-completion.bash"
 #---------------------------------------
 
 # Load colors definition
-source "$HOME/archon/variant/colors/solarized/bash.conf"
+source "$HOME/archon/hal/colors/solarized/bash.conf"
 
 #---------------------------------------
 # Choice
