@@ -101,21 +101,21 @@ checkInitialPartitions()
 createSwapPartition()
 {
     log "Create swap partition..."
-    createPartition /dev/$SYSTEM_HDD p $SWAP_PART_NB $SWAP_PART_SIZE 82
+    createPartition /dev/$SYSTEM_HDD p $SWAP_PART_NB "$SWAP_PART_SIZE" 82
     log "Create swap partition...done"
 }
 
 createBootPartition()
 {
     log "Create boot partition..."
-    createPartition /dev/$SYSTEM_HDD p $BOOT_PART_NB $BOOT_PART_SIZE 83
+    createPartition /dev/$SYSTEM_HDD p $BOOT_PART_NB "$BOOT_PART_SIZE" 83
     log "Create boot partition...done"
 }
 
 createRootPartition()
 {
     log "Create root partition..."
-    createPartition /dev/$SYSTEM_HDD p $ROOT_PART_NB \"$ROOT_PART_SIZE\" 83
+    createPartition /dev/$SYSTEM_HDD p $ROOT_PART_NB "$ROOT_PART_SIZE" 83
     log "Create root partition...done"
 }
 
