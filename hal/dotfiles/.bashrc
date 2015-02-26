@@ -7,11 +7,6 @@
 #-------------------------------------------------------------------------------
 [[ $- != *i* ]] && return
 
-#-------------------------------------------------------------------------------
-# Load files containing variables to be exported
-#-------------------------------------------------------------------------------
-source "$HOME/archon/hal/setup/bash_exports.conf"
-
 #---------------------------------------
 # Exported variables
 #---------------------------------------
@@ -36,9 +31,9 @@ PS1='[\u@\h \W]\$'
 # Data partition remounting
 #-------------------
 dataRwParams="remount,nouser,noexec,rw"
-alias drw="sudo mount -U \"$DATA_PARTITION_UUID\" -o $dataRwParams"
+alias drw="sudo mount -L \"Data\" -o $dataRwParams"
 dataRoParams="remount,auto,nouser,noexec,ro"
-alias dro="sudo mount -U \"$DATA_PARTITION_UUID\" -o $dataRoParams"
+alias dro="sudo mount -L \"Data\" -o $dataRoParams"
 
 #-------------------
 # ls

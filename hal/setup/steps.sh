@@ -16,9 +16,6 @@ set -o nounset -o errexit
 # Include functions definitions
 source functions.sh
 
-# Include variables to be exported in .bashrc
-source bash_exports.conf
-
 #-------------------------------------------------------------------------------
 # Installation
 #-------------------------------------------------------------------------------
@@ -1079,7 +1076,7 @@ setTmpfsTmpSize()
 setDataPartition()
 {
     local mntDir="/mnt/data"
-    local entry="UUID=$DATA_PARTITION_UUID"
+    local entry="LABEL=Data"
     entry="$entry /mnt/data"
     entry="$entry ext4"
     entry="$entry auto,nouser,noexec,ro"
