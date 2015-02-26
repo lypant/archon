@@ -17,6 +17,35 @@ set -o nounset -o errexit
 source functions.sh
 
 #-------------------------------------------------------------------------------
+# Configuration variables
+#-------------------------------------------------------------------------------
+
+#---------------------------------------
+# System HDD
+#---------------------------------------
+SYSTEM_HDD="sdb"
+
+#-------------------
+# Swap partition
+#-------------------
+SWAP_PART_NB="1"
+SWAP_PART_SIZE="+16G"
+
+#-------------------
+# Boot partition
+#-------------------
+BOOT_PART_NB="2"
+BOOT_PART_SIZE="+512M"
+BOOT_PART_FS="ext2"
+
+#-------------------
+# Root partition
+#-------------------
+ROOT_PART_NB="3"
+ROOT_PART_SIZE=""
+ROOT_PART_FS="ext4"
+
+#-------------------------------------------------------------------------------
 # Installation
 #-------------------------------------------------------------------------------
 
@@ -59,8 +88,6 @@ installArchlinuxKeyring()
 # Disks, partitions and file systems
 #---------------------------------------
 
-SYSTEM_HDD="sdc"
-
 checkInitialPartitions()
 {
     local hdd="/dev/$SYSTEM_HDD"
@@ -74,21 +101,21 @@ checkInitialPartitions()
 createSwapPartition()
 {
     log "Create swap partition..."
-    createPartition /dev/$SYSTEM_HDD p 1 +8G 82
+    createPartition /dev/$SYSTEM_HDD p $SWAP_PART_NB $SWAP_PART_SIZE 82
     log "Create swap partition...done"
 }
 
 createBootPartition()
 {
     log "Create boot partition..."
-    createPartition /dev/$SYSTEM_HDD p 2 +512M 83
+    createPartition /dev/$SYSTEM_HDD p $BOOT_PART_NB $BOOT_PART_SIZE 83
     log "Create boot partition...done"
 }
 
 createRootPartition()
 {
     log "Create root partition..."
-    createPartition /dev/$SYSTEM_HDD p 3 "" 83
+    createPartition /dev/$SYSTEM_HDD p $ROOT_PART_NB \"$ROOT_PART_SIZE\" 83
     log "Create root partition...done"
 }
 
@@ -105,14 +132,14 @@ checkCreatedPartitions()
 setBootPartitionBootable()
 {
     log "Set boot partition bootable..."
-    setPartitionBootable /dev/$SYSTEM_HDD 2
+    setPartitionBootable /dev/$SYSTEM_HDD $BOOT_PART_NB
     log "Set boot partition bootable...done"
 }
 
 createSwap()
 {
     log "Create swap..."
-    cmd "mkswap /dev/${SYSTEM_HDD}1"
+    cmd "mkswap /dev/$SYSTEM_HDD$SWAP_PART_NB"
     err "$?" "$FUNCNAME" "failed to create swap"
     log "Create swap...done"
 }
@@ -120,7 +147,7 @@ createSwap()
 activateSwap()
 {
     log "Activate swap..."
-    cmd "swapon /dev/${SYSTEM_HDD}1"
+    cmd "swapon /dev/$SYSTEM_HDD$SWAP_PART_NB"
     err "$?" "$FUNCNAME" "failed to activate swap"
     log "Activate swap...done"
 }
@@ -128,7 +155,7 @@ activateSwap()
 createBootFileSystem()
 {
     log "Create boot file system..."
-    cmd "mkfs.ext2 /dev/${SYSTEM_HDD}2"
+    cmd "mkfs.$BOOT_PART_FS /dev/$SYSTEM_HDD$BOOT_PART_NB"
     err "$?" "$FUNCNAME" "failed to create boot file system"
     log "Create boot file system...done"
 }
@@ -136,7 +163,7 @@ createBootFileSystem()
 createRootFileSystem()
 {
     log "Create root file system..."
-    cmd "mkfs.ext4 /dev/${SYSTEM_HDD}3"
+    cmd "mkfs.$ROOT_PART_FS /dev/$SYSTEM_HDD$ROOT_PART_NB"
     err "$?" "$FUNCNAME" "failed to create root file system"
     log "Create root file system...done"
 }
@@ -144,7 +171,7 @@ createRootFileSystem()
 mountRootPartition()
 {
     log "Mount root partition..."
-    cmd "mount /dev/${SYSTEM_HDD}3 /mnt"
+    cmd "mount /dev/$SYSTEM_HDD$ROOT_PART_NB /mnt"
     err "$?" "$FUNCNAME" "failed to mount root partition"
     log "Mount root partition...done"
 }
@@ -154,7 +181,7 @@ mountBootPartition()
     log "Mount boot partition..."
     cmd "mkdir /mnt/boot"
     err "$?" "$FUNCNAME" "failed to create boot partition mount point"
-    cmd "mount /dev/${SYSTEM_HDD}2 /mnt/boot"
+    cmd "mount /dev/$SYSTEM_HDD$BOOT_PART_NB /mnt/boot"
     err "$?" "$FUNCNAME" "failed to mount boot partition"
     log "Mount boot partition...done"
 }
@@ -388,7 +415,7 @@ installBootloader()
 configureBootloader()
 {
     local src="sda3"
-    local dst="sdc3"
+    local dst="$SYSTEM_HDD$ROOT_PART_NB"
     local subst="s|$src|$dst|g"
     local file="/boot/syslinux/syslinux.cfg"
     local cnt=0
@@ -964,7 +991,7 @@ installConkyDotfile()
 setBootloaderKernelParams()
 {
     local params=""
-    params="$params root=/dev/sdc3"
+    params="$params root=/dev/$SYSTEM_HDD$ROOT_PART_NB"
     params="$params rw"
     params="$params vga=0x0369"
     params="$params quiet"

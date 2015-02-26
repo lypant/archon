@@ -22,8 +22,6 @@ NOTES:
   are invalid - perform additional checks after partition creation?
 
 TODO:
-? Use partition LABEL for arch partitions (swap, boot, /) instead of /dev/sdxN
-- Unify approach in steps - either variables defining partitions or hardcoded
 - Allow for installation with other system present ()
     - Handle partitions
     - Support bootloader chainloading
