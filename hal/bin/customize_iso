@@ -161,7 +161,7 @@ unmountFsImage()
 copyCustomContent()
 {
     echo "Copy custom content..."
-    eval "sudo cp $CUSTOM_SRC/* $FS_MNT_PNT$CUSTOM_DST"
+    eval "sudo cp -R $CUSTOM_SRC/* $FS_MNT_PNT$CUSTOM_DST"
     echo "Copy custom content...done"
 }
 

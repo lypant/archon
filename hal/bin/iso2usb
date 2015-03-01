@@ -221,8 +221,8 @@ Usage: ${0##*/} [-h] [-i ISO_IMG] [-d USB_DEVICE] [-p USB_NB USB] [-l PART_LABEL
     -i ISO_IMG ISO file to be copied to USB partition ($ISO_IMG)
     -d USB_DEVICE USB device path, without partition number ($USB_DEVICE)
     -p USB_NB USB partition number, where image will be copied,
-    -l PART_LABEL partition label, should match given Arch iso, ($PART_LABEL)
        e.g. 1 in /dev/sdc1 ($USB_NB)
+    -l PART_LABEL partition label, should match given Arch iso, ($PART_LABEL)
 EOF
 }
 
