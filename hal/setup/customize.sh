@@ -152,6 +152,14 @@ customize()
     setTmpfsTmpSize # To install large AUR packages in supplementation script
     setDataPartition
 
+    #-------------------
+    # SSD adjustments
+    #-------------------
+    setRootPartitionTrim
+    setIoScheduler
+    setSwappiness
+    setMakepkgBuilddir
+
     #---------------------------------------
     # Final steps
     #---------------------------------------

@@ -38,7 +38,6 @@ TODO:
 - Add program for downloading arch isos
 - Evince - fix missing icons
 - Add screen saver deactivation when watching films (flash/vlc/...)
-- Add SSD support
 ? Add virtualbox installation
     - When using two disks this might be not needed as maintaining VBox
       compatibility requires much work

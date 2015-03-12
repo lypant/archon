@@ -1120,6 +1120,55 @@ setDataPartition()
     log "Set data partition...done"
 }
 
+#-------------------
+# SSD adjustments
+#-------------------
+
+setRootPartitionTrim()
+{
+    local old="rw,relatime,data=ordered"
+    local new="rw,relatime,data=ordered,discard"
+    local subst="s|$old|$new|g"
+    local file="/etc/fstab"
+
+    log "Set root partition TRIM..."
+    cmd "sed -i \\\"$subst\\\" $file"
+    log "Set root partition TRIM...done"
+}
+
+setIoScheduler()
+{
+    local file="/etc/udev/rules.d/60-schedulers.rules"
+    local line='ACTION=="add|change", KERNEL=="sd[a-z]",'\
+               ' ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="noop"'
+
+    log "Set IO scheduler..."
+    cmd "echo $line >> $file"
+    log "Set IO scheduler...done"
+}
+
+setSwappiness()
+{
+    local file="/etc/sysctl.d/99-sysctl.conf"
+    # 0-swap only to avoid OOM; 60-default; 100-max, aggresive swapping
+    local line="vm.swappiness=1"
+
+    log "Set swappiness..."
+    cmd "echo $line >> $file"
+    log "Set swappiness...done"
+}
+
+# Compile in tmpfs
+setMakepkgBuilddir()
+{
+    local variable="BUILDDIR"
+    local file="/etc/makepkg.conf"
+
+    log "Set makepkg builddir..."
+    uncommentVar $variable $file
+    log "Set makepkg builddir...done"
+}
+
 #---------------------------------------
 # Final steps
 #---------------------------------------
