@@ -1143,7 +1143,7 @@ setIoScheduler()
     line=$line' ATTR{queue/rotational}==\"0\", ATTR{queue/scheduler}=\"noop\"'
 
     log "Set IO scheduler..."
-    cmd "echo $line >> $file"
+    cmd "echo \"$line\" >> $file"
     log "Set IO scheduler...done"
 }
 
