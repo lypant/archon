@@ -1132,15 +1132,15 @@ setRootPartitionTrim()
     local file="/etc/fstab"
 
     log "Set root partition TRIM..."
-    cmd "sed -i \\\"$subst\\\" $file"
+    cmd "sed -i \"$subst\" $file"
     log "Set root partition TRIM...done"
 }
 
 setIoScheduler()
 {
     local file="/etc/udev/rules.d/60-schedulers.rules"
-    local line='ACTION=="add|change", KERNEL=="sd[a-z]",'\
-               ' ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="noop"'
+    local line='ACTION==\"add|change\", KERNEL==\"sd[a-z]\",'
+    line=$line' ATTR{queue/rotational}==\"0\", ATTR{queue/scheduler}=\"noop\"'
 
     log "Set IO scheduler..."
     cmd "echo $line >> $file"
