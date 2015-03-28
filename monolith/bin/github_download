@@ -1,0 +1,98 @@
+#!/bin/bash
+#===============================================================================
+# FILE:         github_download
+#
+# USAGE:        ./github_download
+#
+# DESCRIPTION:  Downloads and unpacks github repository to local directory
+#===============================================================================
+
+# Detect unset variables. No errexit for correct work of getopts.
+set -o nounset
+
+#-------------------------------------------------------------------------------
+# Default values which can be changed using options
+#-------------------------------------------------------------------------------
+
+GITHUB_USER="lypant"
+REPO_NAME="archon"
+REPO_BRANCH="master"
+TRANSFORM=1
+
+#-------------------------------------------------------------------------------
+# Default values
+#-------------------------------------------------------------------------------
+
+GIT_URL="https://github.com"
+
+#-------------------------------------------------------------------------------
+# Functions
+#-------------------------------------------------------------------------------
+
+usage()
+{
+cat << EOF
+Downloads and unpacks github repository to local directory
+
+Usage: ${0##*/} [-ht] [-u USER] [-r REPOSITORY] [-b BRANCH]
+    -h display this help and exit
+    -t do not transform dir name when unpacking
+    -u set github user ($GITHUB_USER)
+    -r set github repository name ($REPO_NAME)
+    -b set github repository branch name ($REPO_BRANCH)
+EOF
+}
+
+download()
+{
+    local downloadCmd="curl -L"
+    local url="$GIT_URL/$GITHUB_USER/$REPO_NAME/tarball/$REPO_BRANCH"
+    local unpackCmd="tar xz"
+    local transformOpt="--transform"
+    local transformPattern="\"s/$GITHUB_USER-$REPO_NAME-......./$REPO_NAME/\""
+    local cmd="$downloadCmd $url | $unpackCmd"
+
+    if [[ "$TRANSFORM" -eq 1 ]]; then
+        cmd="$cmd $transformOpt $transformPattern"
+    fi
+
+    echo $cmd
+    eval $cmd
+}
+
+#-------------------------------------------------------------------------------
+# Execution
+#-------------------------------------------------------------------------------
+
+while getopts ":htu:r:b:" opt; do
+    case $opt in
+        h)
+            usage
+            exit 0
+            ;;
+        t)
+            TRANSFORM=0
+            ;;
+        u)
+            GITHUB_USER=$OPTARG
+            ;;
+        r)
+            REPO_NAME=$OPTARG
+            ;;
+        b)
+            REPO_BRANCH=$OPTARG
+            ;;
+
+        \?)
+            echo "Invalid option: -$OPTARG"
+            exit 1
+            ;;
+        :)
+            echo "Option -$OPTARG requires an argument"
+            exit 2
+            ;;
+    esac
+done
+
+download
+

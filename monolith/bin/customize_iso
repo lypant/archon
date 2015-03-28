@@ -1,0 +1,354 @@
+#!/bin/bash
+#===============================================================================
+# FILE:         customize_iso
+#
+# USAGE:        ./customize_iso
+#
+# DESCRIPTION:  Creates ISO based on provided Arch Linux ISO,
+#               adding provided custom content
+#
+# TODO:         Add switch to chose i686 or/and x86_64 architecture
+#===============================================================================
+
+# Setup shell - detect unset variables
+set -o nounset
+
+#-------------------------------------------------------------------------------
+# Settings adjustable using command line options
+#-------------------------------------------------------------------------------
+
+ORIGINAL_ISO="~/shared/archlinux-2014.08.01-dual.iso"
+NEW_ISO="~/shared/custom-archlinux-2014.08.01-dual.iso"
+WORKSPACE="~/forge/customize_iso"
+CUSTOM_SRC="~/bin"
+CUSTOM_DST="/root"
+
+#-------------------------------------------------------------------------------
+# Settings adjustable by editing this script
+#-------------------------------------------------------------------------------
+
+ISO_MNT_PNT="/mnt/iso"
+FS_MNT_PNT="/mnt/iso_rootfs"
+
+#-------------------------------------------------------------------------------
+# Not editable (unless changed in Arch Linux)
+#-------------------------------------------------------------------------------
+
+PACKAGES="squashfs-tools cdrkit"
+SFS_NAME="airootfs.sfs"
+MD5_NAME="airootfs.md5"
+IMG_NAME="airootfs.img"
+USQ_NAME="squashfs-root"
+
+#-------------------------------------------------------------------------------
+# Functions
+#-------------------------------------------------------------------------------
+
+updatePackageList()
+{
+    echo "Update package list..."
+    sudo pacman -Syy
+    echo "Update package list...done"
+}
+
+checkPackages()
+{
+    echo "Check packages..."
+
+    for pkg in $PACKAGES
+    do
+        pacman -Qsq $pkg &>/dev/null
+        if [[ "$?" -ne 0 ]]; then
+            eval "sudo pacman -S --noconfirm $pkg"
+        fi
+    done
+
+    echo "Check packages...done"
+}
+
+createIsoMountPoint()
+{
+    echo "Create ISO mount point..."
+    eval "sudo mkdir -p $ISO_MNT_PNT"
+    echo "Create ISO mount point...done"
+}
+
+removeIsoMountPoint()
+{
+    echo "Remove ISO mount point..."
+    eval "sudo rmdir $ISO_MNT_PNT"
+    echo "Remove ISO mount point...done"
+}
+
+mountIso()
+{
+    echo "Mount ISO..."
+    eval "sudo mount -t iso9660 -o loop $ORIGINAL_ISO $ISO_MNT_PNT"
+    echo "Mount ISO...done"
+}
+
+unmountIso()
+{
+    echo "Unmount ISO..."
+    eval "sudo umount $ISO_MNT_PNT"
+    echo "Unmount ISO...done"
+}
+
+createWorkspaceDir()
+{
+    echo "Create workspace directory..."
+    eval "mkdir -p $WORKSPACE"
+    echo "Create workspace directory...done"
+}
+
+removeWorkspace()
+{
+    echo "Remove workspace..."
+    eval "rm -rf $WORKSPACE"
+    echo "Remove workspace...done"
+}
+
+copyIsoContents()
+{
+    echo "Copy ISO contents..."
+    eval "cp -a $ISO_MNT_PNT $ISO_CONTENTS_DIR"
+    echo "Copy ISO contents...done"
+}
+
+unsquashFs()
+{
+    echo "Unsquash file system..."
+
+    local newFsPath="$1"
+    local originalFsPath="$2"
+
+    eval "mkdir -p $newFsPath"
+    eval "cd $newFsPath"
+    eval "unsquashfs $originalFsPath/$SFS_NAME"
+
+    echo "Unsquash file system...done"
+}
+
+createFsImgMountPoint()
+{
+    echo "Create file systen image mount point..."
+    eval "sudo mkdir -p $FS_MNT_PNT"
+    echo "Create file systen image mount point...done"
+}
+
+removeFsImgMountPoint()
+{
+    echo "Remove file system image mount point..."
+    eval "sudo rmdir $FS_MNT_PNT"
+    echo "Remove file system image mount point...done"
+}
+
+mountFsImage()
+{
+    echo "Mount file system image..."
+    local newFsPath="$1"
+    eval "sudo mount $newFsPath/$USQ_NAME/$IMG_NAME $FS_MNT_PNT"
+    echo "Mount file system image...done"
+}
+
+unmountFsImage()
+{
+    echo "Unmount file sytem image..."
+    eval "sudo umount $FS_MNT_PNT"
+    echo "Unmount file sytem image...done"
+}
+
+copyCustomContent()
+{
+    echo "Copy custom content..."
+    eval "sudo cp -R $CUSTOM_SRC/* $FS_MNT_PNT$CUSTOM_DST"
+    echo "Copy custom content...done"
+}
+
+squashNewFs()
+{
+    echo "Squash new file system..."
+    local newFsPath="$1"
+    eval "mksquashfs $newFsPath/$USQ_NAME $newFsPath/$SFS_NAME"
+    echo "Squash new file system...done"
+}
+
+generateNewFsChecksum()
+{
+    echo "Generate new file system checksum..."
+    local newFsPath="$1"
+    eval "md5sum $newFsPath/$SFS_NAME > $newFsPath/$MD5_NAME"
+    echo "Generate new file system checksum...done"
+}
+
+removeOriginalFsFiles()
+{
+    echo "Remove original file sytem files..."
+    local originalFsPath="$1"
+    eval "rm $originalFsPath/$SFS_NAME"
+    eval "rm $originalFsPath/$MD5_NAME"
+    echo "Remove original file sytem files...done"
+}
+
+copyNewFsFiles()
+{
+    echo "Copy new file system files..."
+    local newFsPath="$1"
+    local originalFsPath="$2"
+    eval "cp $newFsPath/$SFS_NAME $originalFsPath/$SFS_NAME"
+    eval "cp $newFsPath/$MD5_NAME $originalFsPath/$MD5_NAME"
+    echo "Copy new file system files...done"
+}
+
+generateNewIso()
+{
+    echo "Generate new ISO..."
+    eval "cd $ISO_CONTENTS_DIR"
+    eval "genisoimage -l -r -J -V \"$ISO_VERSION\""\
+         "-b isolinux/isolinux.bin -no-emul-boot -boot-load-size 4"\
+         "-boot-info-table -c isolinux/boot.cat"\
+         "-o $NEW_ISO $ISO_CONTENTS_DIR"
+    echo "Generate new ISO...done"
+}
+
+prepareFileSystem()
+{
+    local newFsDir="$1"
+    local originalFsDir="$2"
+
+    unsquashFs $newFsDir $originalFsDir
+    createFsImgMountPoint
+    mountFsImage $newFsDir
+    copyCustomContent
+    unmountFsImage
+    removeFsImgMountPoint
+    squashNewFs $newFsDir
+    generateNewFsChecksum $newFsDir
+    removeOriginalFsFiles $originalFsDir
+    copyNewFsFiles $newFsDir $originalFsDir
+}
+
+prepareFileSystemX86_64()
+{
+    echo "Prepare x86_64 file system..."
+    prepareFileSystem $X86_64_FS_DIR $X86_64_FS_SRC
+    echo "Prepare x86_64 file system...done"
+}
+
+prepareFileSystemI686()
+{
+    echo "Prepare i686 file system..."
+    prepareFileSystem $I686_FS_DIR $I686_FS_SRC
+    echo "Prepare i686 file system...done"
+}
+
+createCustomIso()
+{
+    echo "Create custom ISO..."
+    updatePackageList
+    checkPackages
+    # Exit on error
+    set -o errexit
+    createIsoMountPoint
+    mountIso
+    createWorkspaceDir
+    copyIsoContents
+    unmountIso
+    removeIsoMountPoint
+    prepareFileSystemX86_64
+    prepareFileSystemI686
+    generateNewIso
+    removeWorkspace
+    echo "Create custom ISO...done"
+}
+
+query()
+{
+    echo "Original iso: $ORIGINAL_ISO"
+    echo "New iso:      $NEW_ISO"
+    echo "Workspace:    $WORKSPACE"
+    echo "Custom src:   $CUSTOM_SRC"
+    echo "Custom dst:   $CUSTOM_DST"
+    echo "ISO ver:      $ISO_VERSION"
+
+    read -p "Create new iso? [y/N]?" response
+    case $response in
+        [Yy]*)
+            time { createCustomIso ; }
+            ;;
+        *)
+            echo "Cancelled"
+            exit 0
+            ;;
+    esac
+}
+
+usage()
+{
+cat << EOF
+Creates ISO based on provided Arch Linux ISO, adding provided custom content
+
+Usage: ${0##*/} [-h] [-o ORIG_ISO] [-n NEW_ISO] [-w WORKSPACE] [-s SRC] [-d DST]
+    -h display this help and exit
+    -o ORIG_ISO original ISO file ($ORIGINAL_ISO)
+    -n NEW_ISO ISO file to be created ($NEW_ISO)
+    -w WORKSPACE dir for temporary files ($WORKSPACE)
+    -s SRC source dir with ISO customization content ($CUSTOM_SRC)
+    -d DST dir where customization content will be available after booting ISO
+       ($CUSTOM_DST)
+EOF
+}
+
+#-------------------------------------------------------------------------------
+# Execution
+#-------------------------------------------------------------------------------
+
+while getopts ":ho:n:w:s:d:" opt; do
+    case $opt in
+        h)
+            usage
+            exit 0
+            ;;
+        o)
+            ORIGINAL_ISO="$OPTARG"
+            ;;
+        n)
+            NEW_ISO="$OPTARG"
+            ;;
+        w)
+            WORKSPACE="$OPTARG"
+            ;;
+        s)
+            CUSTOM_SRC="$OPTARG"
+            ;;
+        d)
+            CUSTOM_DST="$OPTARG"
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG"
+            exit 1
+            ;;
+        :)
+            echo "Option -$OPTARG requires an argument"
+            exit 2
+            ;;
+    esac
+done
+
+#-------------------------------------------------------------------------------
+# Dependent on command line options
+#-------------------------------------------------------------------------------
+
+ORIGINAL_NAME="${ORIGINAL_ISO##*/}"
+ISO_YEAR="${ORIGINAL_NAME:10:4}"
+ISO_MONTH="${ORIGINAL_NAME:15:2}"
+ISO_VERSION="ARCH_$ISO_YEAR$ISO_MONTH"
+
+ISO_CONTENTS_DIR="$WORKSPACE/iso_contents"
+X86_64_FS_DIR="$WORKSPACE/x86_64_fs"
+I686_FS_DIR="$WORKSPACE/i686_fs"
+X86_64_FS_SRC="$ISO_CONTENTS_DIR/arch/x86_64"
+I686_FS_SRC="$ISO_CONTENTS_DIR/arch/i686"
+
+query
+

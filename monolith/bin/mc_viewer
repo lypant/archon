@@ -1,0 +1,12 @@
+#!/bin/bash
+#===============================================================================
+# FILE:         mc_viewer
+#
+# USAGE:        ./mc_viewer
+#
+# DESCRIPTION:  Runs vim with editing disabled.
+#               Used as a workaround for mc viewer - set in ~/.bashrc
+#===============================================================================
+
+vim -M -c 'map q :q<CR>' $@
+
