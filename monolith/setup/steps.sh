@@ -1220,7 +1220,7 @@ setMakepkgBuilddir()
 recreateImage()
 {
     log "Recreate image..."
-    cmd "mkinitcpio -p linux"
+    cmd "mkinitcpio -p linux-lts"
     err "$?" "$FUNCNAME" "failed to recreate image"
     log "Recreate image...done"
 }

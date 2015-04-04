@@ -27,7 +27,6 @@ install()
     #---------------------------------------
     # Preparations
     #---------------------------------------
-    setTemporaryFont
     createLogDir
     log "Install..."
 

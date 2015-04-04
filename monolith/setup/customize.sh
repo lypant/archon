@@ -29,10 +29,8 @@ customize()
     #---------------------------------------
     # Preparations
     #---------------------------------------
-    setTemporaryFont
     createLogDir
     log "Customize..."
-    setMultilibRepository   # TODO: Is it needed?
     configurePacman
     updatePackageList
 
@@ -133,7 +131,6 @@ customize()
 
     installXinitrcDotfile
     installXresourcesDotfile
-    installXbindkeysrcDotfile
     installConkyDotfile
 
     #---------------------------------------
