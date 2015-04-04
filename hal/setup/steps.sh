@@ -418,7 +418,6 @@ configureBootloader()
     local dst="$SYSTEM_HDD$ROOT_PART_NB"
     local subst="s|$src|$dst|g"
     local file="/boot/syslinux/syslinux.cfg"
-    local cnt=0
 
     log "Configure bootloader..."
     archChroot "syslinux-install_update -i -a -m"
