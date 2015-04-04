@@ -96,7 +96,7 @@ install()
     #---------------------------------------
     # Bootloader
     #---------------------------------------
-    #tempAlpmWorkaround                      # TODO: Remove when not needed
+    tempAlpmWorkaround                      # TODO: Remove when not needed
     installBootloader
     configureBootloader
     replacBootloaderKernelVersion
