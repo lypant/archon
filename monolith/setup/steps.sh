@@ -760,14 +760,6 @@ installGuiFonts()
 # Config
 #-------------------
 
-# To be able to bind special keyboard keys to commands
-installXbindkeys()
-{
-    log "Install xbindkeys..."
-    installPackage "xbindkeys"
-    log "Install xbindkeys...done"
-}
-
 installConky()
 {
     log "Install conky..."
@@ -822,36 +814,6 @@ installRxvtUnicode()
     log "Install rxvt unicode...done"
 }
 
-installFirefox()
-{
-    log "Install firefox..."
-    installPackage "firefox"
-    log "Install firefox...done"
-}
-
-installFlashplugin()
-{
-    log "Install flashplugin..."
-    installPackage "flashplugin"
-    log "Install flashplugin...done"
-}
-
-installThunderbird()
-{
-    log "Install thunderbird..."
-    installPackage "thunderbird"
-    log "Install thunderbird...done"
-}
-
-installVlc()
-{
-    log "Install vlc..."
-    # TODO: Check whether libcddb is necessary
-    #installPackage "vlc libcddb"
-    installPackage "vlc"
-    log "Install vlc...done"
-}
-
 installFeh()
 {
     log "Install feh..."
@@ -886,30 +848,21 @@ installAlsa()
     log "Install alsa...done"
 }
 
-initAlsa()
-{
-    local ret=0
-
-    log "Init alsa..."
-    cmd "alsactl init"
-    ret="$?"
-    # Alsa can answer with error 99 but work fine
-    if [[ "$ret" -eq 99 ]]; then
-        log "alsactl init returned error code 99; accepting it as 0"
-        ret=0
-    fi
-    err "$ret" "$FUNCNAME" "failed to init alsa"
-    log "Init alsa...done"
-
-}
-
-# Deprecated - not needed on HAL HW nor on VM
-#unmuteAlsa()
+#initAlsa()
 #{
-#    log "Unmute alsa..."
-#    cmd "amixer sset Master unmute"
-#    err "$?" "$FUNCNAME" "failed to unmute alsa"
-#    log "Unmute alsa...done"
+#    local ret=0
+#
+#    log "Init alsa..."
+#    cmd "alsactl init"
+#    ret="$?"
+#    # Alsa can answer with error 99 but work fine
+#    if [[ "$ret" -eq 99 ]]; then
+#        log "alsactl init returned error code 99; accepting it as 0"
+#        ret=0
+#    fi
+#    err "$ret" "$FUNCNAME" "failed to init alsa"
+#    log "Init alsa...done"
+#
 #}
 
 disablePcSpeaker()
@@ -1139,18 +1092,6 @@ setBootConsoleOutputLevels()
 # Partitions and file systems
 #---------------------------------------
 
-# Has to be done before AUR packages installation phase
-# to allow large AUR packages installation
-# OOM problems were observed on VirtualBox installations without this.
-setTmpfsTmpSize()
-{
-    # Size of /tmp partition - e.g. RAM size + SWAP size
-    log "Set tmpfs tmp size..."
-    cmd "echo \"tmpfs /tmp tmpfs size=16G,rw 0 0\" >> /etc/fstab"
-    err "$?" "$FUNCNAME" "failed to set tmpfs tmp size"
-    log "Set tmpfs tmp size...done"
-}
-
 setDataPartition()
 {
     local mntDir="/mnt/data"
@@ -1169,55 +1110,6 @@ setDataPartition()
     createLink "$mntDir" "/home/adam/Data"
     err "$?" "$FUNCNAME" "failed to create link"
     log "Set data partition...done"
-}
-
-#-------------------
-# SSD adjustments
-#-------------------
-
-setRootPartitionTrim()
-{
-    local old="rw,relatime,data=ordered"
-    local new="rw,relatime,data=ordered,discard"
-    local subst="s|$old|$new|g"
-    local file="/etc/fstab"
-
-    log "Set root partition TRIM..."
-    cmd "sed -i \"$subst\" $file"
-    log "Set root partition TRIM...done"
-}
-
-setIoScheduler()
-{
-    local file="/etc/udev/rules.d/60-schedulers.rules"
-    local line='ACTION==\"add|change\", KERNEL==\"sd[a-z]\",'
-    line=$line' ATTR{queue/rotational}==\"0\", ATTR{queue/scheduler}=\"noop\"'
-
-    log "Set IO scheduler..."
-    cmd "echo \"$line\" >> $file"
-    log "Set IO scheduler...done"
-}
-
-setSwappiness()
-{
-    local file="/etc/sysctl.d/99-sysctl.conf"
-    # 0-swap only to avoid OOM; 60-default; 100-max, aggresive swapping
-    local line="vm.swappiness=1"
-
-    log "Set swappiness..."
-    cmd "echo $line >> $file"
-    log "Set swappiness...done"
-}
-
-# Compile in tmpfs
-setMakepkgBuilddir()
-{
-    local variable="BUILDDIR"
-    local file="/etc/makepkg.conf"
-
-    log "Set makepkg builddir..."
-    uncommentVar $variable $file
-    log "Set makepkg builddir...done"
 }
 
 #---------------------------------------

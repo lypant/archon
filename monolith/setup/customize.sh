@@ -76,7 +76,7 @@ customize()
     # Xorg
     #-------------------
     installXorg
-    removeMesaLibgl # TODO: Is it needed?
+    #removeMesaLibgl # TODO: Is it needed?
 
     #-------------------
     # Video driver
@@ -91,7 +91,6 @@ customize()
     #-------------------
     # Config
     #-------------------
-    #installXbindkeys   # No fancy keys on monolith
     installConky
 
     #-------------------
@@ -100,10 +99,6 @@ customize()
     installCustomizedDwm
     installDmenu
     installRxvtUnicode
-    #installFirefox     # Heavy
-    #installFlashplugin # Heavy
-    #installThunderbird # Heavy
-    #installVlc         # Heavy
     installFeh
     installEvince
     installWmname   # TODO Is it needed?
@@ -112,8 +107,6 @@ customize()
     # Sound
     #---------------------------------------
     installAlsa
-    #initAlsa   # TODO Check if this is needed
-    #unmuteAlsa # TODO Check if this is needed
     disablePcSpeaker
     installCmus
 
@@ -149,16 +142,7 @@ customize()
     #---------------------------------------
     # Partitions and file systems
     #---------------------------------------
-    #setTmpfsTmpSize # To install large AUR packages in supplementation script
     setDataPartition
-
-    #-------------------
-    # SSD adjustments
-    #-------------------
-    #setRootPartitionTrim
-    #setIoScheduler
-    #setSwappiness
-    #setMakepkgBuilddir
 
     #---------------------------------------
     # Final steps

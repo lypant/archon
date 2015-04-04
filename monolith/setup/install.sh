@@ -52,9 +52,8 @@ install()
     #---------------------------------------
     # Base system installation
     #---------------------------------------
-    #rankMirrors
-    downloadMirrorList
-    #installBaseSystem
+    rankMirrors
+    #downloadMirrorList
     installBaseSystemLts
 
     #---------------------------------------
@@ -97,7 +96,7 @@ install()
     #---------------------------------------
     # Bootloader
     #---------------------------------------
-    tempAlpmWorkaround                      # TODO: Remove when not needed
+    #tempAlpmWorkaround                      # TODO: Remove when not needed
     installBootloader
     configureBootloader
     replacBootloaderKernelVersion
