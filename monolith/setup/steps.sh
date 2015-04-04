@@ -231,6 +231,19 @@ installBaseSystem()
     log "Install base system...done"
 }
 
+installBaseSystemLts()
+{
+    # Replace linux package with lts version...
+    local basePkgs=$(pacman -Sqg base | sed "s|^linux$|linux-lts|")
+    # ...change new lines into spaces
+    basePkgs=$(echo $basePkgs | tr '\n' ' ')
+
+    log "Install base system lts..."
+    cmd "pacstrap -i /mnt $basePkgs base-devel"
+    err "$?" "$FUNCNAME" "failed to install base system"
+    log "Install base system lts...done"
+}
+
 #---------------------------------------
 # Base system configuration
 #---------------------------------------
@@ -425,9 +438,41 @@ configureBootloader()
     archChroot "syslinux-install_update -i -a -m"
     err "$?" "$FUNCNAME" "failed to update syslinux"
 
+    # Workaround for monolith - if udev is mounted, unmount it
+    cnt=$(mount | grep udev | wc -l)
+    if [[ "$cnt" -gt 0 ]]; then
+        log "Udev detected, unmounting..."
+	    cmd "umount /mnt/dev"
+        log "Udev detected, unmounting...done"
+    else
+        log "Udev not detected"
+    fi
+
     archChroot "sed -i \\\"$subst\\\" $file"
     err "$?" "$FUNCNAME" "failed to replace parition path"
     log "Configure bootloader...done"
+}
+
+replacBootloaderKernelVersion()
+{
+    local src="vmlinuz-linux"
+    local dst="vmlinuz-linux-lts"
+    local subst="s|$src|$dst|g"
+    local file="/boot/syslinux/syslinux.cfg"
+
+    log "Replace bootloader kernel version..."
+
+    archChroot "sed -i \\\"$subst\\\" $file"
+    err "$?" "$FUNCNAME" "failed to replace LINUX entry"
+
+    src="initramfs-linux.img"
+    dst="initramfs-linux-lts.img"
+    subst="s|$src|$dst|g"
+
+    archChroot "sed -i \\\"$subst\\\" $file"
+    err "$?" "$FUNCNAME" "failed to replace INITRD entry"
+
+    log "Replace bootloader kernel version...done"
 }
 
 #---------------------------------------
