@@ -727,13 +727,6 @@ installXorg()
     log "Install Xorg...done"
 }
 
-removeMesaLibgl()
-{
-    log "Remove mesa-libgl..."
-    removePackage "mesa-libgl"
-    log "Remove mesa-libgl...done"
-}
-
 #-------------------
 # Video driver
 #-------------------
@@ -847,23 +840,6 @@ installAlsa()
     installPackage alsa-utils
     log "Install alsa...done"
 }
-
-#initAlsa()
-#{
-#    local ret=0
-#
-#    log "Init alsa..."
-#    cmd "alsactl init"
-#    ret="$?"
-#    # Alsa can answer with error 99 but work fine
-#    if [[ "$ret" -eq 99 ]]; then
-#        log "alsactl init returned error code 99; accepting it as 0"
-#        ret=0
-#    fi
-#    err "$ret" "$FUNCNAME" "failed to init alsa"
-#    log "Init alsa...done"
-#
-#}
 
 disablePcSpeaker()
 {

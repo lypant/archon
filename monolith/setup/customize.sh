@@ -76,7 +76,6 @@ customize()
     # Xorg
     #-------------------
     installXorg
-    #removeMesaLibgl # TODO: Is it needed?
 
     #-------------------
     # Video driver
