@@ -705,6 +705,13 @@ installTmux()
     log "Install tmux...done"
 }
 
+installElinks()
+{
+    log "Install elinks..."
+    installPackage elinks
+    log "Install elinks...done"
+}
+
 #--------------------------------------
 # GUI programs
 #---------------------------------------

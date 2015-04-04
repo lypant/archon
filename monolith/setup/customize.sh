@@ -66,6 +66,7 @@ customize()
 
     installMc
     installTmux
+    installElinks
 
     #---------------------------------------
     # GUI programs
