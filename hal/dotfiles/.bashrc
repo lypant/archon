@@ -14,6 +14,9 @@
 # Add more dirs to path
 export PATH=$PATH:/$HOME/archon/hal/bin
 
+# Script for entering sudo password using dmenu
+export SUDO_ASKPASS="/home/adam/archon/hal/bin/dmenu_passwd"
+
 #-------------------------------------------------------------------------------
 # Shell
 #-------------------------------------------------------------------------------

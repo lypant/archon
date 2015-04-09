@@ -1,0 +1,11 @@
+#!/bin/bash
+#===============================================================================
+# FILE:         rt
+#
+# USAGE:        Execute from dmenu
+#
+# DESCRIPTION:  Allows rebooting using dmenu without a need to open a console
+#===============================================================================
+
+sudo -A systemctl reboot &
+
