@@ -17,7 +17,7 @@ pad_percents 4
 TEXT
 ${exec cmus_status} :: \
 V${exec amixer get Master | awk -F'[]%[]' '/%/ { printf "%3d", $2 }'}% :: \
-${time %d %b %Y %H:%M}\
+${time %a %d %b %Y %H:%M}\
 ;\
 D ${downspeed enp4s0} :: \
 U ${upspeed enp4s0} :: \
