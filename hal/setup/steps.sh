@@ -1088,11 +1088,11 @@ setBootConsoleOutputLevels()
 #---------------------------------------
 
 # Needed for exfat file system support (used natively by AEE S71 as default FS)
-installExfatFuse()
+installFuseExfat()
 {
-    log "Install exfat-fuse..."
-    installPackage exfat-fuse
-    log "Install exfat-fuse...done"
+    log "Install fuse-exfat..."
+    installPackage fuse-exfat
+    log "Install fuse-exfat...done"
 }
 
 # Has to be done before AUR packages installation phase
