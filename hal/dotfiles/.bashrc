@@ -41,7 +41,7 @@ alias dro="sudo mount -L \"Data\" -o $dataRoParams"
 #-------------------
 # ls
 #-------------------
-alias ls='ls -hF --color=auto'
+alias ls='ls -h --color=auto'
 alias la='ls -A'
 alias ll='la -l'
 alias lr='ls -R'
