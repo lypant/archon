@@ -149,6 +149,7 @@ customize()
     #---------------------------------------
     # Partitions and file systems
     #---------------------------------------
+    installExfatFuse
     setTmpfsTmpSize # To install large AUR packages in supplementation script
     setDataPartition
 

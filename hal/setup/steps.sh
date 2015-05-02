@@ -1087,6 +1087,14 @@ setBootConsoleOutputLevels()
 # Partitions and file systems
 #---------------------------------------
 
+# Needed for exfat file system support (used natively by AEE S71 as default FS)
+installExfatFuse()
+{
+    log "Install exfat-fuse..."
+    installPackage exfat-fuse
+    log "Install exfat-fuse...done"
+}
+
 # Has to be done before AUR packages installation phase
 # to allow larga AUR packages installation
 # OOM problems were observed on VirtualBox installations without this.
