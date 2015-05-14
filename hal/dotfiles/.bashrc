@@ -77,7 +77,8 @@ alias mkdir="mkdir -p"
 #-------------------
 
 # To let aliases carry over to the root account when using sudo
-alias sudo='sudo '
+# -E option to allow e.g. vim settings available during sudo session
+alias sudo='sudo -E '
 alias poweroff="sudo systemctl poweroff"
 alias reboot="sudo systemctl reboot"
 
