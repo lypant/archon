@@ -1127,6 +1127,155 @@ setDataPartition()
     log "Set data partition...done"
 }
 
+setGenericUsbMountPoint()
+{
+    log "Set generic usb mount point..."
+    createDir "/mnt/usb"
+    err "$?" "$FUNCNAME" "failed to create mount dir"
+    log "Set generic usb mount point...done"
+}
+
+setMonolithUsb()
+{
+    log "Set monolith usb..."
+
+    local entry="LABEL=monolith"
+    entry="$entry /mnt/monolith"
+    entry="$entry ext4"
+    entry="$entry noauto,nofail,user,rw"
+    entry="$entry 0"
+    entry="$entry 0"
+
+    createDir "/mnt/monolith"
+    err "$?" "$FUNCNAME" "failed to create mount dir"
+    cmd "echo -e \"\n$entry\" >> /etc/fstab"
+    err "$?" "$FUNCNAME" "failed to add entry to fstab"
+
+    log "Set monolith usb...done"
+}
+
+setPchelkaUsb()
+{
+    log "Set pchelka usb..."
+
+    local entry="LABEL=PCHELKA"
+    entry="$entry /mnt/pchelka"
+    entry="$entry vfat"
+    entry="$entry noauto,nofail,user,rw,umask=111,dmask=000"
+    entry="$entry 0"
+    entry="$entry 0"
+
+    createDir "/mnt/pchelka"
+    err "$?" "$FUNCNAME" "failed to create mount dir"
+    cmd "echo -e \"\n$entry\" >> /etc/fstab"
+    err "$?" "$FUNCNAME" "failed to add entry to fstab"
+
+    log "Set pchelka usb...done"
+}
+
+setSzkatulkaUsb()
+{
+    log "Set szkatulka usb..."
+
+    local entry="LABEL=SZKATULKA"
+    entry="$entry /mnt/szkatulka"
+    entry="$entry vfat"
+    entry="$entry noauto,nofail,user,rw,umask=111,dmask=000"
+    entry="$entry 0"
+    entry="$entry 0"
+
+    createDir "/mnt/szkatulka"
+    err "$?" "$FUNCNAME" "failed to create mount dir"
+    cmd "echo -e \"\n$entry\" >> /etc/fstab"
+    err "$?" "$FUNCNAME" "failed to add entry to fstab"
+
+    log "Set szkatulka usb...done"
+}
+
+setE51Usb()
+{
+    log "Set e51 usb..."
+
+    local entry="LABEL=E51"
+    entry="$entry /mnt/e51"
+    entry="$entry vfat"
+    entry="$entry noauto,nofail,user,rw,umask=111,dmask=000"
+    entry="$entry 0"
+    entry="$entry 0"
+
+    createDir "/mnt/e51"
+    err "$?" "$FUNCNAME" "failed to create mount dir"
+    cmd "echo -e \"\n$entry\" >> /etc/fstab"
+    err "$?" "$FUNCNAME" "failed to add entry to fstab"
+
+    log "Set e51 usb...done"
+}
+
+setHama641Usb()
+{
+    log "Set hama_64_1 usb..."
+
+    local entry="LABEL=HAMA_64_1"
+    entry="$entry /mnt/hama_64_1"
+    entry="$entry exfat"
+    entry="$entry noauto,nofail,user,rw,umask=111,dmask=000"
+    entry="$entry 0"
+    entry="$entry 0"
+
+    createDir "/mnt/hama_64_1"
+    err "$?" "$FUNCNAME" "failed to create mount dir"
+    cmd "echo -e \"\n$entry\" >> /etc/fstab"
+    err "$?" "$FUNCNAME" "failed to add entry to fstab"
+
+    log "Set hama_64_1 usb...done"
+}
+
+setD40Usb()
+{
+    log "Set D40 usb..."
+
+    local entry="LABEL=D40"
+    entry="$entry /mnt/d40"
+    entry="$entry vfat"
+    entry="$entry noauto,nofail,user,rw,umask=111,dmask=000"
+    entry="$entry 0"
+    entry="$entry 0"
+
+    createDir "/mnt/d40"
+    err "$?" "$FUNCNAME" "failed to create mount dir"
+    cmd "echo -e \"\n$entry\" >> /etc/fstab"
+    err "$?" "$FUNCNAME" "failed to add entry to fstab"
+
+    log "Set D40 usb...done"
+}
+
+setGwizdekUsb()
+{
+    log "Set gwizdek usb..."
+
+    # Gwizdek's label changes often, so use udev rule instead
+    local entry="/dev/gwizdek1"
+    entry="$entry /mnt/gwizdek"
+    entry="$entry vfat"
+    entry="$entry noauto,nofail,user,rw,umask=111,dmask=000"
+    entry="$entry 0"
+    entry="$entry 0"
+
+    local rule="KERNEL==\"sd*\","
+    rule="$rule ATTRS{vendor}==\"Kingston\","
+    rule="$rule ATTRS{model}==\"DataTraveler 2.0\""
+    rule="$rule SYMLINK+=\"gwizdek%n\""
+
+    createDir "/mnt/gwizdek"
+    err "$?" "$FUNCNAME" "failed to create mount dir"
+    cmd "echo -e \"\n$entry\" >> /etc/fstab"
+    err "$?" "$FUNCNAME" "failed to add entry to fstab"
+    cmd "echo -e \"\n$rule\" >> /etc/udev/rules.d/8-usbstick.rules"
+    err "$?" "$FUNCNAME" "failed to add udev rule"
+
+    log "Set gwizdek usb...done"
+}
+
 #-------------------
 # SSD adjustments
 #-------------------
