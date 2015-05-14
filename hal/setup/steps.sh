@@ -1261,10 +1261,10 @@ setGwizdekUsb()
     entry="$entry 0"
     entry="$entry 0"
 
-    local rule="KERNEL==\"sd*\","
-    rule="$rule ATTRS{vendor}==\"Kingston\","
-    rule="$rule ATTRS{model}==\"DataTraveler 2.0\""
-    rule="$rule SYMLINK+=\"gwizdek%n\""
+    local rule="KERNEL==\\\"sd*\\\","
+    rule="$rule ATTRS{vendor}==\\\"Kingston\\\","
+    rule="$rule ATTRS{model}==\\\"DataTraveler 2.0\\\""
+    rule="$rule SYMLINK+=\\\"gwizdek%n\\\""
 
     createDir "/mnt/gwizdek"
     err "$?" "$FUNCNAME" "failed to create mount dir"
