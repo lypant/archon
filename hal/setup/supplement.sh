@@ -28,11 +28,16 @@ supplement()
 {
     log "Supplement..."
 
+    #--------------------------------------
+    # Misc AUR packages
+    #--------------------------------------
+    installStlarchFont
+
     #---------------------------------------
     # Android development environment
     #---------------------------------------
-    installJdk
-    installAndroidEnv
+    #installJdk
+    #installAndroidEnv
 
     log "Supplement...done"
 }

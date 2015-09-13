@@ -175,11 +175,6 @@ customize()
     setSwappiness
     setMakepkgBuilddir
 
-    #-------------------
-    # AUR packages (need to be installed after setTmpfsTmpSize step)
-    #-------------------
-    installStlarchFont
-
     #---------------------------------------
     # Final steps
     #---------------------------------------

@@ -728,7 +728,7 @@ installConky()
 # Requires stlarch_font package from AUR for status bar glyphs
 installCustomizedDwm()
 {
-    local patch_dir="/home/adam/archon/hal/patches/dwm_14343e6"
+    local patch_dir="/root/archon/hal/patches/dwm_14343e6"
     local build_path="/home/adam/forge/dwm"
     local comment="Adjustments done during archon installation"
 
@@ -1362,17 +1362,6 @@ setMakepkgBuilddir()
     log "Set makepkg builddir...done"
 }
 
-#-------------------
-# AUR packages (need to be installed after setTmpfsTmpSize step)
-#-------------------
-
-installStlarchFont()
-{
-    log "Install stlarch font..."
-    installAurPackage "stlarch_font"
-    log "Install stlarch font...done"
-}
-
 #---------------------------------------
 # Final steps
 #---------------------------------------
@@ -1402,6 +1391,17 @@ copyProjectLogFiles()
 #
 # Note: All steps will be executed using regular user account
 #-------------------------------------------------------------------------------
+
+#--------------------------------------
+# Misc AUR packages
+#--------------------------------------
+
+installStlarchFont()
+{
+    log "Install stlarch font..."
+    installAurPackage "stlarch_font"
+    log "Install stlarch font...done"
+}
 
 #---------------------------------------
 # Android development environment
