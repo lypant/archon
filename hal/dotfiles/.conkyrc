@@ -12,20 +12,104 @@ out_to_x no
 total_run_times 0
 update_interval 1.0
 use_spacer left
-pad_percents 4
+pad_percents 3
 
 TEXT
-${exec cmus_status} :: \
-V${exec amixer get Master | awk -F'[]%[]' '/%/ { printf "%3d", $2 }'}% :: \
-${time %a %d %b %Y %H:%M}\
+${exec cmus_status} \
+${exec amixer get Master | awk -F'[]%[]' '/%/ { printf "%3d", $2; exit }'}% \
+${time %d.%m.%Y %H:%M}\
 ;\
-D ${downspeed enp4s0} :: \
-U ${upspeed enp4s0} :: \
-C1${cpu cpu1}% :: \
-C2${cpu cpu2}% :: \
-M${memperc}% :: \
-S$swapperc% :: \
-/${fs_used_perc /}% :: \
-/boot${fs_used_perc /boot/}% :: \
-data${fs_used_perc /mnt/data}%
-
+${if_match ${cpu cpu1} >= 90}\
+${if_match ${cpu cpu1} >= 95}\
+ \
+${else}\
+ \
+${endif}\
+$else\
+ \
+${endif}\
+${cpu cpu1}%\
+ \
+${if_match ${cpu cpu2} >= 90}\
+${if_match ${cpu cpu2} >= 95}\
+ \
+${else}\
+ \
+${endif}\
+$else\
+ \
+${endif}\
+${cpu cpu2}%\
+ \
+${if_match ${memperc} >= 75}\
+${if_match ${memperc} >= 90}\
+ \
+ ${else}\
+ \
+${endif}\
+${else}\
+ \
+${endif}\
+${memperc}%\
+    \
+${if_match ${fs_used_perc /} >= 75}\
+${if_match ${fs_used_perc /} >= 90}\
+ \
+ ${else}\
+ \
+${endif}\
+${else}\
+ \
+${endif}\
+/${fs_used_perc /}% ${fs_free /}\
+    \
+${if_match ${fs_used_perc /boot} >= 75}\
+${if_match ${fs_used_perc /boot} >= 90}\
+ \
+ ${else}\
+ \
+${endif}\
+${else}\
+ \
+${endif}\
+/boot${fs_used_perc /boot}% ${fs_free /boot}\
+    \
+${if_match ${fs_used_perc /mnt/data} >= 75}\
+${if_match ${fs_used_perc /mnt/data} >= 90}\
+ \
+ ${else}\
+ \
+${endif}\
+${else}\
+ \
+${endif}\
+/mnt/data${fs_used_perc /mnt/data}% ${fs_free /mnt/data}\
+    \
+${if_match ${fs_used_perc /tmp} >= 75}\
+${if_match ${fs_used_perc /tmp} >= 90}\
+ \
+ ${else}\
+ \
+${endif}\
+${else}\
+ \
+${endif}\
+/tmp${fs_used_perc /tmp}% ${fs_free /tmp}\
+    \
+${if_match ${swapperc} >= 75}\
+${if_match ${swapperc} >= 90}\
+ \
+ ${else}\
+ \
+${endif}\
+${else}\
+ \
+${endif}\
+swap${swapperc}% ${swapfree}\
+    \
+ \
+${addr enp4s0} ${execi 3600 dig +short myip.opendns.com @resolver1.opendns.com}\
+    \
+ ${downspeed enp4s0} ${totaldown enp4s0}\
+    \
+ ${upspeed enp4s0}  ${totalup enp4s0}\

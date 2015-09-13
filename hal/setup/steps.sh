@@ -725,9 +725,10 @@ installConky()
 # Programs
 #-------------------
 
+# Requires stlarch_font package from AUR for status bar glyphs
 installCustomizedDwm()
 {
-    local patch="/home/adam/archon/hal/patches/dwm_cdec978.diff"
+    local patch_dir="/home/adam/archon/hal/patches/dwm_14343e6"
     local build_path="/home/adam/forge/dwm"
     local comment="Adjustments done during archon installation"
 
@@ -735,16 +736,39 @@ installCustomizedDwm()
     # Clone project from git
     cmd "git clone http://git.suckless.org/dwm $build_path"
     err "$?" "$FUNCNAME" "failed to clone dwm repo"
-    # Newest commit was not working... use specific, working version
-    cmd "git -C $build_path checkout cdec978 -b dwm_archon"
-    err "$?" "$FUNCNAME" "failed to checkout specific dwm branch"
-    # Apply patch with customizations
-    cmd "git -C $build_path apply $patch"
-    err "$?" "$FUNCNAME" "failed to apply dwm patch"
-    # Add changes introduced with patch. Use add . since new files may be added.
+    # Apply patches with customizations
+    cmd "git -C $build_path apply $patch_dir/001_dwm_adjust_config_mk.diff"
+    err "$?" "$FUNCNAME" "failed to apply dwm patch 001"
+    cmd "git -C $build_path apply $patch_dir/002_dwm_change_termcmd_urxvt.diff"
+    err "$?" "$FUNCNAME" "failed to apply dwm patch 002"
+    cmd "git -C $build_path apply $patch_dir/003_dwm_change_modkey_win_key.diff"
+    err "$?" "$FUNCNAME" "failed to apply dwm patch 003"
+    cmd "git -C $build_path apply $patch_dir/004_dwm_remove_apps_to_tags.diff"
+    err "$?" "$FUNCNAME" "failed to apply dwm patch 004"
+    cmd "git -C $build_path apply $patch_dir/005_dwm_remove_gaps.diff"
+    err "$?" "$FUNCNAME" "failed to apply dwm patch 005"
+    cmd "git -C $build_path apply $patch_dir/006_dwm_solarized_dark_colors.diff"
+    err "$?" "$FUNCNAME" "failed to apply dwm patch 006"
+    cmd "git -C $build_path apply $patch_dir/007_dwm_focus_on_click.diff"
+    err "$?" "$FUNCNAME" "failed to apply dwm patch 007"
+    cmd "git -C $build_path apply $patch_dir/008_dwm_pertag.diff"
+    err "$?" "$FUNCNAME" "failed to apply dwm patch 008"
+    cmd "git -C $build_path apply $patch_dir/009_dwm_dual_status.diff"
+    err "$?" "$FUNCNAME" "failed to apply dwm patch 009"
+    cmd "git -C $build_path apply $patch_dir/010_dwm_bottom_stack.diff"
+    err "$?" "$FUNCNAME" "failed to apply dwm patch 010"
+    cmd "git -C $build_path apply $patch_dir/011_dwm_gapless_grid.diff"
+    err "$?" "$FUNCNAME" "failed to apply dwm patch 011"
+    cmd "git -C $build_path apply $patch_dir/012_dwm_change_layout_symbols.diff"
+    err "$?" "$FUNCNAME" "failed to apply dwm patch 012"
+    cmd "git -C $build_path apply $patch_dir/013_dwm_status_color.diff"
+    err "$?" "$FUNCNAME" "failed to apply dwm patch 013"
+    cmd "git -C $build_path apply $patch_dir/014_dwm_stlarch_font_glyphs.diff"
+    err "$?" "$FUNCNAME" "failed to apply dwm patch 014"
+    # Add changes introduced with patch. Use add . since new files may be added
     cmd "git -C $build_path add ."
     err "$?" "$FUNCNAME" "failed to add changes introduced with patch"
-    # Save configuration as new commit
+    # Save configuration as a new commit
     cmd "git -C $build_path commit -m \"$comment\""
     err "$?" "$FUNCNAME" "failed to commit dwm changes"
     # Install
@@ -873,6 +897,19 @@ installCmus()
     log "Install cmus...done"
 }
 
+#---------------------------------------
+# Network tools
+#---------------------------------------
+
+# bind-tools package a.k.a. dnsutils package
+# Needed for 'dig' tool used for obtaining exterlan IP address - to display it
+# in dwm or tmux status bar
+installBindTools()
+{
+    log "Install bind tools..."
+    installPackage "bind-tools"
+    log "Install bind tools...done"
+}
 
 #---------------------------------------
 # Dotfiles
@@ -1096,7 +1133,7 @@ installFuseExfat()
 }
 
 # Has to be done before AUR packages installation phase
-# to allow larga AUR packages installation
+# to allow large AUR packages installation
 # OOM problems were observed on VirtualBox installations without this.
 setTmpfsTmpSize()
 {
@@ -1323,6 +1360,17 @@ setMakepkgBuilddir()
     log "Set makepkg builddir..."
     uncommentVar $variable $file
     log "Set makepkg builddir...done"
+}
+
+#-------------------
+# AUR packages (need to be installed after setTmpfsTmpSize step)
+#-------------------
+
+installStlarchFont()
+{
+    log "Install stlarch font..."
+    installAurPackage "stlarch_font"
+    log "Install stlarch font...done"
 }
 
 #---------------------------------------

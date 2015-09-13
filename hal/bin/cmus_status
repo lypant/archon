@@ -36,12 +36,11 @@ fi
 #-------------------------------------------------------------------------------
 
 if [[ "$status" = "stopped" ]]; then
-    echo "."
+    echo ""
 elif [[ "$status" = "paused" ]]; then
-    echo "| $artist : $title"
+    echo "$artist : $title"
 elif [[ "$status" = "playing" ]]; then
-    echo "> $artist : $title"
+    echo "$artist : $title"
 else
     echo "" # cmus is not running
 fi
-

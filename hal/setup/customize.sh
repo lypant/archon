@@ -117,6 +117,11 @@ customize()
     installCmus
 
     #---------------------------------------
+    # Network tools
+    #---------------------------------------
+    installBindTools    # For getting external IP for displaying in dwm bar
+
+    #---------------------------------------
     # Dotfiles
     #---------------------------------------
     installBashprofileDotfile
@@ -169,6 +174,11 @@ customize()
     setIoScheduler
     setSwappiness
     setMakepkgBuilddir
+
+    #-------------------
+    # AUR packages (need to be installed after setTmpfsTmpSize step)
+    #-------------------
+    installStlarchFont
 
     #---------------------------------------
     # Final steps
