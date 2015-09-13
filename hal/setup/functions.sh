@@ -311,11 +311,11 @@ changeOutputLevels()
 installAurPackage()
 {
     local buildDir="/tmp"
-    local url="https://aur.archlinux.org/packages"
+    local url="https://aur.archlinux.org/cgit/aur.git/snapshot"
 
     for p in $@
     do
-        local pkgFile="$url/${p:0:2}/$p/$p.tar.gz"
+        local pkgFile="$url/$p.tar.gz"
 
         cd $buildDir
         cmd "curl \"$pkgFile\" | tar xz"
