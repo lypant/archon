@@ -16,8 +16,7 @@ pad_percents 3
 
 TEXT
 ${exec cmus_status} \
-${exec amixer get Master | awk -F'[]%[]' '/%/ { printf "%3d", $2; exit }'}% \
-${time %d.%m.%Y %H:%M}\
+${exec amixer get Master | awk -F'[]%[]' '/%/ { printf "%3d", $2; exit }'}%\
 ;\
 ${if_match ${cpu cpu1} >= 90}\
 ${if_match ${cpu cpu1} >= 95}\
@@ -51,6 +50,14 @@ ${else}\
  \
 ${endif}\
 ${memperc}%\
+    \
+ ${downspeed enp4s0}\
+    \
+ ${upspeed enp4s0}\
+    \
+    \
+    \
+    \
     \
 ${if_match ${fs_used_perc /} >= 75}\
 ${if_match ${fs_used_perc /} >= 90}\
@@ -107,9 +114,8 @@ ${else}\
 ${endif}\
 swap${swapperc}% ${swapfree}\
     \
- \
-${addr enp4s0} ${execi 3600 dig +short myip.opendns.com @resolver1.opendns.com}\
     \
- ${downspeed enp4s0} ${totaldown enp4s0}\
     \
- ${upspeed enp4s0}  ${totalup enp4s0}\
+    \
+    \
+${time %d.%m.%y %H:%M}\
