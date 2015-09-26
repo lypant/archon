@@ -119,7 +119,7 @@ customize()
     #---------------------------------------
     # Network tools
     #---------------------------------------
-    installBindTools    # For getting external IP for displaying in dwm bar
+    #installBindTools    # For getting external IP for displaying in dwm bar
 
     #---------------------------------------
     # Dotfiles

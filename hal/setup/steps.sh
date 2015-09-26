@@ -904,12 +904,12 @@ installCmus()
 # bind-tools package a.k.a. dnsutils package
 # Needed for 'dig' tool used for obtaining exterlan IP address - to display it
 # in dwm or tmux status bar
-installBindTools()
-{
-    log "Install bind tools..."
-    installPackage "bind-tools"
-    log "Install bind tools...done"
-}
+#installBindTools()
+#{
+    #log "Install bind tools..."
+    #installPackage "bind-tools"
+    #log "Install bind tools...done"
+#}
 
 #---------------------------------------
 # Dotfiles
