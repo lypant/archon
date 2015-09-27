@@ -1,3 +1,8 @@
+# NOTE: Systemd does not allow using symlinks as service files, hence
+#       this file was copied from ~/archon/hal/dotfiles/.config/systemd/user
+#       instead of treating it as a regular archon dotfile.
+#       If modifying this file, it is necessary to edit original archon file,
+#       or archon repo will not detect the changes
 [Unit]
 Description=Actkbd: Daemon for X-independent shortcuts
 
