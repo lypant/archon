@@ -1,0 +1,10 @@
+[Unit]
+Description=Actkbd: Daemon for X-independent shortcuts
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/actkbd -c /home/adam/.config/actkbd.conf -d /dev/input/event2 -D -p /tmp/actkbd.service.pid
+PIDFile=/tmp/actkbd.service.pid
+
+[Install]
+WantedBy=default.target

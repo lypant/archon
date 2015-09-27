@@ -34,6 +34,10 @@ xsetroot -solid "#$SOLARIZED_BASE03"
 # Use conky to display system info on status bar
 conky | while read -r; do xsetroot -name "$REPLY"; done &
 
+# TODO: Think about using either actkbd or xbindkeys instead of both of them
+# Disable console keys mapping service - to not overlap with xbindkeys
+systemctl --user stop actkbd.service
+
 # Bind keyboard keys
 xbindkeys
 

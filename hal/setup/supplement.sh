@@ -29,15 +29,22 @@ supplement()
     log "Supplement..."
 
     #--------------------------------------
-    # Misc AUR packages
+    # AUR packages
     #--------------------------------------
-    installStlarchFont
 
-    #---------------------------------------
-    # Android development environment
-    #---------------------------------------
+    #-------------------
+    # Installation
+    #-------------------
+    installStlarchFont                  # For glyphs in dwm status bar
+    installActkbd                       # For key bindings in console mode
+
     #installJdk
     #installAndroidEnv
+
+    #-------------------
+    # Systemd services enabling
+    #-------------------
+    enableActkbdService
 
     log "Supplement...done"
 }

@@ -988,6 +988,24 @@ installTmuxConfDotfile()
     log "Install .tmux.conf dotfile...done"
 }
 
+# NOTE: actkbd is installed from AUR in supplementation stage
+installActkbdConfDotfile()
+{
+    log "Install actkbd.conf dotfile..."
+    installDotfile "actkbd.conf" ".config"
+    err "$?" "$FUNCNAME" "failed to install actkbd.conf dotfile"
+    log "Install actkbd.conf dotfile...done"
+}
+
+# NOTE: actkbd is installed from AUR in supplementation stage
+installActkbdServiceDotfile()
+{
+    log "Install actkbd.service dotfile..."
+    installDotfile "actkbd.service" ".config/systemd/user"
+    err "$?" "$FUNCNAME" "failed to install actkbd.service dotfile"
+    log "Install actkbd.service dotfile...done"
+}
+
 installXinitrcDotfile()
 {
     log "Install .xinitrc dotfile..."
@@ -1393,8 +1411,12 @@ copyProjectLogFiles()
 #-------------------------------------------------------------------------------
 
 #--------------------------------------
-# Misc AUR packages
+# AUR packages
 #--------------------------------------
+
+#-------------------
+# Installation
+#-------------------
 
 installStlarchFont()
 {
@@ -1403,10 +1425,12 @@ installStlarchFont()
     log "Install stlarch font...done"
 }
 
-#---------------------------------------
-# Android development environment
-#---------------------------------------
-
+installActkbd()
+{
+    log "Install actkbd..."
+    installAurPackage "actkbd"
+    log "Install actkbd...done"
+}
 installJdk()
 {
     log "Install jdk..."
@@ -1416,7 +1440,7 @@ installJdk()
 
 installAndroidEnv()
 {
-    log "Install android env"
+    log "Install android env..."
     installAurPackage "android-sdk"
     installAurPackage "android-sdk-platform-tools"
     installAurPackage "android-sdk-build-tools"
@@ -1425,5 +1449,17 @@ installAndroidEnv()
     cmd "sudo chmod -R 755 /opt/android-sdk"
     err "$?" "$FUNCNAME" "failed to change android-sdk file permissions"
     log "Install android env...done"
+}
+
+#-------------------
+# Systemd services enabling
+#-------------------
+
+enableActkbdService()
+{
+    log "Enable actkbd service..."
+    cmd "systemctl --user enable actkbd.service"
+    err "$?" "$FUNCNAME" "failed to enable actkbd service"
+    log "Enable actkbd service...done"
 }
 

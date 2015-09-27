@@ -117,7 +117,7 @@ customize()
     installCmus
 
     #---------------------------------------
-    # Network tools
+    # Network
     #---------------------------------------
     #installBindTools    # For getting external IP for displaying in dwm bar
 
@@ -133,6 +133,8 @@ customize()
     installGitconfigDotfile
     installCmusColorThemeDotfile
     installTmuxConfDotfile
+    installActkbdConfDotfile            # actkbd is installed in supplementation
+    installActkbdServiceDotfile         # actkbd is installed in supplementation
 
     installXinitrcDotfile
     installXresourcesDotfile
