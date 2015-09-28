@@ -134,8 +134,7 @@ customize()
     installCmusColorThemeDotfile
     installTmuxConfDotfile
     installActkbdConfDotfile            # actkbd is installed in supplementation
-    #installActkbdServiceDotfile        # actkbd is installed in supplementation
-    copyActkbdServiceDotfile            # actkbd is installed in supplementation
+    installActkbdServiceDotfile         # actkbd is installed in supplementation
 
     installXinitrcDotfile
     installXresourcesDotfile

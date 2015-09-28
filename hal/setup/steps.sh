@@ -511,7 +511,7 @@ configurePacman()
 addUser()
 {
     log "Add user..."
-    cmd "useradd -m -g users -G wheel,storage,power,input -s /bin/bash adam"
+    cmd "useradd -m -g users -G wheel,storage,power -s /bin/bash adam"
     log "Add user...done"
 }
 
@@ -998,24 +998,12 @@ installActkbdConfDotfile()
 }
 
 # NOTE: actkbd is installed from AUR in supplementation stage
-#installActkbdServiceDotfile()
-#{
-    #log "Install actkbd.service dotfile..."
-    #installDotfile "actkbd.service" ".config/systemd/user"
-    #err "$?" "$FUNCNAME" "failed to install actkbd.service dotfile"
-    #log "Install actkbd.service dotfile...done"
-#}
-
-# NOTE: actkbd is installed from AUR in supplementation stage
-# NOTE: systemd does not allow symlinks - need to copy the file
-copyActkbdServiceDotfile()
+installActkbdServiceDotfile()
 {
-    log "Copy actkbd.service dotfile..."
-    cmd "mkdir -p /home/adam/.config/systemd/user"
-    err "$?" "$FUNCNAME" "failed to create .config/systemd/user directory"
-    cmd "cp /home/adam/archon/hal/dotfiles/.config/systemd/user/actkbd.service /home/adam/.config/systemd/user/actkbd.service"
-    err "$?" "$FUNCNAME" "failed to copy actkbd.service dotfile "
-    log "Copy actkbd.service dotfile...done"
+    log "Install actkbd.service dotfile..."
+    installDotfile "actkbd.service" ".config/systemd/user"
+    err "$?" "$FUNCNAME" "failed to install actkbd.service dotfile"
+    log "Install actkbd.service dotfile...done"
 }
 
 installXinitrcDotfile()
