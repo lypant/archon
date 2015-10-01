@@ -69,40 +69,6 @@ customize()
     installElinks
 
     #---------------------------------------
-    # GUI programs
-    #---------------------------------------
-
-    #-------------------
-    # Xorg
-    #-------------------
-    installXorg
-
-    #-------------------
-    # Video driver
-    #-------------------
-    installVideoDriver
-
-    #-------------------
-    # Fonts
-    #-------------------
-    installGuiFonts
-
-    #-------------------
-    # Config
-    #-------------------
-    installConky
-
-    #-------------------
-    # Programs
-    #-------------------
-    installCustomizedDwm
-    installDmenu
-    installRxvtUnicode
-    installFeh
-    installEvince
-    installWmname   # TODO Is it needed?
-
-    #---------------------------------------
     # Sound
     #---------------------------------------
     installAlsa
@@ -122,10 +88,6 @@ customize()
     installCmusColorThemeDotfile
     installTmuxConfDotfile
 
-    installXinitrcDotfile
-    installXresourcesDotfile
-    installConkyDotfile
-
     #---------------------------------------
     # Boot process configuration
     #---------------------------------------
@@ -142,6 +104,10 @@ customize()
     # Partitions and file systems
     #---------------------------------------
     setDataPartition
+    setGenericUsbMountPoint
+    setPchelkaUsb
+    setSzkatulkaUsb
+    setD40Usb
 
     #---------------------------------------
     # Final steps

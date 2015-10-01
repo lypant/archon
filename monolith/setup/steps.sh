@@ -712,124 +712,6 @@ installElinks()
     log "Install elinks...done"
 }
 
-#--------------------------------------
-# GUI programs
-#---------------------------------------
-
-#-------------------
-# Xorg
-#-------------------
-
-installXorg()
-{
-    log "Install Xorg..."
-    installPackage "xorg-server xorg-server-utils xorg-xinit"
-    log "Install Xorg...done"
-}
-
-#-------------------
-# Video driver
-#-------------------
-
-installVideoDriver()
-{
-    log "Install video driver..."
-    installPackage "xf86-video-vesa"
-    log "Install video driver...done"
-}
-
-#-------------------
-# Fonts
-#-------------------
-
-installGuiFonts()
-{
-    log "Install gui fonts..."
-    installPackage "ttf-inconsolata ttf-dejavu terminus-font"
-    log "Install gui fonts...done"
-}
-
-#-------------------
-# Config
-#-------------------
-
-installConky()
-{
-    log "Install conky..."
-    installPackage "conky"
-    log "Install conky...done"
-}
-
-#-------------------
-# Programs
-#-------------------
-
-installCustomizedDwm()
-{
-    local patch="/home/adam/archon/monolith/patches/dwm_cdec978.diff"
-    local build_path="/home/adam/forge/dwm"
-    local comment="Adjustments done during archon installation"
-
-    log "Installing customized dwm..."
-    # Clone project from git
-    cmd "git clone http://git.suckless.org/dwm $build_path"
-    err "$?" "$FUNCNAME" "failed to clone dwm repo"
-    # Newest commit was not working... use specific, working version
-    cmd "git -C $build_path checkout cdec978 -b dwm_archon"
-    err "$?" "$FUNCNAME" "failed to checkout specific dwm branch"
-    # Apply patch with customizations
-    cmd "git -C $build_path apply $patch"
-    err "$?" "$FUNCNAME" "failed to apply dwm patch"
-    # Add changes introduced with patch. Use add . since new files may be added.
-    cmd "git -C $build_path add ."
-    err "$?" "$FUNCNAME" "failed to add changes introduced with patch"
-    # Save configuration as new commit
-    cmd "git -C $build_path commit -m \"$comment\""
-    err "$?" "$FUNCNAME" "failed to commit dwm changes"
-    # Install
-    cmd "make -C $build_path clean install"
-    err "$?" "$FUNCNAME" "failed to install dwm"
-    log "Installing customized dwm...done"
-}
-
-installDmenu()
-{
-    log "Install dmenu..."
-    installPackage "dmenu"
-    log "Install dmenu...done"
-}
-
-installRxvtUnicode()
-{
-    # Note: rxvt-unicode can be launched with command urxvt
-    log "Install rxvt unicode..."
-    installPackage "rxvt-unicode"
-    log "Install rxvt unicode...done"
-}
-
-installFeh()
-{
-    log "Install feh..."
-    installPackage "feh"
-    log "Install feh...done"
-}
-
-installEvince()
-{
-    log "Install evince..."
-    installPackage "evince"
-    log "Install evince...done"
-}
-
-# TODO: Craete another paragraph with modules used as fixes/workaronds etc?
-# To fix misbehaving Java windows
-installWmname()
-{
-    log "Install wmname..."
-    installPackage "wmname"
-    log "Install wmname...done"
-}
-
 #---------------------------------------
 # Sound
 #---------------------------------------
@@ -930,38 +812,6 @@ installTmuxConfDotfile()
     installDotfile ".tmux.conf" ""
     err "$?" "$FUNCNAME" "failed to install .tmux.conf dotfile"
     log "Install .tmux.conf dotfile...done"
-}
-
-installXinitrcDotfile()
-{
-    log "Install .xinitrc dotfile..."
-    installDotfile ".xinitrc" ""
-    err "$?" "$FUNCNAME" "failed to install .xinitrc dotfile"
-    log "Install .xinitrc dotfile...done"
-}
-
-installXresourcesDotfile()
-{
-    log "Install .Xresources dotfile..."
-    installDotfile ".Xresources" ""
-    err "$?" "$FUNCNAME" "failed to install .Xresources dotfile"
-    log "Install .Xresources dotfile...done"
-}
-
-installXbindkeysrcDotfile()
-{
-    log "Install .xbindkeysrc dotfile..."
-    installDotfile ".xbindkeysrc" ""
-    err "$?" "$FUNCNAME" "failed to install .xbindkeys dotfile"
-    log "Install .xbindkeysrc dotfile...done"
-}
-
-installConkyDotfile()
-{
-    log "Install .conkyrc dotfile..."
-    installDotfile ".conkyrc" ""
-    err "$?" "$FUNCNAME" "failed to install .conkyrc dotfile"
-    log "Install .conkyrc dotfile...done"
 }
 
 #---------------------------------------
@@ -1086,6 +936,71 @@ setDataPartition()
     createLink "$mntDir" "/home/adam/Data"
     err "$?" "$FUNCNAME" "failed to create link"
     log "Set data partition...done"
+}
+
+setGenericUsbMountPoint()
+{
+    log "Set generic usb mount point..."
+    createDir "/mnt/usb"
+    err "$?" "$FUNCNAME" "failed to create mount dir"
+    log "Set generic usb mount point...done"
+}
+
+setPchelkaUsb()
+{
+    log "Set pchelka usb..."
+
+    local entry="LABEL=PCHELKA"
+    entry="$entry /mnt/pchelka"
+    entry="$entry vfat"
+    entry="$entry noauto,nofail,user,rw,umask=111,dmask=000"
+    entry="$entry 0"
+    entry="$entry 0"
+
+    createDir "/mnt/pchelka"
+    err "$?" "$FUNCNAME" "failed to create mount dir"
+    cmd "echo -e \"\n$entry\" >> /etc/fstab"
+    err "$?" "$FUNCNAME" "failed to add entry to fstab"
+
+    log "Set pchelka usb...done"
+}
+
+setSzkatulkaUsb()
+{
+    log "Set szkatulka usb..."
+
+    local entry="LABEL=SZKATULKA"
+    entry="$entry /mnt/szkatulka"
+    entry="$entry vfat"
+    entry="$entry noauto,nofail,user,rw,umask=111,dmask=000"
+    entry="$entry 0"
+    entry="$entry 0"
+
+    createDir "/mnt/szkatulka"
+    err "$?" "$FUNCNAME" "failed to create mount dir"
+    cmd "echo -e \"\n$entry\" >> /etc/fstab"
+    err "$?" "$FUNCNAME" "failed to add entry to fstab"
+
+    log "Set szkatulka usb...done"
+}
+
+setD40Usb()
+{
+    log "Set D40 usb..."
+
+    local entry="LABEL=D40"
+    entry="$entry /mnt/d40"
+    entry="$entry vfat"
+    entry="$entry noauto,nofail,user,rw,umask=111,dmask=000"
+    entry="$entry 0"
+    entry="$entry 0"
+
+    createDir "/mnt/d40"
+    err "$?" "$FUNCNAME" "failed to create mount dir"
+    cmd "echo -e \"\n$entry\" >> /etc/fstab"
+    err "$?" "$FUNCNAME" "failed to add entry to fstab"
+
+    log "Set D40 usb...done"
 }
 
 #---------------------------------------
