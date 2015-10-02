@@ -68,6 +68,7 @@ customize()
 
     installMc
     installTmux
+    installCompressionTools
 
     #---------------------------------------
     # GUI programs

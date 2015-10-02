@@ -658,6 +658,13 @@ installTmux()
     log "Install tmux...done"
 }
 
+installCompressionTools()
+{
+    log "Install compression tools..."
+    installPackage atool zip unzip unrar
+    log "Install compression tools...done"
+}
+
 #--------------------------------------
 # GUI programs
 #---------------------------------------

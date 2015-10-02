@@ -712,6 +712,13 @@ installElinks()
     log "Install elinks...done"
 }
 
+installCompressionTools()
+{
+    log "Install compression tools..."
+    installPackage atool zip unzip unrar
+    log "Install compression tools...done"
+}
+
 #---------------------------------------
 # Sound
 #---------------------------------------

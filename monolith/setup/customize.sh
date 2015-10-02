@@ -67,6 +67,7 @@ customize()
     installMc
     installTmux
     installElinks
+    installCompressionTools
 
     #---------------------------------------
     # Sound
