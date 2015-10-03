@@ -665,6 +665,13 @@ installCompressionTools()
     log "Install compression tools...done"
 }
 
+installIsoTools()
+{
+    log "Install iso tools..."
+    installPackage squashfs-tools cdrkit
+    log "Install iso tools...done"
+}
+
 #--------------------------------------
 # GUI programs
 #---------------------------------------
