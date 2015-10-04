@@ -68,6 +68,7 @@ customize()
     installTmux
     installElinks
     installCompressionTools
+    installIsoTools
 
     #---------------------------------------
     # Sound

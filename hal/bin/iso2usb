@@ -1,8 +1,8 @@
 #!/bin/bash
-#===============================================================================
+#-------------------------------------------------------------------------------
 # FILE:         iso2usb
 #
-# USAGE:        ./iso2usb
+# USAGE:        iso2usb -h
 #
 # DESCRIPTION:  Formats given USB device.
 #               Copies given ISO image contents to specified USB device, so it
@@ -10,181 +10,61 @@
 #               Installs Syslinux and MBR on the USB device.
 #
 # TODO:         Add step to set partition as bootable
-#===============================================================================
-
-# Setup shell - detect unset variables
-set -o nounset
+#-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
 # Settings adjustable using command line options
 #-------------------------------------------------------------------------------
 
-ISO_IMG="~/shared/custom-archlinux-2015.01.01-dual.iso"
+ISO_IMG=                # To be provided by user
 USB_DEVICE="/dev/sdd"
 USB_NB="1"
-PART_LABEL="ARCH_201501"
-
-#-------------------------------------------------------------------------------
-# Settings adjustable by editing this script
-#-------------------------------------------------------------------------------
-
-MNT_DIR="/mnt/iso2usb"
-ISO_MNT="$MNT_DIR/iso"
-USB_MNT="$MNT_DIR/usb"
-SYSLINUX_PATH="$USB_MNT/arch/boot/syslinux"
-
-#-------------------------------------------------------------------------------
-# Not editable (unless changed in Arch Linux)
-#-------------------------------------------------------------------------------
-
-MBR_FILE="/usr/lib/syslinux/bios/mbr.bin"
+PART_LABEL=             # To be provided by user
 
 #-------------------------------------------------------------------------------
 # Functions
 #-------------------------------------------------------------------------------
 
-updatePackageList()
+usage()
 {
-    echo "Update package list..."
-    sudo pacman -Syy
-    echo "Update package list...done"
+cat << EOF
+Formats given USB device.
+Copies given ISO image contents to specified USB device, so it \
+can be used as USB boot media.
+Installs Syslinux and MBR on the USB device.
+Requires dosfstools package.
+
+Note: USB device needs to be formatted and the partition has to be bootable.
+
+Usage: ${0##*/} [-h] [-i ISO_IMG] [-d USB_DEVICE] [-p USB_NB USB] \
+[-l PART_LABEL]
+    -h display this help and exit
+    -i ISO_IMG ISO file to be copied to USB partition (${ISO_IMG:-"unset"})
+    -d USB_DEVICE USB device path, without partition number \
+(${USB_DEVICE-"unset"})
+    -p USB_NB USB partition number, where image will be copied, \
+e.g. for /dev/sdd1 it should be 1 (${USB_NB-"unset"})
+    -l PART_LABEL partition label, should match given Arch iso, \
+e.g. for archlinux-20150-10.01.dual.iso it should be ARCH_201510 \
+(${PART_LABEL:-"unset"})
+EOF
 }
 
-checkPackages()
+checkOptions()
 {
-    echo "Check packages..."
+    if [[ -z "$ISO_IMG" ]]; then
+        echo "Unset parameter ISO_IMG, use option -i"
+        echo
+        usage
+        exit 1
+    fi
 
-    for pkg in "dosfstools"
-    do
-        pacman -Qsq $pkg &>/dev/null
-        if [[ "$?" -ne 0 ]]; then
-            eval "sudo pacman -S --noconfirm $pkg"
-        fi
-    done
-
-    echo "Check packages...done"
-}
-
-formatPartition()
-{
-    echo "Format partition..."
-    eval "sudo mkfs.msdos -n $PART_LABEL $USB_PART"
-    echo "Format partition...done"
-}
-
-createMountDir()
-{
-    echo "Create mount dir..."
-    eval "sudo mkdir -p $MNT_DIR"
-    echo "Create mount dir...done"
-}
-
-removeMountDir()
-{
-    echo "Remove mount dir..."
-    eval "sudo rmdir $MNT_DIR"
-    echo "Remove mount dir...done"
-}
-
-createIsoMountDir()
-{
-    echo "Create iso mount dir..."
-    eval "sudo mkdir -p $ISO_MNT"
-    echo "Create iso mount dir...done"
-}
-
-removeIsoMountDir()
-{
-    echo "Remove iso mount dir..."
-    eval "sudo rmdir $ISO_MNT"
-    echo "Remove iso mount dir...done"
-}
-
-createUsbMountDir()
-{
-    echo "Create usb mount dir..."
-    eval "sudo mkdir -p $USB_MNT"
-    echo "Create usb mount dir...done"
-}
-
-removeUsbMountDir()
-{
-    echo "Remove usb mount dir..."
-    eval "sudo rmdir $USB_MNT"
-    echo "Remove usb mount dir...done"
-}
-
-mountIso()
-{
-    echo "Mount iso..."
-    eval "sudo mount -o loop $ISO_IMG $ISO_MNT"
-    echo "Mount iso...done"
-}
-
-unmountIso()
-{
-    echo "Unount iso..."
-    eval "sudo umount $ISO_MNT"
-    echo "Unount iso...done"
-}
-
-mountUsb()
-{
-    echo "Mount usb..."
-    eval "sudo mount $USB_PART $USB_MNT"
-    echo "Mount usb...done"
-}
-
-unmountUsb()
-{
-    echo "Unount usb..."
-    eval "sudo umount $USB_MNT"
-    echo "Unount usb...done"
-}
-
-copyFiles()
-{
-    echo "Copy files..."
-    eval "sudo cp -a $ISO_MNT/* $USB_MNT"
-    eval "sync"
-    echo "Copy files...done"
-}
-
-installSyslinux()
-{
-    echo "Install syslinux..."
-    eval "sudo extlinux --install $SYSLINUX_PATH"
-    echo "Install syslinux...done"
-}
-
-installMbr()
-{
-    echo "Install MBR..."
-    eval "sudo dd bs=440 count=1 conv=notrunc if=$MBR_FILE of=$USB_DEVICE"
-    eval "sync"
-    echo "Install MBR...done"
-}
-
-perform()
-{
-    updatePackageList
-    checkPackages
-    # Exit on error
-    set -o errexit
-    formatPartition
-    createMountDir
-    createIsoMountDir
-    createUsbMountDir
-    mountIso
-    mountUsb
-    copyFiles
-    unmountIso
-    installSyslinux
-    installMbr
-    unmountUsb
-    removeUsbMountDir
-    removeIsoMountDir
-    removeMountDir
+    if [[ -z "$PART_LABEL" ]]; then
+        echo "Unset parameter PART_LABEL, use option -l"
+        echo
+        usage
+        exit 1
+    fi
 }
 
 query()
@@ -197,7 +77,7 @@ query()
     read -p "Proceed? [y/N]?" response
     case $response in
         [Yy]*)
-            time { perform ; }
+            time { copyIso2Usb ; }
             ;;
         *)
             echo "Cancelled"
@@ -206,29 +86,67 @@ query()
     esac
 }
 
-usage()
+copyIso2Usb()
 {
-cat << EOF
-Formats given USB device.
-Copies given ISO image contents to specified USB device, so it
-can be used as USB boot media.
-Installs Syslinux and MBR on the USB device.
+    echo "Copy ISO to usb..."
 
-Note: USB device needs to be formatted and the partition has to be bootable.
+    echo "Format partition..."
+    eval "sudo mkfs.msdos -n $PART_LABEL $USB_PART"
 
-Usage: ${0##*/} [-h] [-i ISO_IMG] [-d USB_DEVICE] [-p USB_NB USB] [-l PART_LABEL]
-    -h display this help and exit
-    -i ISO_IMG ISO file to be copied to USB partition ($ISO_IMG)
-    -d USB_DEVICE USB device path, without partition number ($USB_DEVICE)
-    -p USB_NB USB partition number, where image will be copied,
-       e.g. 1 in /dev/sdc1 ($USB_NB)
-    -l PART_LABEL partition label, should match given Arch iso, ($PART_LABEL)
-EOF
+    echo "Create common mount dir..."
+    eval "sudo mkdir -p /mnt/iso2usb"
+
+    echo "Create iso mount dir..."
+    eval "sudo mkdir -p /mnt/iso2usb/iso"
+
+    echo "Create usb mount dir..."
+    eval "sudo mkdir -p /mnt/iso2usb/usb"
+
+    echo "Mount iso..."
+    eval "sudo mount -o loop $ISO_IMG /mnt/iso2usb/iso"
+
+    echo "Mount usb..."
+    eval "sudo mount $USB_PART /mnt/iso2usb/usb"
+
+    echo "Copy files from ISO to usb..."
+    eval "sudo cp -a /mnt/iso2usb/iso/* /mnt/iso2usb/usb"
+    eval "sync"
+
+    echo "Unmount iso..."
+    eval "sudo umount /mnt/iso2usb/iso"
+
+    echo "Remove iso mount dir..."
+    eval "sudo rmdir /mnt/iso2usb/iso"
+
+    echo "Install syslinux on usb..."
+    eval "sudo extlinux --install /mnt/iso2usb/usb/arch/boot/syslinux"
+
+    echo "Install MBR on usb..."
+    eval "sudo dd bs=440 count=1 conv=notrunc"\
+         "if=/usr/lib/syslinux/bios/mbr.bin"\
+         "of=$USB_DEVICE"
+    eval "sync"
+
+    echo "Unmount usb..."
+    eval "sudo umount /mnt/iso2usb/usb"
+
+    echo "Remove usb mount dir..."
+    eval "sudo rmdir /mnt/iso2usb/usb"
+
+    echo "Remove common mount dir.."
+    eval "sudo rmdir /mnt/iso2usb"
+
+    echo "Copy ISO to usb...done"
 }
 
 #-------------------------------------------------------------------------------
 # Execution
 #-------------------------------------------------------------------------------
+
+if [[ "$#" -eq "0" ]]; then
+    usage
+    exit 0
+fi
 
 while getopts ":hi:d:p:l:" opt; do
     case $opt in
@@ -254,14 +172,21 @@ while getopts ":hi:d:p:l:" opt; do
             ;;
         :)
             echo "Option -$OPTARG requires an argument"
-            exit 2
+            exit 1
             ;;
     esac
 done
 
-#-------------------------------------------------------------------------------
+checkOptions
+
+#----------------------------------------
 # Dependent on command line options
-#-------------------------------------------------------------------------------
+#----------------------------------------
+
+# Setup shell - detect unset variables
+set -o nounset
+# Setup shell - exit on error
+set -o errexit
 
 USB_PART="${USB_DEVICE}${USB_NB}"
 

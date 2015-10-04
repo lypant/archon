@@ -665,10 +665,11 @@ installCompressionTools()
     log "Install compression tools...done"
 }
 
+# Packages used by customize_iso and iso2usb scripts
 installIsoTools()
 {
     log "Install iso tools..."
-    installPackage squashfs-tools cdrkit
+    installPackage squashfs-tools cdrkit dosfstools
     log "Install iso tools...done"
 }
 

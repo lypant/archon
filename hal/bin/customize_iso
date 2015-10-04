@@ -121,12 +121,12 @@ createCustomIso()
     eval "md5sum $WORKSPACE/airootfs.sfs > $WORKSPACE/airootfs.md5"
 
     echo "Remove original x86_64 file sytem files..."
-    eval "rm $WORKSPACE/iso_contents/arch/x86_64/airootfs.sfs"
-    eval "rm $WORKSPACE/iso_contents/arch/x86_64/airootfs.md5"
+    eval "sudo rm $WORKSPACE/iso_contents/arch/x86_64/airootfs.sfs"
+    eval "sudo rm $WORKSPACE/iso_contents/arch/x86_64/airootfs.md5"
 
     echo "Move new x86_64 file system files..."
-    eval "mv $WORKSPACE/airootfs.sfs $WORKSPACE/iso_contents/arch/x86_64"
-    eval "mv $WORKSPACE/airootfs.md5 $WORKSPACE/iso_contents/arch/x86_64"
+    eval "sudo mv $WORKSPACE/airootfs.sfs $WORKSPACE/iso_contents/arch/x86_64"
+    eval "sudo mv $WORKSPACE/airootfs.md5 $WORKSPACE/iso_contents/arch/x86_64"
 
     #----------------------------------------
     # Prepare i686 file system
@@ -146,12 +146,12 @@ createCustomIso()
     eval "md5sum $WORKSPACE/airootfs.sfs > $WORKSPACE/airootfs.md5"
 
     echo "Remove original i686 file sytem files..."
-    eval "rm $WORKSPACE/iso_contents/arch/i686/airootfs.sfs"
-    eval "rm $WORKSPACE/iso_contents/arch/i686/airootfs.md5"
+    eval "sudo rm $WORKSPACE/iso_contents/arch/i686/airootfs.sfs"
+    eval "sudo rm $WORKSPACE/iso_contents/arch/i686/airootfs.md5"
 
     echo "Move new i686 file system files..."
-    eval "mv $WORKSPACE/airootfs.sfs $WORKSPACE/iso_contents/arch/i686"
-    eval "mv $WORKSPACE/airootfs.md5 $WORKSPACE/iso_contents/arch/i686"
+    eval "sudo mv $WORKSPACE/airootfs.sfs $WORKSPACE/iso_contents/arch/i686"
+    eval "sudo mv $WORKSPACE/airootfs.md5 $WORKSPACE/iso_contents/arch/i686"
 
     #----------------------------------------
     # Generate new ISO
@@ -159,7 +159,7 @@ createCustomIso()
 
     echo "Generate new ISO..."
     eval "cd $WORKSPACE/iso_contents"
-    eval "genisoimage -l -r -J -V \"$ISO_VERSION\""\
+    eval "sudo genisoimage -l -r -J -V \"$ISO_VERSION\""\
          "-b isolinux/isolinux.bin -no-emul-boot -boot-load-size 4"\
          "-boot-info-table -c isolinux/boot.cat"\
          "-o $NEW_ISO $WORKSPACE/iso_contents"
