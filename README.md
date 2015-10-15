@@ -25,20 +25,18 @@ TODO:
 - Allow for installation with other system present ()
     - Handle partitions
     - Support bootloader chainloading
-- Experiment with Syslinux boot menu
-    - Try out including other files
-    - Allow for multiboot (chainloading)
-    - Add file defining color scheme etc
 - Increase sudo timeout
 ? Add Tmp partition handling similar to Data partition
-- Add permissions handling of mounted devices
-    - Should not require root privileges for basic operations
 ? Add autofs support for removable media
-- Add cd/dvd burning program
+- Add cd/dvd burning program (brasero?)
 - Add program for downloading arch isos
 - Evince - fix missing icons
 - Add screen saver deactivation when watching films (flash/vlc/...)
 ? Add virtualbox installation
     - When using two disks this might be not needed as maintaining VBox
       compatibility requires much work
+- Add libreoffice or similar office suite installation
+- BinUhr
+    ? python2-pyserial package needed for serial communication
+    ? add user to uucp group for access of /dev/ttyS0
 

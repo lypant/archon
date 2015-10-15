@@ -661,7 +661,7 @@ installTmux()
 installCompressionTools()
 {
     log "Install compression tools..."
-    installPackage atool zip unzip unrar
+    installPackage atool zip unzip unrar p7zip
     log "Install compression tools...done"
 }
 
