@@ -11,9 +11,9 @@
 # Get required data
 #-------------------------------------------------------------------------------
 
-status=$(cmus-remote -Q | grep 'status' | awk '{print $2}')
-artist=$(cmus-remote -Q | grep 'tag artist' | awk '{$1=$2=""; print substr($0,3)}')
-title=$(cmus-remote -Q | grep 'tag title' | awk '{$1=$2=""; print substr($0,3)}')
+status=$(cmus-remote -Q 2> /dev/null | grep 'status' | awk '{print $2}')
+artist=$(cmus-remote -Q 2> /dev/null | grep 'tag artist' | awk '{$1=$2=""; print substr($0,3)}')
+title=$(cmus-remote -Q 2> /dev/null | grep 'tag title' | awk '{$1=$2=""; print substr($0,3)}')
 
 #-------------------------------------------------------------------------------
 # Check artist
