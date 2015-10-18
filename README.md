@@ -39,4 +39,5 @@ TODO:
 - BinUhr
     ? python2-pyserial package needed for serial communication
     ? add user to uucp group for access of /dev/ttyS0
+? Replace fstab entries for removable media with udisks/udiskie or similar tools
 

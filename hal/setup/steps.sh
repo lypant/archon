@@ -599,7 +599,9 @@ copyOverArchonFiles()
 installVim()
 {
     log "Install vim..."
-    installPackage vim
+    # Use gvim, as it has vim compiled with xterm_clipboard option
+    # allowing to use copy-paste in X
+    installPackage gvim
     log "Install vim...done"
 }
 
