@@ -119,9 +119,22 @@ customize()
     installCmus
 
     #---------------------------------------
-    # Network tools
+    # Partitions and file systems
     #---------------------------------------
-    #installBindTools    # For getting external IP for displaying in dwm bar
+    installFuseExfat
+    installAutomountTools
+    configureAutomountTools
+    setTmpfsTmpSize # To install large AUR packages in supplementation script
+    setDataPartition
+    #setGenericUsbMountPoint
+    #setMonolithUsb
+    #setPchelkaUsb
+    #setSzkatulkaUsb
+    #setE51Usb
+    #setHama641Usb
+    #setD40Usb
+    #setGwizdekUsb
+    # TODO: Check Android device mounting
 
     #---------------------------------------
     # Dotfiles
@@ -135,6 +148,7 @@ customize()
     installGitconfigDotfile
     installCmusColorThemeDotfile
     installTmuxConfDotfile
+    copyUdiskieServiceDotfile           # Activate at supplementation stage
 
     installXinitrcDotfile
     installXresourcesDotfile
@@ -152,22 +166,6 @@ customize()
     setMkinitcpioHooks                      # Requires image recreation
     setMkinitcpioModules                    # Requires imafe recreation
     setBootConsoleOutputLevels
-
-    #---------------------------------------
-    # Partitions and file systems
-    #---------------------------------------
-    installFuseExfat
-    setTmpfsTmpSize # To install large AUR packages in supplementation script
-    setDataPartition
-    setGenericUsbMountPoint
-    setMonolithUsb
-    setPchelkaUsb
-    setSzkatulkaUsb
-    setE51Usb
-    setHama641Usb
-    setD40Usb
-    setGwizdekUsb
-    # TODO: Check Android device mounting
 
     #-------------------
     # SSD adjustments

@@ -915,17 +915,222 @@ installCmus()
 }
 
 #---------------------------------------
-# Network tools
+# Partitions and file systems
 #---------------------------------------
 
-# bind-tools package a.k.a. dnsutils package
-# Needed for 'dig' tool used for obtaining exterlan IP address - to display it
-# in dwm or tmux status bar
-#installBindTools()
+# Needed for exfat file system support (used natively by AEE S71 as default FS)
+installFuseExfat()
+{
+    log "Install fuse-exfat..."
+    installPackage fuse-exfat
+    log "Install fuse-exfat...done"
+}
+
+installAutomountTools()
+{
+    log "Install automount tools..."
+    installPackage udisks2 udiskie
+    log "Install automount tools...done"
+}
+
+configureAutomountTools()
+{
+    local configDir="/root/archon/hal/config"
+    local polkitFile="/etc/polkit-1/rules.d/50-udisks.rules"
+    local udevFile="/etc/udev/rules.d/99-udisks2.rules"
+
+    log "Configure automount tools..."
+    # Policy file for udisks
+    cmd "cp $configDir$polkitFile $polkitFile"
+    err "$?" "$FUNCNAME" "failed to copy udisks polkit file"
+    # Create /media mount point
+    createDir "/media"
+    err "$?" "$FUNCNAME" "failed to create /media dir"
+    # Use /media as mount point instead of /run/media/$USER/<VOLUME_NAME>
+    cmd "cp $configDir$udevFile $udevFile"
+    err "$?" "$FUNCNAME" "failed to copy udisks udev rule file"
+    log "Configure automount tools...done"
+}
+
+# Has to be done before AUR packages installation phase
+# to allow large AUR packages installation
+# OOM problems were observed on VirtualBox installations without this.
+setTmpfsTmpSize()
+{
+    # Size of /tmp partition - e.g. RAM size + SWAP size
+    log "Set tmpfs tmp size..."
+    cmd "echo \"tmpfs /tmp tmpfs size=16G,rw 0 0\" >> /etc/fstab"
+    err "$?" "$FUNCNAME" "failed to set tmpfs tmp size"
+    log "Set tmpfs tmp size...done"
+}
+
+setDataPartition()
+{
+    local mntDir="/mnt/data"
+    local entry="LABEL=Data"
+    entry="$entry /mnt/data"
+    entry="$entry ext4"
+    entry="$entry auto,nouser,noexec,ro"
+    entry="$entry 0"    # dump backup utility: 0 - don't, 1 - do backup
+    entry="$entry 2"    # fsck: 0- don't check, 1- highiest prio, 2- other prio
+
+    log "Set data partition..."
+    cmd "echo -e \"\n$entry\" >> /etc/fstab"
+    err "$?" "$FUNCNAME" "failed to add entry to fstab"
+    createDir "$mntDir"
+    err "$?" "$FUNCNAME" "failed to create mount dir"
+    createLink "$mntDir" "/home/adam/Data"
+    err "$?" "$FUNCNAME" "failed to create link"
+    log "Set data partition...done"
+}
+
+#setGenericUsbMountPoint()
 #{
-    #log "Install bind tools..."
-    #installPackage "bind-tools"
-    #log "Install bind tools...done"
+    #log "Set generic usb mount point..."
+    #createDir "/mnt/usb"
+    #err "$?" "$FUNCNAME" "failed to create mount dir"
+    #log "Set generic usb mount point...done"
+#}
+
+#setMonolithUsb()
+#{
+    #log "Set monolith usb..."
+
+    #local entry="LABEL=monolith"
+    #entry="$entry /mnt/monolith"
+    #entry="$entry ext4"
+    #entry="$entry noauto,nofail,user,rw"
+    #entry="$entry 0"
+    #entry="$entry 0"
+
+    #createDir "/mnt/monolith"
+    #err "$?" "$FUNCNAME" "failed to create mount dir"
+    #cmd "echo -e \"\n$entry\" >> /etc/fstab"
+    #err "$?" "$FUNCNAME" "failed to add entry to fstab"
+
+    #log "Set monolith usb...done"
+#}
+
+#setPchelkaUsb()
+#{
+    #log "Set pchelka usb..."
+
+    #local entry="LABEL=PCHELKA"
+    #entry="$entry /mnt/pchelka"
+    #entry="$entry vfat"
+    #entry="$entry noauto,nofail,user,rw,umask=111,dmask=000"
+    #entry="$entry 0"
+    #entry="$entry 0"
+
+    #createDir "/mnt/pchelka"
+    #err "$?" "$FUNCNAME" "failed to create mount dir"
+    #cmd "echo -e \"\n$entry\" >> /etc/fstab"
+    #err "$?" "$FUNCNAME" "failed to add entry to fstab"
+
+    #log "Set pchelka usb...done"
+#}
+
+#setSzkatulkaUsb()
+#{
+    #log "Set szkatulka usb..."
+
+    #local entry="LABEL=SZKATULKA"
+    #entry="$entry /mnt/szkatulka"
+    #entry="$entry vfat"
+    #entry="$entry noauto,nofail,user,rw,umask=111,dmask=000"
+    #entry="$entry 0"
+    #entry="$entry 0"
+
+    #createDir "/mnt/szkatulka"
+    #err "$?" "$FUNCNAME" "failed to create mount dir"
+    #cmd "echo -e \"\n$entry\" >> /etc/fstab"
+    #err "$?" "$FUNCNAME" "failed to add entry to fstab"
+
+    #log "Set szkatulka usb...done"
+#}
+
+#setE51Usb()
+#{
+    #log "Set e51 usb..."
+
+    #local entry="LABEL=E51"
+    #entry="$entry /mnt/e51"
+    #entry="$entry vfat"
+    #entry="$entry noauto,nofail,user,rw,umask=111,dmask=000"
+    #entry="$entry 0"
+    #entry="$entry 0"
+
+    #createDir "/mnt/e51"
+    #err "$?" "$FUNCNAME" "failed to create mount dir"
+    #cmd "echo -e \"\n$entry\" >> /etc/fstab"
+    #err "$?" "$FUNCNAME" "failed to add entry to fstab"
+
+    #log "Set e51 usb...done"
+#}
+
+#setHama641Usb()
+#{
+    #log "Set hama_64_1 usb..."
+
+    #local entry="LABEL=HAMA_64_1"
+    #entry="$entry /mnt/hama_64_1"
+    #entry="$entry exfat"
+    #entry="$entry noauto,nofail,user,rw,umask=111,dmask=000"
+    #entry="$entry 0"
+    #entry="$entry 0"
+
+    #createDir "/mnt/hama_64_1"
+    #err "$?" "$FUNCNAME" "failed to create mount dir"
+    #cmd "echo -e \"\n$entry\" >> /etc/fstab"
+    #err "$?" "$FUNCNAME" "failed to add entry to fstab"
+
+    #log "Set hama_64_1 usb...done"
+#}
+
+#setD40Usb()
+#{
+    #log "Set D40 usb..."
+
+    #local entry="LABEL=D40"
+    #entry="$entry /mnt/d40"
+    #entry="$entry vfat"
+    #entry="$entry noauto,nofail,user,rw,umask=111,dmask=000"
+    #entry="$entry 0"
+    #entry="$entry 0"
+
+    #createDir "/mnt/d40"
+    #err "$?" "$FUNCNAME" "failed to create mount dir"
+    #cmd "echo -e \"\n$entry\" >> /etc/fstab"
+    #err "$?" "$FUNCNAME" "failed to add entry to fstab"
+
+    #log "Set D40 usb...done"
+#}
+
+#setGwizdekUsb()
+#{
+    #log "Set gwizdek usb..."
+
+    ## Gwizdek's label changes often, so use udev rule instead
+    #local entry="/dev/gwizdek1"
+    #entry="$entry /mnt/gwizdek"
+    #entry="$entry vfat"
+    #entry="$entry noauto,nofail,user,rw,umask=111,dmask=000"
+    #entry="$entry 0"
+    #entry="$entry 0"
+
+    #local rule="KERNEL==\\\"sd*\\\","
+    #rule="$rule ATTRS{vendor}==\\\"Kingston\\\","
+    #rule="$rule ATTRS{model}==\\\"DataTraveler 2.0\\\""
+    #rule="$rule SYMLINK+=\\\"gwizdek%n\\\""
+
+    #createDir "/mnt/gwizdek"
+    #err "$?" "$FUNCNAME" "failed to create mount dir"
+    #cmd "echo -e \"\n$entry\" >> /etc/fstab"
+    #err "$?" "$FUNCNAME" "failed to add entry to fstab"
+    #cmd "echo -e \"\n$rule\" >> /etc/udev/rules.d/8-usbstick.rules"
+    #err "$?" "$FUNCNAME" "failed to add udev rule"
+
+    #log "Set gwizdek usb...done"
 #}
 
 #---------------------------------------
@@ -1004,6 +1209,22 @@ installTmuxConfDotfile()
     err "$?" "$FUNCNAME" "failed to install .tmux.conf dotfile"
     log "Install .tmux.conf dotfile...done"
 }
+
+# NOTE: systemd does not allow symlinks - need to copy the file
+# NOTE: necessary to execute this as regular user - in supplementation stage
+copyUdiskieServiceDotfile()
+{
+    local srcDir="/home/adam/archon/hal/dotfiles/.config/systemd/user"
+    local dstDir="/home/adam/.config/systemd/user"
+
+    log "Copy udiskie service dotfile..."
+    cmd "mkdir -p $dstDir"
+    err "$?" "$FUNCNAME" "failed to create $dstDir directory"
+    cmd "cp $srcDir/udiskie.service $dstDir/udiskie.service"
+    err "$?" "$FUNCNAME" "failed to copy udiskie.service dotfile"
+    log "Copy udiskie service dotfile...done"
+}
+
 
 installXinitrcDotfile()
 {
@@ -1137,199 +1358,6 @@ setBootConsoleOutputLevels()
     log "Set boot console output levels...done"
 }
 
-#---------------------------------------
-# Partitions and file systems
-#---------------------------------------
-
-# Needed for exfat file system support (used natively by AEE S71 as default FS)
-installFuseExfat()
-{
-    log "Install fuse-exfat..."
-    installPackage fuse-exfat
-    log "Install fuse-exfat...done"
-}
-
-# Has to be done before AUR packages installation phase
-# to allow large AUR packages installation
-# OOM problems were observed on VirtualBox installations without this.
-setTmpfsTmpSize()
-{
-    # Size of /tmp partition - e.g. RAM size + SWAP size
-    log "Set tmpfs tmp size..."
-    cmd "echo \"tmpfs /tmp tmpfs size=16G,rw 0 0\" >> /etc/fstab"
-    err "$?" "$FUNCNAME" "failed to set tmpfs tmp size"
-    log "Set tmpfs tmp size...done"
-}
-
-setDataPartition()
-{
-    local mntDir="/mnt/data"
-    local entry="LABEL=Data"
-    entry="$entry /mnt/data"
-    entry="$entry ext4"
-    entry="$entry auto,nouser,noexec,ro"
-    entry="$entry 0"    # dump backup utility: 0 - don't, 1 - do backup
-    entry="$entry 2"    # fsck: 0- don't check, 1- highiest prio, 2- other prio
-
-    log "Set data partition..."
-    cmd "echo -e \"\n$entry\" >> /etc/fstab"
-    err "$?" "$FUNCNAME" "failed to add entry to fstab"
-    createDir "$mntDir"
-    err "$?" "$FUNCNAME" "failed to create mount dir"
-    createLink "$mntDir" "/home/adam/Data"
-    err "$?" "$FUNCNAME" "failed to create link"
-    log "Set data partition...done"
-}
-
-setGenericUsbMountPoint()
-{
-    log "Set generic usb mount point..."
-    createDir "/mnt/usb"
-    err "$?" "$FUNCNAME" "failed to create mount dir"
-    log "Set generic usb mount point...done"
-}
-
-setMonolithUsb()
-{
-    log "Set monolith usb..."
-
-    local entry="LABEL=monolith"
-    entry="$entry /mnt/monolith"
-    entry="$entry ext4"
-    entry="$entry noauto,nofail,user,rw"
-    entry="$entry 0"
-    entry="$entry 0"
-
-    createDir "/mnt/monolith"
-    err "$?" "$FUNCNAME" "failed to create mount dir"
-    cmd "echo -e \"\n$entry\" >> /etc/fstab"
-    err "$?" "$FUNCNAME" "failed to add entry to fstab"
-
-    log "Set monolith usb...done"
-}
-
-setPchelkaUsb()
-{
-    log "Set pchelka usb..."
-
-    local entry="LABEL=PCHELKA"
-    entry="$entry /mnt/pchelka"
-    entry="$entry vfat"
-    entry="$entry noauto,nofail,user,rw,umask=111,dmask=000"
-    entry="$entry 0"
-    entry="$entry 0"
-
-    createDir "/mnt/pchelka"
-    err "$?" "$FUNCNAME" "failed to create mount dir"
-    cmd "echo -e \"\n$entry\" >> /etc/fstab"
-    err "$?" "$FUNCNAME" "failed to add entry to fstab"
-
-    log "Set pchelka usb...done"
-}
-
-setSzkatulkaUsb()
-{
-    log "Set szkatulka usb..."
-
-    local entry="LABEL=SZKATULKA"
-    entry="$entry /mnt/szkatulka"
-    entry="$entry vfat"
-    entry="$entry noauto,nofail,user,rw,umask=111,dmask=000"
-    entry="$entry 0"
-    entry="$entry 0"
-
-    createDir "/mnt/szkatulka"
-    err "$?" "$FUNCNAME" "failed to create mount dir"
-    cmd "echo -e \"\n$entry\" >> /etc/fstab"
-    err "$?" "$FUNCNAME" "failed to add entry to fstab"
-
-    log "Set szkatulka usb...done"
-}
-
-setE51Usb()
-{
-    log "Set e51 usb..."
-
-    local entry="LABEL=E51"
-    entry="$entry /mnt/e51"
-    entry="$entry vfat"
-    entry="$entry noauto,nofail,user,rw,umask=111,dmask=000"
-    entry="$entry 0"
-    entry="$entry 0"
-
-    createDir "/mnt/e51"
-    err "$?" "$FUNCNAME" "failed to create mount dir"
-    cmd "echo -e \"\n$entry\" >> /etc/fstab"
-    err "$?" "$FUNCNAME" "failed to add entry to fstab"
-
-    log "Set e51 usb...done"
-}
-
-setHama641Usb()
-{
-    log "Set hama_64_1 usb..."
-
-    local entry="LABEL=HAMA_64_1"
-    entry="$entry /mnt/hama_64_1"
-    entry="$entry exfat"
-    entry="$entry noauto,nofail,user,rw,umask=111,dmask=000"
-    entry="$entry 0"
-    entry="$entry 0"
-
-    createDir "/mnt/hama_64_1"
-    err "$?" "$FUNCNAME" "failed to create mount dir"
-    cmd "echo -e \"\n$entry\" >> /etc/fstab"
-    err "$?" "$FUNCNAME" "failed to add entry to fstab"
-
-    log "Set hama_64_1 usb...done"
-}
-
-setD40Usb()
-{
-    log "Set D40 usb..."
-
-    local entry="LABEL=D40"
-    entry="$entry /mnt/d40"
-    entry="$entry vfat"
-    entry="$entry noauto,nofail,user,rw,umask=111,dmask=000"
-    entry="$entry 0"
-    entry="$entry 0"
-
-    createDir "/mnt/d40"
-    err "$?" "$FUNCNAME" "failed to create mount dir"
-    cmd "echo -e \"\n$entry\" >> /etc/fstab"
-    err "$?" "$FUNCNAME" "failed to add entry to fstab"
-
-    log "Set D40 usb...done"
-}
-
-setGwizdekUsb()
-{
-    log "Set gwizdek usb..."
-
-    # Gwizdek's label changes often, so use udev rule instead
-    local entry="/dev/gwizdek1"
-    entry="$entry /mnt/gwizdek"
-    entry="$entry vfat"
-    entry="$entry noauto,nofail,user,rw,umask=111,dmask=000"
-    entry="$entry 0"
-    entry="$entry 0"
-
-    local rule="KERNEL==\\\"sd*\\\","
-    rule="$rule ATTRS{vendor}==\\\"Kingston\\\","
-    rule="$rule ATTRS{model}==\\\"DataTraveler 2.0\\\""
-    rule="$rule SYMLINK+=\\\"gwizdek%n\\\""
-
-    createDir "/mnt/gwizdek"
-    err "$?" "$FUNCNAME" "failed to create mount dir"
-    cmd "echo -e \"\n$entry\" >> /etc/fstab"
-    err "$?" "$FUNCNAME" "failed to add entry to fstab"
-    cmd "echo -e \"\n$rule\" >> /etc/udev/rules.d/8-usbstick.rules"
-    err "$?" "$FUNCNAME" "failed to add udev rule"
-
-    log "Set gwizdek usb...done"
-}
-
 #-------------------
 # SSD adjustments
 #-------------------
@@ -1442,5 +1470,17 @@ installAndroidEnv()
     cmd "sudo chmod -R 755 /opt/android-sdk"
     err "$?" "$FUNCNAME" "failed to change android-sdk file permissions"
     log "Install android env...done"
+}
+
+#-------------------
+# Systemd services enabling
+#-------------------
+
+enableUdiskieService()
+{
+    log "Enable udiskie systemd service..."
+    cmd "systemctl --user enable udiskie.service"
+    err "$?" "$FUNCNAME" "failed to enable udiskie systemd  service"
+    log "Enable udiskie systemd service...done"
 }
 

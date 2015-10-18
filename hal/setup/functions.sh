@@ -205,7 +205,7 @@ createDir()
     local dir="$1"
     local retval=0
 
-    # Check if backup dir exists
+    # Check if dir exists
     if [[ ! -d $dir ]]; then
         cmd "mkdir -p $dir"
         retval="$?"

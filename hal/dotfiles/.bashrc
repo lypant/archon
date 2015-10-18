@@ -83,6 +83,11 @@ alias poweroff="sudo systemctl poweroff"
 alias reboot="sudo systemctl reboot"
 
 #-------------------
+# Udisks/udiskie
+#-------------------
+alias dismount='udiskie-umount --detach'
+
+#-------------------
 # X
 #-------------------
 #alias startx='startx &> ~/.xlog'

@@ -39,6 +39,12 @@ supplement()
     #installJdk
     #installAndroidEnv
 
+    #-------------------
+    # Systemd services enabling
+    #-------------------
+
+    enableUdiskieService
+
     log "Supplement...done"
 }
 
