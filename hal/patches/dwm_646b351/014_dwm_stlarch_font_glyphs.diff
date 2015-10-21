@@ -1,0 +1,34 @@
+diff --git a/config.def.h b/config.def.h
+index 0f1001f..3f847a8 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -30,9 +30,10 @@ static const char colors[NUMCOLORS][MAXCOLORS][8] = {
+ 
+ /* appearance */
+ static const char *fonts[] = {
+-	"monospace:size=10"
++    "Stlarch:size=10",
++    "Terminus:size=10"
+ };
+-static const char dmenufont[]       = "monospace:size=10";
++static const char dmenufont[]       = "Terminus:size=10";
+ static const char normbordercolor[] = SOLARIZED_BASE01;
+ static const char normbgcolor[]     = SOLARIZED_BASE03;
+ static const char normfgcolor[]     = SOLARIZED_BASE01;
+@@ -70,11 +71,11 @@ static const Bool resizehints = False;/* True means respect size hints in tiled
+ 
+ static const Layout layouts[] = {
+ 	/* symbol     arrange function */
+-	{ "[T]",      tile },    /* first entry is default */
+-	{ "[F]",      NULL },    /* no layout function means floating behavior */
+-	{ "[M]",      monocle },
+-	{ "[V]",      bstack },
+-	{ "[G]",      gaplessgrid },
++	{ "",      tile },    /* first entry is default */
++	{ "",      NULL },    /* no layout function means floating behavior */
++	{ "",      monocle },
++	{ "",      bstack },
++	{ "",      gaplessgrid },
+ };
+ 
+ /* key definitions */

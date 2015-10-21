@@ -125,15 +125,6 @@ customize()
     installAutomountTools
     configureAutomountTools
     setTmpfsTmpSize # To install large AUR packages in supplementation script
-    setDataPartition
-    #setGenericUsbMountPoint
-    #setMonolithUsb
-    #setPchelkaUsb
-    #setSzkatulkaUsb
-    #setE51Usb
-    #setHama641Usb
-    #setD40Usb
-    #setGwizdekUsb
     # TODO: Check Android device mounting
 
     #---------------------------------------

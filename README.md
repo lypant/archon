@@ -12,7 +12,7 @@ VirtualBox machine setup needed for installation to complete ('common' branch):
 Downloading scripts from livecd:
 curl -L https://github.com/lypant/archon/tarball/common | tar xz
 or with custom image containing additional scripts:
-./github_download -b common
+./github_download -b kiss
 
 2014_12_09
 Create new branch "kiss"
@@ -22,12 +22,10 @@ NOTES:
   are invalid - perform additional checks after partition creation?
 
 TODO:
-- Allow for installation with other system present ()
+? Allow for installation with other system present ()
     - Handle partitions
     - Support bootloader chainloading
-- Increase sudo timeout
 ? Add Tmp partition handling similar to Data partition
-? Add autofs support for removable media
 - Add cd/dvd burning program (brasero?)
 - Add program for downloading arch isos
 - Evince - fix missing icons
@@ -39,5 +37,8 @@ TODO:
 - BinUhr
     ? python2-pyserial package needed for serial communication
     ? add user to uucp group for access of /dev/ttyS0
-? Replace fstab entries for removable media with udisks/udiskie or similar tools
+- Add console program for email
+    ? mutt
+    ? alpine
+- Remove patches of older dwm version - dwm_14343e6
 
