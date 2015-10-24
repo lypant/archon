@@ -40,7 +40,6 @@ TODO:
 - Add console program for email
     ? mutt
     ? alpine
-- Remove patches of older dwm version - dwm_14343e6
 - Consider replacing dwm with i3
     Pros:
         - Configuration not requiring recompilation
