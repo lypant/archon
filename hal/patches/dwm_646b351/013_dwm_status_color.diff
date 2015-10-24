@@ -20,10 +20,10 @@ index 3a039ac..0f1001f 100644
  static const char *fonts[] = {
  	"monospace:size=10"
 diff --git a/drw.c b/drw.c
-index f49200b..3b3ebca 100644
+index f49200b..a9db4c3 100644
 --- a/drw.c
 +++ b/drw.c
-@@ -206,12 +206,36 @@ drw_setscheme(Drw *drw, ClrScheme *scheme)
+@@ -206,6 +206,31 @@ drw_setscheme(Drw *drw, ClrScheme *scheme)
  	drw->scheme = scheme;
  }
  
@@ -53,27 +53,18 @@ index f49200b..3b3ebca 100644
 +}
 +
  void
--drw_rect(Drw *drw, int x, int y, unsigned int w, unsigned int h, int filled, int empty, int invert)
--{
-+drw_rect(Drw *drw, int x, int y, unsigned int w, unsigned int h, int filled, int empty) {
- 	if (!drw->scheme)
- 		return;
--	XSetForeground(drw->dpy, drw->gc, invert ? drw->scheme->bg->pix : drw->scheme->fg->pix);
-+	XSetForeground(drw->dpy, drw->gc, drw->scheme->fg->pix);
- 	if (filled)
- 		XFillRectangle(drw->dpy, drw->drawable, drw->gc, x, y, w + 1, h + 1);
- 	else if (empty)
-@@ -219,8 +243,7 @@ drw_rect(Drw *drw, int x, int y, unsigned int w, unsigned int h, int filled, int
+ drw_rect(Drw *drw, int x, int y, unsigned int w, unsigned int h, int filled, int empty, int invert)
+ {
+@@ -219,7 +244,7 @@ drw_rect(Drw *drw, int x, int y, unsigned int w, unsigned int h, int filled, int
  }
  
  int
 -drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text, int invert)
--{
-+drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text, int pad) {
++drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text, int pad)
+ {
  	char buf[1024];
  	int tx, ty, th;
- 	Extnts tex;
-@@ -242,8 +265,7 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
+@@ -242,8 +267,7 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
  	if (!(render = x || y || w || h)) {
  		w = ~w;
  	} else {
@@ -83,7 +74,7 @@ index f49200b..3b3ebca 100644
  		XFillRectangle(drw->dpy, drw->drawable, drw->gc, x, y, w, h);
  		d = XftDrawCreate(drw->dpy, drw->drawable,
  		                  DefaultVisual(drw->dpy, drw->screen),
-@@ -289,10 +311,10 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
+@@ -289,10 +313,10 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
  					for (i = len; i && i > len - 3; buf[--i] = '.');
  
  				if (render) {
@@ -98,23 +89,21 @@ index f49200b..3b3ebca 100644
  				x += tex.w;
  				w -= tex.w;
 diff --git a/drw.h b/drw.h
-index e3b8515..5aaa4ab 100644
+index e3b8515..c3dcfad 100644
 --- a/drw.h
 +++ b/drw.h
-@@ -67,8 +67,9 @@ void drw_setfont(Drw *, Fnt *);
- void drw_setscheme(Drw *, ClrScheme *);
+@@ -68,7 +68,8 @@ void drw_setscheme(Drw *, ClrScheme *);
  
  /* Drawing functions */
--void drw_rect(Drw *, int, int, unsigned int, unsigned int, int, int, int);
+ void drw_rect(Drw *, int, int, unsigned int, unsigned int, int, int, int);
 -int drw_text(Drw *, int, int, unsigned int, unsigned int, const char *, int);
-+int drw_colored_text(Drw *drw, ClrScheme *scheme, int numcolors, int x, int y, unsigned int w, unsigned int h, char *text);
-+void drw_rect(Drw *drw, int x, int y, unsigned int w, unsigned int h, int filled, int empty);
 +int drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text, int pad);
++int drw_colored_text(Drw *drw, ClrScheme *scheme, int numcolors, int x, int y, unsigned int w, unsigned int h, char *text);
  
  /* Map functions */
  void drw_map(Drw *, Window, int, int, unsigned int, unsigned int);
 diff --git a/dwm.c b/dwm.c
-index 2192fde..733d136 100644
+index 2192fde..88b4349 100644
 --- a/dwm.c
 +++ b/dwm.c
 @@ -51,6 +51,7 @@
@@ -143,8 +132,7 @@ index 2192fde..733d136 100644
 +		drw_setscheme(drw, &scheme[(m->tagset[m->seltags] & 1 << i) ? 1 : (urg & 1 << i ? 2:0)]);
 +		drw_text(drw, x, 0, w, bh, tags[i], 1);
  		drw_rect(drw, x + 1, 1, dx, dx, m == selmon && selmon->sel && selmon->sel->tags & 1 << i,
--		           occ & 1 << i, urg & 1 << i);
-+		           occ & 1 << i);
+ 		           occ & 1 << i, urg & 1 << i);
  		x += w;
  	}
  	w = blw = TEXTW(m->ltsymbol);
@@ -153,7 +141,7 @@ index 2192fde..733d136 100644
  	drw_text(drw, x, 0, w, bh, m->ltsymbol, 0);
  	x += w;
  	xx = x;
-@@ -769,25 +770,26 @@ drawbar(Monitor *m) {
+@@ -769,25 +770,25 @@ drawbar(Monitor *m) {
  			x = xx;
  			w = m->ww - xx;
  		}
@@ -167,17 +155,14 @@ index 2192fde..733d136 100644
  		if(m->sel) {
 -			drw_setscheme(drw, m == selmon ? &scheme[SchemeSel] : &scheme[SchemeNorm]);
 -			drw_text(drw, x, 0, w, bh, m->sel->name, 0);
--			drw_rect(drw, x + 1, 1, dx, dx, m->sel->isfixed, m->sel->isfloating, 0);
 +			drw_setscheme(drw, &scheme[m == selmon ? 1 : 0]);
 +			drw_text(drw, x, 0, w, bh, m->sel->name, 1);
-+			drw_rect(drw, x, 0, w, bh, m->sel->isfixed, m->sel->isfloating);
+ 			drw_rect(drw, x + 1, 1, dx, dx, m->sel->isfixed, m->sel->isfloating, 0);
  		}
  		else {
 -			drw_setscheme(drw, &scheme[SchemeNorm]);
--			drw_rect(drw, x, 0, w, bh, 1, 0, 1);
 +			drw_setscheme(drw, &scheme[0]);
-+			/*drw_rect(drw, x, 0, w, bh, 1, 0, 1);*/
-+			drw_rect(drw, x, 0, w, bh, 1, 0);
+ 			drw_rect(drw, x, 0, w, bh, 1, 0, 1);
  		}
  	}
  	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
@@ -188,7 +173,7 @@ index 2192fde..733d136 100644
  	drw_map(drw, eb.win, 0, 0, mons->ww, bh);
  }
  
-@@ -823,7 +825,7 @@ focus(Client *c) {
+@@ -823,7 +824,7 @@ focus(Client *c) {
  		detachstack(c);
  		attachstack(c);
  		grabbuttons(c, True);
@@ -197,16 +182,16 @@ index 2192fde..733d136 100644
  		setfocus(c);
  	}
  	else {
-@@ -1069,7 +1071,7 @@ manage(Window w, XWindowAttributes *wa) {
- 	c->bw = borderpx;
+@@ -1070,7 +1071,7 @@ manage(Window w, XWindowAttributes *wa) {
  
  	wc.border_width = c->bw;
--	XConfigureWindow(dpy, w, CWBorderWidth, &wc);
+ 	XConfigureWindow(dpy, w, CWBorderWidth, &wc);
+-	XSetWindowBorder(dpy, w, scheme[SchemeNorm].border->pix);
 +	XSetWindowBorder(dpy, w, scheme[0].border->pix);
- 	XSetWindowBorder(dpy, w, scheme[SchemeNorm].border->pix);
  	configure(c); /* propagates border_width, if size doesn't change */
  	updatewindowtype(c);
-@@ -1566,12 +1568,12 @@ setup(void) {
+ 	updatesizehints(c);
+@@ -1566,12 +1567,12 @@ setup(void) {
  	cursor[CurResize] = drw_cur_create(drw, XC_sizing);
  	cursor[CurMove] = drw_cur_create(drw, XC_fleur);
  	/* init appearance */
@@ -225,7 +210,7 @@ index 2192fde..733d136 100644
  	/* init bars */
  	updatebars();
  	updatestatus();
-@@ -1750,7 +1752,7 @@ unfocus(Client *c, Bool setfocus) {
+@@ -1750,7 +1751,7 @@ unfocus(Client *c, Bool setfocus) {
  	if(!c)
  		return;
  	grabbuttons(c, False);
