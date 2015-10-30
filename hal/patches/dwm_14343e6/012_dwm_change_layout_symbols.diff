@@ -1,0 +1,15 @@
+diff --git a/config.def.h b/config.def.h
+index 767b5dd..c964fe7 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -62,8 +62,8 @@ static const Bool resizehints = False;/* True means respect size hints in tiled
+ 
+ static const Layout layouts[] = {
+ 	/* symbol     arrange function */
+-	{ "[]=",      tile },    /* first entry is default */
+-	{ "><>",      NULL },    /* no layout function means floating behavior */
++	{ "[T]",      tile },    /* first entry is default */
++	{ "[F]",      NULL },    /* no layout function means floating behavior */
+ 	{ "[M]",      monocle },
+ 	{ "[V]",      bstack },
+ 	{ "[G]",      gaplessgrid },

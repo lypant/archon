@@ -1,0 +1,30 @@
+diff --git a/config.def.h b/config.def.h
+index c964fe7..4ca10c6 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -20,6 +20,8 @@
+ 
+ /* appearance */
+ static const char *fonts[] = {
++    "Stlarch:size=10.5",
++    "Terminus:size=10.5",
+     "Sans:size=10.5",
+     "VL Gothic:size=10.5",
+     "WenQuanYi Micro Hei:size=10.5",
+@@ -62,11 +64,11 @@ static const Bool resizehints = False;/* True means respect size hints in tiled
+ 
+ static const Layout layouts[] = {
+ 	/* symbol     arrange function */
+-	{ "[T]",      tile },    /* first entry is default */
+-	{ "[F]",      NULL },    /* no layout function means floating behavior */
+-	{ "[M]",      monocle },
+-	{ "[V]",      bstack },
+-	{ "[G]",      gaplessgrid },
++	{ "",      tile },    /* first entry is default */
++	{ "",      NULL },    /* no layout function means floating behavior */
++	{ "",      monocle },
++	{ "",      bstack },
++	{ "",      gaplessgrid },
+ };
+ 
+ /* key definitions */
