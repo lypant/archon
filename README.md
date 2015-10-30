@@ -41,20 +41,4 @@ TODO:
     ? mutt
     ? alpine
 - Remove patches of older dwm version - dwm_14343e6
-- Consider replacing dwm with i3
-    Pros:
-        - Configuration not requiring recompilation
-            - No need to adjust after package update
-        - Good documentation
-    Cons:
-        ? Is it possible to have colorized dmenu without using AUR dmenu?
-            - If not than this is a con
-        - Gaps between windows (at least between terminals)
-        - No defined layouts - need to create manually
-            - How to switch e.g. from "tiled" to "bstack" layouts easily?
-    dwm cons:
-        - Need to update patches for newer commits in dwm git repo
-        - Patching and fiddling with source code can lead to bugs
-        - No central config file witch could be left after package update
-        - Not installed as package - might be not visible for some dependencies
 

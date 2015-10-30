@@ -1,5 +1,5 @@
 diff --git a/config.def.h b/config.def.h
-index 0f1001f..8000c46 100644
+index 0f1001f..3f847a8 100644
 --- a/config.def.h
 +++ b/config.def.h
 @@ -30,9 +30,10 @@ static const char colors[NUMCOLORS][MAXCOLORS][8] = {
@@ -11,7 +11,7 @@ index 0f1001f..8000c46 100644
 +    "Terminus:size=10"
  };
 -static const char dmenufont[]       = "monospace:size=10";
-+static const char dmenufont[]       = "-*-terminus-medium-r-*-*-13-*-*-*-*-*-*-*";
++static const char dmenufont[]       = "Terminus:size=10";
  static const char normbordercolor[] = SOLARIZED_BASE01;
  static const char normbgcolor[]     = SOLARIZED_BASE03;
  static const char normfgcolor[]     = SOLARIZED_BASE01;
