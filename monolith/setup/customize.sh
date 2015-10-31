@@ -89,6 +89,8 @@ customize()
     installGitconfigDotfile
     installCmusColorThemeDotfile
     installTmuxConfDotfile
+    installActkbdConfDotfile            # actkbd is installed in supplementation
+    copyActkbdServiceDotfile            # actkbd is installed in supplementation
 
     #---------------------------------------
     # Boot process configuration

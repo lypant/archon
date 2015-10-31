@@ -558,7 +558,7 @@ configurePacman()
 addUser()
 {
     log "Add user..."
-    cmd "useradd -m -g users -G wheel,storage,power -s /bin/bash adam"
+    cmd "useradd -m -g users -G wheel,storage,power,input -s /bin/bash adam"
     log "Add user...done"
 }
 
@@ -829,6 +829,27 @@ installTmuxConfDotfile()
     log "Install .tmux.conf dotfile...done"
 }
 
+# NOTE: actkbd is installed from AUR in supplementation stage
+installActkbdConfDotfile()
+{
+    log "Install actkbd.conf dotfile..."
+    installDotfile "actkbd.conf" ".config"
+    err "$?" "$FUNCNAME" "failed to install actkbd.conf dotfile"
+    log "Install actkbd.conf dotfile...done"
+}
+
+# NOTE: actkbd is installed from AUR in supplementation stage
+# NOTE: systemd does not allow symlinks - need to copy the file
+copyActkbdServiceDotfile()
+{
+    log "Copy actkbd.service dotfile..."
+    cmd "mkdir -p /home/adam/.config/systemd/user"
+    err "$?" "$FUNCNAME" "failed to create .config/systemd/user directory"
+    cmd "cp /home/adam/archon/monolith/dotfiles/.config/systemd/user/actkbd.service /home/adam/.config/systemd/user/actkbd.service"
+    err "$?" "$FUNCNAME" "failed to copy actkbd.service dotfile "
+    log "Copy actkbd.service dotfile...done"
+}
+
 #---------------------------------------
 # Boot process configuration
 #---------------------------------------
@@ -1009,14 +1030,37 @@ copyProjectLogFiles()
 # Note: All steps will be executed using regular user account
 #-------------------------------------------------------------------------------
 
-#---------------------------------------
-# Java development environment
-#---------------------------------------
+#--------------------------------------
+# AUR packages
+#--------------------------------------
+
+#-------------------
+# Installation
+#-------------------
+
+installActkbd()
+{
+    log "Install actkbd..."
+    installAurPackage "actkbd"
+    log "Install actkbd...done"
+}
 
 installJdk()
 {
     log "Install jdk..."
     installPackage "jdk8-openjdk"
     log "Install jdk...done"
+}
+
+#-------------------
+# Systemd services enabling
+#-------------------
+
+enableActkbdService()
+{
+    log "Enable actkbd service..."
+    cmd "systemctl --user enable actkbd.service"
+    err "$?" "$FUNCNAME" "failed to enable actkbd service"
+    log "Enable actkbd service...done"
 }
 

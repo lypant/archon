@@ -28,10 +28,20 @@ supplement()
 {
     log "Supplement..."
 
-    #---------------------------------------
-    # Java development environment
-    #---------------------------------------
-    installJdk
+    #--------------------------------------
+    # AUR packages
+    #--------------------------------------
+
+    #-------------------
+    # Installation
+    #-------------------
+    installActkbd                       # For key bindings in console mode
+    #installJdk
+
+    #-------------------
+    # Systemd services enabling
+    #-------------------
+    enableActkbdService
 
     log "Supplement...done"
 }
