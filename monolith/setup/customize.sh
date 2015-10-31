@@ -105,11 +105,9 @@ customize()
     #---------------------------------------
     # Partitions and file systems
     #---------------------------------------
+    installAutomountTools
+    configureAutomountTools
     setDataPartition
-    setGenericUsbMountPoint
-    setPchelkaUsb
-    setSzkatulkaUsb
-    setD40Usb
 
     #---------------------------------------
     # Final steps

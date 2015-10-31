@@ -933,6 +933,32 @@ setBootConsoleOutputLevels()
 # Partitions and file systems
 #---------------------------------------
 
+installAutomountTools()
+{
+    log "Install automount tools..."
+    installPackage udisks2 udiskie
+    log "Install automount tools...done"
+}
+
+configureAutomountTools()
+{
+    local configDir="/root/archon/monolith/config"
+    local polkitFile="/etc/polkit-1/rules.d/50-udisks.rules"
+    local udevFile="/etc/udev/rules.d/99-udisks2.rules"
+
+    log "Configure automount tools..."
+    # Policy file for udisks
+    cmd "cp $configDir$polkitFile $polkitFile"
+    err "$?" "$FUNCNAME" "failed to copy udisks polkit file"
+    # Create /media mount point
+    createDir "/media"
+    err "$?" "$FUNCNAME" "failed to create /media dir"
+    # Use /media as mount point instead of /run/media/$USER/<VOLUME_NAME>
+    cmd "cp $configDir$udevFile $udevFile"
+    err "$?" "$FUNCNAME" "failed to copy udisks udev rule file"
+    log "Configure automount tools...done"
+}
+
 setDataPartition()
 {
     local mntDir="/mnt/data"
@@ -951,71 +977,6 @@ setDataPartition()
     createLink "$mntDir" "/home/adam/Data"
     err "$?" "$FUNCNAME" "failed to create link"
     log "Set data partition...done"
-}
-
-setGenericUsbMountPoint()
-{
-    log "Set generic usb mount point..."
-    createDir "/mnt/usb"
-    err "$?" "$FUNCNAME" "failed to create mount dir"
-    log "Set generic usb mount point...done"
-}
-
-setPchelkaUsb()
-{
-    log "Set pchelka usb..."
-
-    local entry="LABEL=PCHELKA"
-    entry="$entry /mnt/pchelka"
-    entry="$entry vfat"
-    entry="$entry noauto,nofail,user,rw,umask=111,dmask=000"
-    entry="$entry 0"
-    entry="$entry 0"
-
-    createDir "/mnt/pchelka"
-    err "$?" "$FUNCNAME" "failed to create mount dir"
-    cmd "echo -e \"\n$entry\" >> /etc/fstab"
-    err "$?" "$FUNCNAME" "failed to add entry to fstab"
-
-    log "Set pchelka usb...done"
-}
-
-setSzkatulkaUsb()
-{
-    log "Set szkatulka usb..."
-
-    local entry="LABEL=SZKATULKA"
-    entry="$entry /mnt/szkatulka"
-    entry="$entry vfat"
-    entry="$entry noauto,nofail,user,rw,umask=111,dmask=000"
-    entry="$entry 0"
-    entry="$entry 0"
-
-    createDir "/mnt/szkatulka"
-    err "$?" "$FUNCNAME" "failed to create mount dir"
-    cmd "echo -e \"\n$entry\" >> /etc/fstab"
-    err "$?" "$FUNCNAME" "failed to add entry to fstab"
-
-    log "Set szkatulka usb...done"
-}
-
-setD40Usb()
-{
-    log "Set D40 usb..."
-
-    local entry="LABEL=D40"
-    entry="$entry /mnt/d40"
-    entry="$entry vfat"
-    entry="$entry noauto,nofail,user,rw,umask=111,dmask=000"
-    entry="$entry 0"
-    entry="$entry 0"
-
-    createDir "/mnt/d40"
-    err "$?" "$FUNCNAME" "failed to create mount dir"
-    cmd "echo -e \"\n$entry\" >> /etc/fstab"
-    err "$?" "$FUNCNAME" "failed to add entry to fstab"
-
-    log "Set D40 usb...done"
 }
 
 #---------------------------------------
