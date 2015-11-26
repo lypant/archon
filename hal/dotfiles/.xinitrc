@@ -17,6 +17,9 @@ xset +fp /usr/share/fonts/local
 # Set fontmap to Polish
 setxkbmap pl
 
+# Bind keyboard keys
+xbindkeys
+
 #-------------------------------------------------------------------------------
 # Colors
 #-------------------------------------------------------------------------------
@@ -28,18 +31,15 @@ source "$HOME/archon/hal/colors/solarized/bash.conf"
 xsetroot -solid "#$SOLARIZED_BASE03"
 
 #-------------------------------------------------------------------------------
-# Windows Manager
+# Window Manager
 #-------------------------------------------------------------------------------
 
-# Use conky to display system info on status bar
-conky | while read -r; do xsetroot -name "$REPLY"; done &
-
-# Bind keyboard keys
-xbindkeys
+## Use conky to display system info on status bar
+#conky | while read -r; do xsetroot -name "$REPLY"; done &
 
 # Fix misbehaving Java applications by setting WM name
 wmname LG3D
 
-# Launch dwm
-exec dwm
+## Launch dwm
+#exec dwm
 

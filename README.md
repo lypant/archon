@@ -82,6 +82,7 @@ TODO:
         Section "Extensions"
             Option "Composite" "Disable"
         EndSection
+    ! Delete .conkyrc dotfile once moved to i3
 - try some console email client
     - mutt
     - alpine

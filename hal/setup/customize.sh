@@ -95,12 +95,12 @@ customize()
     # Config
     #-------------------
     installXbindkeys
-    installConky
+    #installConky
 
     #-------------------
     # Programs
     #-------------------
-    installCustomizedDwm
+    #installCustomizedDwm
     installDmenu
     installRxvtUnicode
     installFirefox
@@ -145,7 +145,7 @@ customize()
     installXinitrcDotfile
     installXresourcesDotfile
     installXbindkeysrcDotfile
-    installConkyDotfile
+    #installConkyDotfile
 
     #---------------------------------------
     # Boot process configuration
