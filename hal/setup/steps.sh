@@ -731,71 +731,16 @@ installXbindkeys()
     log "Install xbindkeys...done"
 }
 
-#installConky()
-#{
-    #log "Install conky..."
-    #installPackage "conky"
-    #log "Install conky...done"
-#}
-
 #-------------------
 # Programs
 #-------------------
 
-## Requires stlarch_font package from AUR for status bar glyphs
-#installCustomizedDwm()
-#{
-#    local patch_dir="/root/archon/hal/patches/dwm_14343e6"
-#    local build_path="/home/adam/forge/dwm"
-#    local comment="Adjustments done during archon installation"
-#
-#    log "Installing customized dwm..."
-#    # Clone project from git
-#    cmd "git clone http://git.suckless.org/dwm $build_path"
-#    err "$?" "$FUNCNAME" "failed to clone dwm repo"
-#    # Use specific commit as a baseline
-#    cmd "git -C $build_path checkout -b custom 14343e6"
-#    err "$?" "$FUNCNAME" "failed to checkout commit 14343e6"
-#    # Apply patches with customizations
-#    cmd "git -C $build_path apply $patch_dir/001_dwm_adjust_config_mk.diff"
-#    err "$?" "$FUNCNAME" "failed to apply dwm patch 001"
-#    cmd "git -C $build_path apply $patch_dir/002_dwm_change_termcmd_urxvt.diff"
-#    err "$?" "$FUNCNAME" "failed to apply dwm patch 002"
-#    cmd "git -C $build_path apply $patch_dir/003_dwm_change_modkey_win_key.diff"
-#    err "$?" "$FUNCNAME" "failed to apply dwm patch 003"
-#    cmd "git -C $build_path apply $patch_dir/004_dwm_remove_apps_to_tags.diff"
-#    err "$?" "$FUNCNAME" "failed to apply dwm patch 004"
-#    cmd "git -C $build_path apply $patch_dir/005_dwm_remove_gaps.diff"
-#    err "$?" "$FUNCNAME" "failed to apply dwm patch 005"
-#    cmd "git -C $build_path apply $patch_dir/006_dwm_solarized_dark_colors.diff"
-#    err "$?" "$FUNCNAME" "failed to apply dwm patch 006"
-#    cmd "git -C $build_path apply $patch_dir/007_dwm_focus_on_click.diff"
-#    err "$?" "$FUNCNAME" "failed to apply dwm patch 007"
-#    cmd "git -C $build_path apply $patch_dir/008_dwm_pertag.diff"
-#    err "$?" "$FUNCNAME" "failed to apply dwm patch 008"
-#    cmd "git -C $build_path apply $patch_dir/009_dwm_dual_status.diff"
-#    err "$?" "$FUNCNAME" "failed to apply dwm patch 009"
-#    cmd "git -C $build_path apply $patch_dir/010_dwm_bottom_stack.diff"
-#    err "$?" "$FUNCNAME" "failed to apply dwm patch 010"
-#    cmd "git -C $build_path apply $patch_dir/011_dwm_gapless_grid.diff"
-#    err "$?" "$FUNCNAME" "failed to apply dwm patch 011"
-#    cmd "git -C $build_path apply $patch_dir/012_dwm_change_layout_symbols.diff"
-#    err "$?" "$FUNCNAME" "failed to apply dwm patch 012"
-#    cmd "git -C $build_path apply $patch_dir/013_dwm_status_color.diff"
-#    err "$?" "$FUNCNAME" "failed to apply dwm patch 013"
-#    cmd "git -C $build_path apply $patch_dir/014_dwm_stlarch_font_glyphs.diff"
-#    err "$?" "$FUNCNAME" "failed to apply dwm patch 014"
-#    # Add changes introduced with patch. Use add . since new files may be added
-#    cmd "git -C $build_path add ."
-#    err "$?" "$FUNCNAME" "failed to add changes introduced with patch"
-#    # Save configuration as a new commit
-#    cmd "git -C $build_path commit -m \"$comment\""
-#    err "$?" "$FUNCNAME" "failed to commit dwm changes"
-#    # Install
-#    cmd "make -C $build_path clean install"
-#    err "$?" "$FUNCNAME" "failed to install dwm"
-#    log "Installing customized dwm...done"
-#}
+installI3()
+{
+    log "Install i3..."
+    installPackage "i3"
+    log "Install i3...done"
+}
 
 installDmenu()
 {
@@ -1104,13 +1049,19 @@ installXbindkeysrcDotfile()
     log "Install .xbindkeysrc dotfile...done"
 }
 
-#installConkyDotfile()
-#{
-    #log "Install .conkyrc dotfile..."
-    #installDotfile ".conkyrc" ""
-    #err "$?" "$FUNCNAME" "failed to install .conkyrc dotfile"
-    #log "Install .conkyrc dotfile...done"
-#}
+installI3ConfigDotfile()
+{
+    log "Install i3 config dotfile..."
+    installDotfile "config" ".config/i3"
+    log "Install i3 config dotfile...done"
+}
+
+installI3StatusConfigDoftile()
+{
+    log "Install i3status.conf dotfile..."
+    installDotfile "i3status.conf" ".config/i3status"
+    log "Install i3status.conf dotfile...done"
+}
 
 #---------------------------------------
 # Boot process configuration
@@ -1295,23 +1246,18 @@ copyProjectLogFiles()
 # Misc AUR packages
 #--------------------------------------
 
-installStlarchFont()
-{
-    log "Install stlarch font..."
-    installAurPackage "stlarch_font"
-    log "Install stlarch font...done"
-}
-
 #---------------------------------------
 # Android development environment
 #---------------------------------------
 
-installJdk()
-{
-    log "Install jdk..."
-    installAurPackage "jdk"
-    log "Install jdk...done"
-}
+# TODO: Prefer packages from official repositories,
+#       e.g. jre8-openjdk and jdk8-openjdk
+#installJdk()
+#{
+    #log "Install jdk..."
+    #installAurPackage "jdk"
+    #log "Install jdk...done"
+#}
 
 installAndroidEnv()
 {

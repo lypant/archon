@@ -31,12 +31,11 @@ supplement()
     #--------------------------------------
     # Misc AUR packages
     #--------------------------------------
-    installStlarchFont
 
     #---------------------------------------
     # Android development environment
     #---------------------------------------
-    #installJdk
+    #installJdk         # TODO: Prefer packages from official repositories
     #installAndroidEnv
 
     #-------------------

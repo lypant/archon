@@ -34,12 +34,9 @@ xsetroot -solid "#$SOLARIZED_BASE03"
 # Window Manager
 #-------------------------------------------------------------------------------
 
-## Use conky to display system info on status bar
-#conky | while read -r; do xsetroot -name "$REPLY"; done &
-
 # Fix misbehaving Java applications by setting WM name
 wmname LG3D
 
-## Launch dwm
-#exec dwm
+# Launch i3
+exec i3
 
