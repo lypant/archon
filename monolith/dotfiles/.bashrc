@@ -12,7 +12,7 @@
 #---------------------------------------
 
 # Add more dirs to path
-export PATH=$PATH:/$HOME/archon/monolith/bin
+export PATH=$PATH:$HOME/archon/monolith/bin
 
 #-------------------------------------------------------------------------------
 # Shell
