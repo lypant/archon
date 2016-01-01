@@ -34,6 +34,9 @@ xsetroot -solid "#$SOLARIZED_BASE03"
 # Window Manager
 #-------------------------------------------------------------------------------
 
+# Disable screensaver (whole Display Power Management Signalling)
+xset -dpms
+
 # Fix misbehaving Java applications by setting WM name
 wmname LG3D
 
