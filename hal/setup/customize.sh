@@ -80,6 +80,7 @@ customize()
     #-------------------
     installXorg
     removeMesaLibgl
+    installPackagesRequiredByI3Shell
 
     #-------------------
     # Video driver

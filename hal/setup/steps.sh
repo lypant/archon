@@ -697,6 +697,13 @@ removeMesaLibgl()
     log "Remove mesa-libgl...done"
 }
 
+installPackagesRequiredByI3Shell()
+{
+    log "Install packages required by i3-shell.sh..."
+    installPackage "xorg-xdpyinfo xorg-xprop"
+    log "Install packages required by i3-shell.sh...done"
+}
+
 #-------------------
 # Video driver
 #-------------------
