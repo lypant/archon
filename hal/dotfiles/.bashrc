@@ -88,6 +88,11 @@ alias reboot="sudo systemctl reboot"
 alias dismount='udiskie-umount --detach'
 
 #-------------------
+# Urgency hint
+#-------------------
+alias urgent='echo -e "\a"'
+
+#-------------------
 # X
 #-------------------
 #alias startx='startx &> ~/.xlog'
