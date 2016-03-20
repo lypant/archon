@@ -907,6 +907,28 @@ configureAutomountTools()
     log "Configure automount tools...done"
 }
 
+# NOTE: jmtpfs package will be installed in supplementation steps - AUR
+configureMtpTools()
+{
+    local fuseFile="/etc/fuse.conf"
+    local configDir="/home/adam/archon/hal/config"
+    local srvFile="/etc/systemd/system/android_automount@.service"
+    local udevFile="/etc/udev/rules.d/98-android_automount.rules"
+
+    log "Configure MTP tools..."
+
+    uncommentVar "user_allow_other" "$fuseFile"
+    err "$?" "$FUNCNAME" "Failed to uncomment user_allow_other var in $fuseFile"
+
+    cmd "cp $configDir$srvFile $srvFile"
+    err "$?" "$FUNCNAME" "Failed to copy $configDir$srvFile to $srvFile"
+
+    cmd "cp $configDir$udevFile $udevFile"
+    err "$?" "$FUNCNAME" "Failed to copy $configDir$udevFile to $udevFile"
+
+    log "Configure MTP tools...done"
+}
+
 # Has to be done before AUR packages installation phase
 # to allow large AUR packages installation
 # OOM problems were observed on VirtualBox installations without this.
@@ -1252,6 +1274,13 @@ copyProjectLogFiles()
 #--------------------------------------
 # Misc AUR packages
 #--------------------------------------
+
+installMtpTools()
+{
+    log "Install MTP tools..."
+    installAurPackage "jmtpfs"
+    log "Install MTP tools...done"
+}
 
 #---------------------------------------
 # Android development environment

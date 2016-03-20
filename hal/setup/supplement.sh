@@ -31,6 +31,7 @@ supplement()
     #--------------------------------------
     # Misc AUR packages
     #--------------------------------------
+    installMtpTools
 
     #---------------------------------------
     # Android development environment
