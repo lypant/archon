@@ -33,16 +33,20 @@ supplement()
     #--------------------------------------
     installMtpTools
 
+    #-------------------
+    # Printing
+    #-------------------
+    installProprietaryPrinterDriver  # Required by HP P1102 printer
+
     #---------------------------------------
     # Android development environment
     #---------------------------------------
     #installJdk         # TODO: Prefer packages from official repositories
     #installAndroidEnv
 
-    #-------------------
+    #--------------------------------------
     # Systemd services enabling
-    #-------------------
-
+    #--------------------------------------
     enableUdiskieService
 
     log "Supplement...done"

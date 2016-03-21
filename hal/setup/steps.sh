@@ -1242,6 +1242,33 @@ setMakepkgBuilddir()
 }
 
 #---------------------------------------
+# Printing
+#---------------------------------------
+
+installCups()
+{
+    log "Install CUPS..."
+    installPackage "cups ghostscript gsfonts"
+    log "Install CUPS...done"
+}
+
+enableCupsService()
+{
+    log "Enable CUPS service..."
+    cmd "systemctl enable org.cups.cupsd.service"
+    err "$?" "$FUNCNAME" "failed to enable CUPS service"
+    log "Enable CUPS service...done"
+}
+
+# NOTE: HP LaserJet Pro P1102 requires also proprietary hplip-plugin (AUR)
+installPrinterDriver()
+{
+    log "Install printer driver..."
+    installPackage "hplip"
+    log "Install printer driver...done"
+}
+
+#---------------------------------------
 # Final steps
 #---------------------------------------
 
@@ -1280,6 +1307,17 @@ installMtpTools()
     log "Install MTP tools..."
     installAurPackage "jmtpfs"
     log "Install MTP tools...done"
+}
+
+#-------------------
+# Printing
+#-------------------
+
+installProprietaryPrinterDriver()
+{
+    log "Install hplip-plugin..."
+    installAurPackage "hplip-plugin"
+    log "Install hplip-plugin...done"
 }
 
 #---------------------------------------

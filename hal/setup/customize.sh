@@ -170,6 +170,13 @@ customize()
     setMakepkgBuilddir
 
     #---------------------------------------
+    # Printing
+    #---------------------------------------
+    installCups
+    enableCupsService
+    installPrinterDriver
+
+    #---------------------------------------
     # Final steps
     #---------------------------------------
     recreateImage
