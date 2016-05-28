@@ -571,7 +571,7 @@ configureGitUser()
 workaroundCaCerts()
 {
     log "Workaround CA certs..."
-    cmd "update-ca-certs"
+    cmd "update-ca-trust"
     log "Workaround CA certs...done"
 }
 
