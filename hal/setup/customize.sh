@@ -48,6 +48,7 @@ customize()
     #---------------------------------------
     installGit
     configureGitUser
+    workaroundCaCerts   # TODO: check in future if still needed
     cloneArchonRepo
     checkoutCurrentBranch
     copyOverArchonFiles
@@ -172,9 +173,9 @@ customize()
     #---------------------------------------
     # Printing
     #---------------------------------------
-    installCups
-    enableCupsService
-    installPrinterDriver
+    #installCups
+    #enableCupsService
+    #installPrinterDriver
 
     #---------------------------------------
     # Final steps

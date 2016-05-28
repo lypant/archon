@@ -563,6 +563,18 @@ configureGitUser()
     log "Configure git user...done"
 }
 
+# This step is a workaround for a problem observed 28.05.2016
+# cloneArchRepo failed with "Unable to access ... error setting certificate:
+# verify locations CAfile: /etc/ssl/certs/ca-certificates.crt CAPath:none"
+# Issueing update-ca-trust helped
+# TODO: check in future if still needed
+workaroundCaCerts()
+{
+    log "Workaround CA certs..."
+    cmd "update-ca-certs"
+    log "Workaround CA certs...done"
+}
+
 cloneArchonRepo()
 {
     log "Clone archon repo..."
