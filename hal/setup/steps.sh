@@ -1281,6 +1281,36 @@ installPrinterDriver()
 }
 
 #---------------------------------------
+# Virtualbox
+#---------------------------------------
+
+installVirtualbox()
+{
+    local modules="vboxdrv vboxnetadp vboxnetflt vboxpci"
+    local modulesFile="/etc/modules-load.d/virtualbox.conf"
+    local user="adam"
+    local group="vboxusers"
+
+    log "Install virtualbox..."
+
+    # Install necessary packages
+    installPackage "virtualbox-host-modules-arch virtualbox qt4"
+
+    # Set kernel modules loading
+    for module in $modules
+    do
+        cmd "echo $module >> $modulesFile"
+        err "$?" "$FUNCNAME" "failed to add module $module to $modulesFile"
+    done
+
+    # Add group to required group
+    cmd "gpasswd -a $user $group"
+    err "$?" "$FUNCNAME" "failed to add user $user to group $group"
+
+    log "Install virtualbox...done"
+}
+
+#---------------------------------------
 # Final steps
 #---------------------------------------
 
