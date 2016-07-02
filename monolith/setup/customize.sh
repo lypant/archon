@@ -33,7 +33,6 @@ customize()
     log "Customize..."
     configurePacman
     updatePackageList
-    updateCertificates
 
     #---------------------------------------
     # User account
@@ -41,6 +40,7 @@ customize()
     addUser
     setUserPassword
     setSudoRights
+    updateCertificates
 
     #---------------------------------------
     # Git and archon files

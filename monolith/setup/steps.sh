@@ -994,7 +994,7 @@ setDataPartition()
     local entry="LABEL=Data"
     entry="$entry /mnt/data"
     entry="$entry ext2"
-    entry="$entry auto,nouser,noexec,ro"
+    entry="$entry auto,nouser,noexec,nofail,ro"
     entry="$entry 0"    # dump backup utility: 0 - don't, 1 - do backup
     entry="$entry 2"    # fsck: 0- don't check, 1- highiest prio, 2- other prio
 
