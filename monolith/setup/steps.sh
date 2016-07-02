@@ -29,7 +29,7 @@ SYSTEM_HDD="sda"
 # Swap partition
 #-------------------
 SWAP_PART_NB="1"
-SWAP_PART_SIZE="+256M"
+SWAP_PART_SIZE="+512M"
 
 #-------------------
 # Boot partition
@@ -549,6 +549,14 @@ configurePacman()
     # Present total download percentage instead of single package percentage
     uncommentVar "TotalDownload" "/etc/pacman.conf"
     log "Configure pacman...done"
+}
+
+updateCertificates()
+{
+    log "Update certificates..."
+    cmd "trust extract-compat"
+    err "$?" "$FUNCNAME" "failed to update certificates"
+    log "Update certificates...done"
 }
 
 #---------------------------------------

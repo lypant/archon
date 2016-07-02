@@ -52,8 +52,8 @@ install()
     #---------------------------------------
     # Base system installation
     #---------------------------------------
-    rankMirrors
-    #downloadMirrorList
+    #rankMirrors
+    downloadMirrorList
     installBaseSystemLts
 
     #---------------------------------------

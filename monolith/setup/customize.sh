@@ -33,6 +33,7 @@ customize()
     log "Customize..."
     configurePacman
     updatePackageList
+    updateCertificates
 
     #---------------------------------------
     # User account
