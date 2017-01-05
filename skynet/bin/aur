@@ -1,0 +1,91 @@
+#!/bin/bash
+#===============================================================================
+# FILE:         aur
+#
+# USAGE:        ./aur
+#
+# DESCRIPTION:  Downloads, processes and installs AUR packages
+#===============================================================================
+
+# Setup shell - detect unset variables
+set -o nounset
+
+#-------------------------------------------------------------------------------
+# Functions
+#-------------------------------------------------------------------------------
+
+usage()
+{
+cat << EOF
+Downloads, processes and installs AUR packages
+
+Usage: ${0##*/} PACKAGE_1 [PACKAGE_2] ...
+    -h display this help and exit
+EOF
+}
+
+installAurPackage()
+{
+    local buildDir="/tmp"
+    local url="https://aur.archlinux.org/cgit/aur.git/snapshot"
+
+    for p in $@
+    do
+        local pkgFile="$url/$p.tar.gz"
+                cd $buildDir
+        eval "curl \"$pkgFile\" | tar xz"
+
+        if [[ "$?" -ne 0 ]]; then
+            echo "Failed to download package $pkgFile"
+            continue
+        fi
+
+        cd $buildDir/$p
+        eval "makepkg -si --noconfirm"
+    done
+}
+
+query()
+{
+    echo "AUR package(s): $@"
+    read -p "Donwload, process and install? [y/N]?" response
+    case $response in
+        [Yy]*)
+            time { installAurPackage "$@" ; }
+            ;;
+        *)
+            echo "Cancelled"
+            exit 0
+            ;;
+    esac
+}
+
+#-------------------------------------------------------------------------------
+# Execution
+#-------------------------------------------------------------------------------
+
+while getopts ":h" opt; do
+    case $opt in
+        h)
+            usage
+            exit 0
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG"
+            exit 1
+            ;;
+        :)
+            echo "Option -$OPTARG requires an argument"
+            exit 2
+            ;;
+    esac
+done
+
+# Check if package names are given
+if [[ "$#" -lt 1 ]]; then
+    usage
+    exit 0
+fi
+
+query $@
+
