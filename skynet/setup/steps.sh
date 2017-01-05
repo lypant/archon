@@ -756,8 +756,7 @@ installPackagesRequiredByI3Shell()
 installVideoDriver()
 {
     log "Install video driver..."
-    # TODO Find appropriate video driver for skynet
-    installPackage "xf86-video-nouveau"
+    installPackage "xf86-video-ati"
     log "Install video driver...done"
 }
 
@@ -1196,8 +1195,7 @@ setMkinitcpioHooks()
 # This requires image recreation for changes to take effect
 setMkinitcpioModules()
 {
-    # TODO Check graphics module for skynet
-    local modules="nouveau"
+    local modules="radeon"
     local src="^MODULES.*$"
     local dst="MODULES=\\\"$modules\\\""
     local subst="s|$src|$dst|"
