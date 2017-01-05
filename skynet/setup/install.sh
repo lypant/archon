@@ -55,7 +55,8 @@ install()
     #---------------------------------------
     #rankMirrors
     downloadMirrorList
-    installBaseSystem
+    #installBaseSystem  # Installation finished OK, but no initramfs was created; after recreation, kernel panics during boot. Try LTS version.
+    installBaseSystemLts
 
     #---------------------------------------
     # Base system configuration
@@ -100,6 +101,7 @@ install()
     tempAlpmWorkaround                      # TODO: Remove when not needed
     installBootloader
     configureBootloader
+    replacBootloaderKernelVersion
 
     #---------------------------------------
     # Root account
