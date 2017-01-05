@@ -102,6 +102,7 @@ install()
     installBootloader
     configureBootloader
     replacBootloaderKernelVersion
+    createInitramfs
 
     #---------------------------------------
     # Root account
