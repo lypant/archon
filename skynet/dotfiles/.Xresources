@@ -30,8 +30,8 @@ URxvt.lineSpace:        0
 !---------------------------------------
 
 URxvt.allow_bold:       false
-URxvt*font:             xft:Terminus:pixelsize=17
-URxvt*boldFont:         xft:Terminus:pixelsize=17
+URxvt*font:             xft:xos4 Terminus:pixelsize=17
+URxvt*boldFont:         xft:xos4 Terminus:pixelsize=17
 
 !---------------------------------------
 ! Scrollbar
