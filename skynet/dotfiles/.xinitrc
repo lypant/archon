@@ -1,0 +1,38 @@
+#-------------------------------------------------------------------------------
+# Use settings from .Xresources
+#-------------------------------------------------------------------------------
+[[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
+
+#-------------------------------------------------------------------------------
+# Keyboard
+#-------------------------------------------------------------------------------
+
+# Set fontmap to Polish
+setxkbmap pl
+
+# Bind keyboard keys
+xbindkeys
+
+#-------------------------------------------------------------------------------
+# Colors
+#-------------------------------------------------------------------------------
+
+# Load colors definition
+source "$HOME/archon/skynet/colors/solarized/bash.conf"
+
+# Set root window background color
+xsetroot -solid "#$SOLARIZED_BASE03"
+
+#-------------------------------------------------------------------------------
+# Window Manager
+#-------------------------------------------------------------------------------
+
+# Disable screensaver (whole Display Power Management Signalling)
+xset -dpms
+
+# Fix misbehaving Java applications by setting WM name
+wmname LG3D
+
+# Launch i3
+exec i3
+

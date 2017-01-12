@@ -563,6 +563,18 @@ configureGitUser()
     log "Configure git user...done"
 }
 
+# This step is a workaround for a problem observed 28.05.2016
+# cloneArchRepo failed with "Unable to access ... error setting certificate:
+# verify locations CAfile: /etc/ssl/certs/ca-certificates.crt CAPath:none"
+# Issueing update-ca-trust helped
+# TODO: check in future if still needed
+workaroundCaCerts()
+{
+    log "Workaround CA certs..."
+    cmd "update-ca-trust"
+    log "Workaround CA certs...done"
+}
+
 cloneArchonRepo()
 {
     log "Clone archon repo..."
@@ -907,6 +919,28 @@ configureAutomountTools()
     log "Configure automount tools...done"
 }
 
+# NOTE: jmtpfs package will be installed in supplementation steps - AUR
+configureMtpTools()
+{
+    local fuseFile="/etc/fuse.conf"
+    local configDir="/home/adam/archon/hal/config"
+    local srvFile="/etc/systemd/system/android_automount@.service"
+    local udevFile="/etc/udev/rules.d/98-android_automount.rules"
+
+    log "Configure MTP tools..."
+
+    uncommentVar "user_allow_other" "$fuseFile"
+    err "$?" "$FUNCNAME" "Failed to uncomment user_allow_other var in $fuseFile"
+
+    cmd "cp $configDir$srvFile $srvFile"
+    err "$?" "$FUNCNAME" "Failed to copy $configDir$srvFile to $srvFile"
+
+    cmd "cp $configDir$udevFile $udevFile"
+    err "$?" "$FUNCNAME" "Failed to copy $configDir$udevFile to $udevFile"
+
+    log "Configure MTP tools...done"
+}
+
 # Has to be done before AUR packages installation phase
 # to allow large AUR packages installation
 # OOM problems were observed on VirtualBox installations without this.
@@ -925,7 +959,7 @@ setDataPartition()
     local entry="LABEL=Data"
     entry="$entry /mnt/data"
     entry="$entry ext4"
-    entry="$entry auto,nouser,noexec,ro"
+    entry="$entry auto,nouser,noexec,nofail,ro"
     entry="$entry 0"    # dump backup utility: 0 - don't, 1 - do backup
     entry="$entry 2"    # fsck: 0- don't check, 1- highiest prio, 2- other prio
 
@@ -1220,6 +1254,63 @@ setMakepkgBuilddir()
 }
 
 #---------------------------------------
+# Printing
+#---------------------------------------
+
+installCups()
+{
+    log "Install CUPS..."
+    installPackage "cups ghostscript gsfonts"
+    log "Install CUPS...done"
+}
+
+enableCupsService()
+{
+    log "Enable CUPS service..."
+    cmd "systemctl enable org.cups.cupsd.service"
+    err "$?" "$FUNCNAME" "failed to enable CUPS service"
+    log "Enable CUPS service...done"
+}
+
+# NOTE: HP LaserJet Pro P1102 requires also proprietary hplip-plugin (AUR)
+installPrinterDriver()
+{
+    log "Install printer driver..."
+    installPackage "hplip"
+    log "Install printer driver...done"
+}
+
+#---------------------------------------
+# Virtualbox
+#---------------------------------------
+
+installVirtualbox()
+{
+    local modules="vboxdrv vboxnetadp vboxnetflt vboxpci"
+    local modulesFile="/etc/modules-load.d/virtualbox.conf"
+    local user="adam"
+    local group="vboxusers"
+
+    log "Install virtualbox..."
+
+    # Install necessary packages
+    installPackage "virtualbox-host-modules-arch virtualbox qt4"
+
+    # Set kernel modules loading
+    for module in $modules
+    do
+        cmd "echo $module >> $modulesFile"
+        err "$?" "$FUNCNAME" "failed to add module $module to $modulesFile"
+    done
+
+    # Add group to required group
+    cmd "gpasswd -a $user $group"
+    err "$?" "$FUNCNAME" "failed to add user $user to group $group"
+
+    log "Install virtualbox...done"
+}
+
+#---------------------------------------
 # Final steps
 #---------------------------------------
 
@@ -1252,6 +1343,24 @@ copyProjectLogFiles()
 #--------------------------------------
 # Misc AUR packages
 #--------------------------------------
+
+installMtpTools()
+{
+    log "Install MTP tools..."
+    installAurPackage "jmtpfs"
+    log "Install MTP tools...done"
+}
+
+#-------------------
+# Printing
+#-------------------
+
+installProprietaryPrinterDriver()
+{
+    log "Install hplip-plugin..."
+    installAurPackage "hplip-plugin"
+    log "Install hplip-plugin...done"
+}
 
 #---------------------------------------
 # Android development environment

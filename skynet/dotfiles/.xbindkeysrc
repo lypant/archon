@@ -1,0 +1,52 @@
+# This is a comment
+
+# TODO Check special keys on skynet and implement their mapping
+
+#-------------------------------------------------------------------------------
+# Multimedia keys
+#-------------------------------------------------------------------------------
+
+#---------------------------------------
+# Volume
+#---------------------------------------
+
+#-------------------
+# Decrease
+#-------------------
+#"amixer -q sset Master 5%-"
+    #XF86AudioLowerVolume
+
+#-------------------
+# Increase
+#-------------------
+#"amixer -q sset Master 5%+"
+    #XF86AudioRaiseVolume
+
+#-------------------
+# Mute/unmute
+#-------------------
+#"amixer -q sset Master toggle"
+    #XF86AudioMute
+
+#---------------------------------------
+# Playback control
+#---------------------------------------
+
+#-------------------
+# Play/pause
+#-------------------
+#"cmus-remote --pause"
+    #XF86AudioPlay
+
+#-------------------
+# Previous
+#-------------------
+#"cmus-remote --prev"
+    #XF86AudioPrev
+
+#-------------------
+# Next
+#-------------------
+#"cmus-remote --next"
+    #XF86AudioNext
+

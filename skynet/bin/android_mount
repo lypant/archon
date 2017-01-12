@@ -4,7 +4,6 @@
 
 CMD="$1"
 DEV="$2"
-
 MNT_PNT="/media/$DEV"
 
 case $CMD in
@@ -13,14 +12,13 @@ case $CMD in
         /bin/mkdir -p "$MNT_PNT"
         /usr/bin/jmtpfs "$MNT_PNT" -o nodev,allow_other,rw,noatime,uid=1000,gid=100
         ;;
-    umount)
+    unmount)
         echo "Unmounting MPT device on $MNT_PNT"
         /usr/bin/fusermount -u "$MNT_PNT"
         /bin/rmdir "$MNT_PNT"
         ;;
     *)
-        echo "Usage: android_mount mount|umount <device_name>"
-        echo "Mount point: $MNT_PNT"
+        echo "Usage: android_mount mount|unmount <device_name>"
         ;;
 esac
 

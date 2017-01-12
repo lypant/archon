@@ -29,13 +29,13 @@ SYSTEM_HDD="sda"
 # Swap partition
 #-------------------
 SWAP_PART_NB="1"
-SWAP_PART_SIZE="+512M"
+SWAP_PART_SIZE="+1G"
 
 #-------------------
 # Boot partition
 #-------------------
 BOOT_PART_NB="2"
-BOOT_PART_SIZE="+128M"
+BOOT_PART_SIZE="+256M"
 BOOT_PART_FS="ext2"
 
 #-------------------
@@ -259,7 +259,7 @@ generateFstab()
 setHostName()
 {
     log "Set host name..."
-    archChroot "echo monolith > /etc/hostname"
+    archChroot "echo skynet > /etc/hostname"
     err "$?" "$FUNCNAME" "failed to set host name"
     log "Set host name...done"
 }
@@ -395,9 +395,7 @@ setConsoleFontmap()
 setWiredNetwork()
 {
     log "Set wired network..."
-    #archChroot "systemctl enable dhcpcd@enp4s0.service"
-    #archChroot "systemctl enable dhcpcd@enp0s3.service"
-    archChroot "systemctl enable dhcpcd@enp0s12.service"
+    archChroot "systemctl enable dhcpcd@enp0s18.service"
     err "$?" "$FUNCNAME" "failed to set wired network"
     log "Set wired network...done"
 }
@@ -432,21 +430,10 @@ configureBootloader()
     local dst="$SYSTEM_HDD$ROOT_PART_NB"
     local subst="s|$src|$dst|g"
     local file="/boot/syslinux/syslinux.cfg"
-    local cnt=0
 
     log "Configure bootloader..."
     archChroot "syslinux-install_update -i -a -m"
     err "$?" "$FUNCNAME" "failed to update syslinux"
-
-    # Workaround for monolith - if udev is mounted, unmount it
-    cnt=$(mount | grep udev | wc -l)
-    if [[ "$cnt" -gt 0 ]]; then
-        log "Udev detected, unmounting..."
-	    cmd "umount /mnt/dev"
-        log "Udev detected, unmounting...done"
-    else
-        log "Udev not detected"
-    fi
 
     archChroot "sed -i \\\"$subst\\\" $file"
     err "$?" "$FUNCNAME" "failed to replace parition path"
@@ -473,6 +460,15 @@ replacBootloaderKernelVersion()
     err "$?" "$FUNCNAME" "failed to replace INITRD entry"
 
     log "Replace bootloader kernel version...done"
+}
+
+# This step was needed since for skynet initramfs was not created automatically
+createInitramfs()
+{
+    log "Create initramfs..."
+    archChroot "mkinitcpio -p linux-lts"
+    err "$?" "$FUNCNAME" "failed to create initramfs"
+    log "Create initramfs...done"
 }
 
 #---------------------------------------
@@ -533,30 +529,12 @@ unmountPartitions()
 # Preparations
 #---------------------------------------
 
-# Use repository for multilib support - to allow 32B apps on 64B system
-# Needed for Android development
-setMultilibRepository()
-{
-    log "Set multilib repository..."
-    cmd "sed -i '/\[multilib\]/,/Include/ s|^#\(.*\)|\1|' /etc/pacman.conf"
-    err "$?" "$FUNCNAME" "failed to set multilib repository"
-    log "Set multilib repository...done"
-}
-
 configurePacman()
 {
     log "Configure pacman..."
     # Present total download percentage instead of single package percentage
     uncommentVar "TotalDownload" "/etc/pacman.conf"
     log "Configure pacman...done"
-}
-
-updateCertificates()
-{
-    log "Update certificates..."
-    cmd "trust extract-compat"
-    err "$?" "$FUNCNAME" "failed to update certificates"
-    log "Update certificates...done"
 }
 
 #---------------------------------------
@@ -566,7 +544,7 @@ updateCertificates()
 addUser()
 {
     log "Add user..."
-    cmd "useradd -m -g users -G wheel,storage,power,input -s /bin/bash adam"
+    cmd "useradd -m -g users -G wheel,storage,power -s /bin/bash adam"
     log "Add user...done"
 }
 
@@ -618,6 +596,18 @@ configureGitUser()
     log "Configure git user...done"
 }
 
+# This step is a workaround for a problem observed 28.05.2016
+# cloneArchRepo failed with "Unable to access ... error setting certificate:
+# verify locations CAfile: /etc/ssl/certs/ca-certificates.crt CAPath:none"
+# Issueing update-ca-trust helped
+# TODO: check in future if still needed
+workaroundCaCerts()
+{
+    log "Workaround CA certs..."
+    cmd "update-ca-trust"
+    log "Workaround CA certs...done"
+}
+
 cloneArchonRepo()
 {
     log "Clone archon repo..."
@@ -654,7 +644,9 @@ copyOverArchonFiles()
 installVim()
 {
     log "Install vim..."
-    installPackage vim
+    # Use gvim, as it has vim compiled with xterm_clipboard option
+    # allowing to use copy-paste in X
+    installPackage gvim
     log "Install vim...done"
 }
 
@@ -713,17 +705,10 @@ installTmux()
     log "Install tmux...done"
 }
 
-installElinks()
-{
-    log "Install elinks..."
-    installPackage elinks
-    log "Install elinks...done"
-}
-
 installCompressionTools()
 {
     log "Install compression tools..."
-    installPackage atool zip unzip unrar
+    installPackage atool zip unzip unrar p7zip
     log "Install compression tools...done"
 }
 
@@ -733,6 +718,146 @@ installIsoTools()
     log "Install iso tools..."
     installPackage squashfs-tools cdrkit dosfstools
     log "Install iso tools...done"
+}
+
+#--------------------------------------
+# GUI programs
+#---------------------------------------
+
+#-------------------
+# Xorg
+#-------------------
+
+installXorg()
+{
+    log "Install Xorg..."
+    installPackage "xorg-server xorg-server-utils xorg-xinit"
+    log "Install Xorg...done"
+}
+
+removeMesaLibgl()
+{
+    log "Remove mesa-libgl..."
+    removePackage "mesa-libgl"
+    log "Remove mesa-libgl...done"
+}
+
+installPackagesRequiredByI3Shell()
+{
+    log "Install packages required by i3-shell.sh..."
+    installPackage "xorg-xdpyinfo xorg-xprop"
+    log "Install packages required by i3-shell.sh...done"
+}
+
+#-------------------
+# Video driver
+#-------------------
+
+installVideoDriver()
+{
+    log "Install video driver..."
+    installPackage "xf86-video-ati"
+    log "Install video driver...done"
+}
+
+#-------------------
+# Fonts
+#-------------------
+
+installGuiFonts()
+{
+    log "Install gui fonts..."
+    installPackage "ttf-inconsolata ttf-dejavu terminus-font"
+    log "Install gui fonts...done"
+}
+
+#-------------------
+# Config
+#-------------------
+
+# To be able to bind special keyboard keys to commands
+installXbindkeys()
+{
+    log "Install xbindkeys..."
+    installPackage "xbindkeys"
+    log "Install xbindkeys...done"
+}
+
+#-------------------
+# Programs
+#-------------------
+
+installI3()
+{
+    log "Install i3..."
+    installPackage "i3"
+    log "Install i3...done"
+}
+
+installDmenu()
+{
+    log "Install dmenu..."
+    installPackage "dmenu"
+    log "Install dmenu...done"
+}
+
+installRxvtUnicode()
+{
+    # Note: rxvt-unicode can be launched with command urxvt
+    log "Install rxvt unicode..."
+    installPackage "rxvt-unicode"
+    log "Install rxvt unicode...done"
+}
+
+installFirefox()
+{
+    log "Install firefox..."
+    installPackage "firefox"
+    log "Install firefox...done"
+}
+
+installFlashplugin()
+{
+    log "Install flashplugin..."
+    installPackage "flashplugin"
+    log "Install flashplugin...done"
+}
+
+installThunderbird()
+{
+    log "Install thunderbird..."
+    installPackage "thunderbird"
+    log "Install thunderbird...done"
+}
+
+installVlc()
+{
+    log "Install vlc..."
+    installPackage "vlc"
+    log "Install vlc...done"
+}
+
+installFeh()
+{
+    log "Install feh..."
+    installPackage "feh"
+    log "Install feh...done"
+}
+
+installEvince()
+{
+    log "Install evince..."
+    installPackage "evince"
+    log "Install evince...done"
+}
+
+# TODO: Craete another paragraph with modules used as fixes/workaronds etc?
+# To fix misbehaving Java windows
+installWmname()
+{
+    log "Install wmname..."
+    installPackage "wmname"
+    log "Install wmname...done"
 }
 
 #---------------------------------------
@@ -745,6 +870,32 @@ installAlsa()
     installPackage alsa-utils
     log "Install alsa...done"
 }
+
+initAlsa()
+{
+    local ret=0
+
+    log "Init alsa..."
+    cmd "alsactl init"
+    ret="$?"
+    # Alsa can answer with error 99 but work fine
+    if [[ "$ret" -eq 99 ]]; then
+        log "alsactl init returned error code 99; accepting it as 0"
+        ret=0
+    fi
+    err "$ret" "$FUNCNAME" "failed to init alsa"
+    log "Init alsa...done"
+
+}
+
+# TODO Check if needed on skynet
+#unmuteAlsa()
+#{
+#    log "Unmute alsa..."
+#    cmd "amixer sset Master unmute"
+#    err "$?" "$FUNCNAME" "failed to unmute alsa"
+#    log "Unmute alsa...done"
+#}
 
 disablePcSpeaker()
 {
@@ -762,6 +913,86 @@ installCmus()
 }
 
 #---------------------------------------
+# Partitions and file systems
+#---------------------------------------
+
+# Needed for exfat file system support (used natively by AEE S71 as default FS)
+installFuseExfat()
+{
+    log "Install fuse-exfat..."
+    installPackage fuse-exfat
+    log "Install fuse-exfat...done"
+}
+
+installAutomountTools()
+{
+    log "Install automount tools..."
+    installPackage udisks2 udiskie
+    log "Install automount tools...done"
+}
+
+configureAutomountTools()
+{
+    local configDir="/root/archon/skynet/config"
+    local polkitFile="/etc/polkit-1/rules.d/50-udisks.rules"
+    local udevFile="/etc/udev/rules.d/99-udisks2.rules"
+
+    log "Configure automount tools..."
+    # Policy file for udisks
+    cmd "cp $configDir$polkitFile $polkitFile"
+    err "$?" "$FUNCNAME" "failed to copy udisks polkit file"
+    # Create /media mount point
+    createDir "/media"
+    err "$?" "$FUNCNAME" "failed to create /media dir"
+    # Use /media as mount point instead of /run/media/$USER/<VOLUME_NAME>
+    cmd "cp $configDir$udevFile $udevFile"
+    err "$?" "$FUNCNAME" "failed to copy udisks udev rule file"
+    log "Configure automount tools...done"
+}
+
+# NOTE: jmtpfs package will be installed in supplementation steps - AUR
+configureMtpTools()
+{
+    local fuseFile="/etc/fuse.conf"
+    local configDir="/home/adam/archon/skynet/config"
+    local srvFile="/etc/systemd/system/android_automount@.service"
+    local udevFile="/etc/udev/rules.d/98-android_automount.rules"
+
+    log "Configure MTP tools..."
+
+    uncommentVar "user_allow_other" "$fuseFile"
+    err "$?" "$FUNCNAME" "Failed to uncomment user_allow_other var in $fuseFile"
+
+    cmd "cp $configDir$srvFile $srvFile"
+    err "$?" "$FUNCNAME" "Failed to copy $configDir$srvFile to $srvFile"
+
+    cmd "cp $configDir$udevFile $udevFile"
+    err "$?" "$FUNCNAME" "Failed to copy $configDir$udevFile to $udevFile"
+
+    log "Configure MTP tools...done"
+}
+
+#setDataPartition()
+#{
+    #local mntDir="/mnt/data"
+    #local entry="LABEL=Data"
+    #entry="$entry /mnt/data"
+    #entry="$entry ext4"
+    #entry="$entry auto,nouser,noexec,nofail,ro"
+    #entry="$entry 0"    # dump backup utility: 0 - don't, 1 - do backup
+    #entry="$entry 2"    # fsck: 0- don't check, 1- highiest prio, 2- other prio
+
+    #log "Set data partition..."
+    #cmd "echo -e \"\n$entry\" >> /etc/fstab"
+    #err "$?" "$FUNCNAME" "failed to add entry to fstab"
+    #createDir "$mntDir"
+    #err "$?" "$FUNCNAME" "failed to create mount dir"
+    #createLink "$mntDir" "/home/adam/Data"
+    #err "$?" "$FUNCNAME" "failed to create link"
+    #log "Set data partition...done"
+#}
+
+#---------------------------------------
 # Dotfiles
 #---------------------------------------
 
@@ -772,6 +1003,7 @@ installBashprofileDotfile()
     err "$?" "$FUNCNAME" "failed to install .bash_profile dotfile"
     log "Install .bash_profile dotfile...done"
 }
+
 
 installBashrcDotfile()
 {
@@ -837,25 +1069,58 @@ installTmuxConfDotfile()
     log "Install .tmux.conf dotfile...done"
 }
 
-# NOTE: actkbd is installed from AUR in supplementation stage
-installActkbdConfDotfile()
+# NOTE: systemd does not allow symlinks - need to copy the file
+# NOTE: necessary to execute this as regular user - in supplementation stage
+copyUdiskieServiceDotfile()
 {
-    log "Install actkbd.conf dotfile..."
-    installDotfile "actkbd.conf" ".config"
-    err "$?" "$FUNCNAME" "failed to install actkbd.conf dotfile"
-    log "Install actkbd.conf dotfile...done"
+    local srcDir="/home/adam/archon/skynet/dotfiles/.config/systemd/user"
+    local dstDir="/home/adam/.config/systemd/user"
+
+    log "Copy udiskie service dotfile..."
+    cmd "mkdir -p $dstDir"
+    err "$?" "$FUNCNAME" "failed to create $dstDir directory"
+    cmd "cp $srcDir/udiskie.service $dstDir/udiskie.service"
+    err "$?" "$FUNCNAME" "failed to copy udiskie.service dotfile"
+    log "Copy udiskie service dotfile...done"
 }
 
-# NOTE: actkbd is installed from AUR in supplementation stage
-# NOTE: systemd does not allow symlinks - need to copy the file
-copyActkbdServiceDotfile()
+
+installXinitrcDotfile()
 {
-    log "Copy actkbd.service dotfile..."
-    cmd "mkdir -p /home/adam/.config/systemd/user"
-    err "$?" "$FUNCNAME" "failed to create .config/systemd/user directory"
-    cmd "cp /home/adam/archon/monolith/dotfiles/.config/systemd/user/actkbd.service /home/adam/.config/systemd/user/actkbd.service"
-    err "$?" "$FUNCNAME" "failed to copy actkbd.service dotfile "
-    log "Copy actkbd.service dotfile...done"
+    log "Install .xinitrc dotfile..."
+    installDotfile ".xinitrc" ""
+    err "$?" "$FUNCNAME" "failed to install .xinitrc dotfile"
+    log "Install .xinitrc dotfile...done"
+}
+
+installXresourcesDotfile()
+{
+    log "Install .Xresources dotfile..."
+    installDotfile ".Xresources" ""
+    err "$?" "$FUNCNAME" "failed to install .Xresources dotfile"
+    log "Install .Xresources dotfile...done"
+}
+
+installXbindkeysrcDotfile()
+{
+    log "Install .xbindkeysrc dotfile..."
+    installDotfile ".xbindkeysrc" ""
+    err "$?" "$FUNCNAME" "failed to install .xbindkeys dotfile"
+    log "Install .xbindkeysrc dotfile...done"
+}
+
+installI3ConfigDotfile()
+{
+    log "Install i3 config dotfile..."
+    installDotfile "config" ".config/i3"
+    log "Install i3 config dotfile...done"
+}
+
+installI3StatusConfigDoftile()
+{
+    log "Install i3status.conf dotfile..."
+    installDotfile "i3status.conf" ".config/i3status"
+    log "Install i3status.conf dotfile...done"
 }
 
 #---------------------------------------
@@ -867,11 +1132,10 @@ setBootloaderKernelParams()
     local params=""
     params="$params root=/dev/$SYSTEM_HDD$ROOT_PART_NB"
     params="$params rw"
-    params="$params vga=789"
+    params="$params vga=792"    # 792: 1024x768 24bit; 789: 800x600 24bit
     params="$params quiet"
     params="$params loglevel=0"
     params="$params rd.udev.log-priority=3"
-    params="$params nomodeset"
     local src="APPEND root.*$"
     local dst="APPEND $params"
     local subst="s|$src|$dst|"
@@ -931,7 +1195,7 @@ setMkinitcpioHooks()
 # This requires image recreation for changes to take effect
 setMkinitcpioModules()
 {
-    local modules="nouveau"
+    local modules="radeon"
     local src="^MODULES.*$"
     local dst="MODULES=\\\"$modules\\\""
     local subst="s|$src|$dst|"
@@ -959,53 +1223,30 @@ setBootConsoleOutputLevels()
 }
 
 #---------------------------------------
-# Partitions and file systems
+# Printing
 #---------------------------------------
 
-installAutomountTools()
+installCups()
 {
-    log "Install automount tools..."
-    installPackage udisks2 udiskie
-    log "Install automount tools...done"
+    log "Install CUPS..."
+    installPackage "cups ghostscript gsfonts"
+    log "Install CUPS...done"
 }
 
-configureAutomountTools()
+enableCupsService()
 {
-    local configDir="/root/archon/monolith/config"
-    local polkitFile="/etc/polkit-1/rules.d/50-udisks.rules"
-    local udevFile="/etc/udev/rules.d/99-udisks2.rules"
-
-    log "Configure automount tools..."
-    # Policy file for udisks
-    cmd "cp $configDir$polkitFile $polkitFile"
-    err "$?" "$FUNCNAME" "failed to copy udisks polkit file"
-    # Create /media mount point
-    createDir "/media"
-    err "$?" "$FUNCNAME" "failed to create /media dir"
-    # Use /media as mount point instead of /run/media/$USER/<VOLUME_NAME>
-    cmd "cp $configDir$udevFile $udevFile"
-    err "$?" "$FUNCNAME" "failed to copy udisks udev rule file"
-    log "Configure automount tools...done"
+    log "Enable CUPS service..."
+    cmd "systemctl enable org.cups.cupsd.service"
+    err "$?" "$FUNCNAME" "failed to enable CUPS service"
+    log "Enable CUPS service...done"
 }
 
-setDataPartition()
+# NOTE: HP LaserJet Pro P1102 requires also proprietary hplip-plugin (AUR)
+installPrinterDriver()
 {
-    local mntDir="/mnt/data"
-    local entry="LABEL=Data"
-    entry="$entry /mnt/data"
-    entry="$entry ext2"
-    entry="$entry auto,nouser,noexec,nofail,ro"
-    entry="$entry 0"    # dump backup utility: 0 - don't, 1 - do backup
-    entry="$entry 2"    # fsck: 0- don't check, 1- highiest prio, 2- other prio
-
-    log "Set data partition..."
-    cmd "echo -e \"\n$entry\" >> /etc/fstab"
-    err "$?" "$FUNCNAME" "failed to add entry to fstab"
-    createDir "$mntDir"
-    err "$?" "$FUNCNAME" "failed to create mount dir"
-    createLink "$mntDir" "/home/adam/Data"
-    err "$?" "$FUNCNAME" "failed to create link"
-    log "Set data partition...done"
+    log "Install printer driver..."
+    installPackage "hplip"
+    log "Install printer driver...done"
 }
 
 #---------------------------------------
@@ -1029,7 +1270,7 @@ changeHomeOwnership()
 
 copyProjectLogFiles()
 {
-    cp -r ../logs /home/adam/archon/monolith
+    cp -r ../logs /home/adam/archon/skynet
 }
 
 #-------------------------------------------------------------------------------
@@ -1039,36 +1280,36 @@ copyProjectLogFiles()
 #-------------------------------------------------------------------------------
 
 #--------------------------------------
-# AUR packages
+# Misc AUR packages
 #--------------------------------------
 
-#-------------------
-# Installation
-#-------------------
-
-installActkbd()
+installMtpTools()
 {
-    log "Install actkbd..."
-    installAurPackage "actkbd"
-    log "Install actkbd...done"
+    log "Install MTP tools..."
+    installAurPackage "jmtpfs"
+    log "Install MTP tools...done"
 }
 
-installJdk()
+#-------------------
+# Printing
+#-------------------
+
+installProprietaryPrinterDriver()
 {
-    log "Install jdk..."
-    installPackage "jdk8-openjdk"
-    log "Install jdk...done"
+    log "Install hplip-plugin..."
+    installAurPackage "hplip-plugin"
+    log "Install hplip-plugin...done"
 }
 
 #-------------------
 # Systemd services enabling
 #-------------------
 
-enableActkbdService()
+enableUdiskieService()
 {
-    log "Enable actkbd service..."
-    cmd "systemctl --user enable actkbd.service"
-    err "$?" "$FUNCNAME" "failed to enable actkbd service"
-    log "Enable actkbd service...done"
+    log "Enable udiskie systemd service..."
+    cmd "systemctl --user enable udiskie.service"
+    err "$?" "$FUNCNAME" "failed to enable udiskie systemd  service"
+    log "Enable udiskie systemd service...done"
 }
 

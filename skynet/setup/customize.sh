@@ -32,7 +32,6 @@ customize()
     setTemporaryFont
     createLogDir
     log "Customize..."
-    setMultilibRepository
     configurePacman
     updatePackageList
 
@@ -126,8 +125,7 @@ customize()
     installAutomountTools
     configureAutomountTools
     configureMtpTools # Packages will be installed in supplementation script
-    setTmpfsTmpSize # To install large AUR packages in supplementation script
-    setDataPartition
+    #setDataPartition
     # TODO: Check Android device mounting
 
     #---------------------------------------
@@ -146,7 +144,7 @@ customize()
 
     installXinitrcDotfile
     installXresourcesDotfile
-    installXbindkeysrcDotfile
+    installXbindkeysrcDotfile  # TODO Check special keys for skynet
     installI3ConfigDotfile
     installI3StatusConfigDoftile
 
@@ -162,25 +160,12 @@ customize()
     setMkinitcpioModules                    # Requires imafe recreation
     setBootConsoleOutputLevels
 
-    #-------------------
-    # SSD adjustments
-    #-------------------
-    setRootPartitionTrim
-    setIoScheduler
-    setSwappiness
-    setMakepkgBuilddir
-
     #---------------------------------------
     # Printing
     #---------------------------------------
     #installCups
     #enableCupsService
     #installPrinterDriver
-
-    #---------------------------------------
-    # Virtualbox
-    #---------------------------------------
-    installVirtualbox
 
     #---------------------------------------
     # Final steps

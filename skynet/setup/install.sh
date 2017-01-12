@@ -27,6 +27,7 @@ install()
     #---------------------------------------
     # Preparations
     #---------------------------------------
+    setTemporaryFont
     createLogDir
     log "Install..."
 
@@ -54,6 +55,7 @@ install()
     #---------------------------------------
     #rankMirrors
     downloadMirrorList
+    #installBaseSystem  # Installation finished OK, but no initramfs was created; after recreation, kernel panics during boot. Try LTS version.
     installBaseSystemLts
 
     #---------------------------------------
@@ -100,6 +102,7 @@ install()
     installBootloader
     configureBootloader
     replacBootloaderKernelVersion
+    createInitramfs
 
     #---------------------------------------
     # Root account

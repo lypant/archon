@@ -18,7 +18,7 @@ set -o nounset -o errexit
 source steps.sh
 
 # Set log file name
-LOG_FILE="/home/adam/archon/hal/logs/supplement.log"
+LOG_FILE="/home/adam/archon/skynet/logs/supplement.log"
 
 #-------------------------------------------------------------------------------
 # Define supplementation function
@@ -36,13 +36,7 @@ supplement()
     #-------------------
     # Printing
     #-------------------
-    installProprietaryPrinterDriver  # Required by HP P1102 printer
-
-    #---------------------------------------
-    # Android development environment
-    #---------------------------------------
-    #installJdk         # TODO: Prefer packages from official repositories
-    #installAndroidEnv
+    #installProprietaryPrinterDriver  # Required by HP P1102 printer
 
     #--------------------------------------
     # Systemd services enabling

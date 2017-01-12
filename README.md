@@ -17,11 +17,16 @@ or with custom image containing additional scripts:
 2014_12_09
 Create new branch "kiss"
 
+2017_01_05
+Create new machine setup "skynet"
+
 NOTES:
 - fdisk does not return error code when provided partition parameters
   are invalid - perform additional checks after partition creation?
 
 TODO:
+- Check video driver for skynet
+- Adjust skynet .tmux.conf
 - Allow for installation with other system present ()
     - Handle partitions
     - Support bootloader chainloading
@@ -32,9 +37,6 @@ TODO:
 - Add program for downloading arch isos
 - Evince - fix missing icons
 - Add screen saver deactivation when watching films (flash/vlc/...)
-? Add virtualbox installation
-    - When using two disks this might be not needed as maintaining VBox
-      compatibility requires much work
 - Add libreoffice or similar office suite installation
 - BinUhr
     ? python2-pyserial package needed for serial communication

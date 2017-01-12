@@ -40,6 +40,7 @@ customize()
     addUser
     setUserPassword
     setSudoRights
+    updateCertificates
 
     #---------------------------------------
     # Git and archon files
