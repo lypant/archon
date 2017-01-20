@@ -100,6 +100,7 @@ install()
     tempAlpmWorkaround                      # TODO: Remove when not needed
     installBootloader
     configureBootloader
+    createInitramfs
 
     #---------------------------------------
     # Root account

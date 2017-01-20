@@ -462,7 +462,7 @@ replacBootloaderKernelVersion()
     log "Replace bootloader kernel version...done"
 }
 
-# This step was needed since for skynet initramfs was not created automatically
+# This step was needed since initramfs was not created automatically
 createInitramfs()
 {
     log "Create initramfs..."

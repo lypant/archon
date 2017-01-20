@@ -475,6 +475,15 @@ replacBootloaderKernelVersion()
     log "Replace bootloader kernel version...done"
 }
 
+# This step was needed since initramfs was not created automatically
+createInitramfs()
+{
+    log "Create initramfs..."
+    archChroot "mkinitcpio -p linux-lts"
+    err "$?" "$FUNCNAME" "failed to create initramfs"
+    log "Create initramfs...done"
+}
+
 #---------------------------------------
 # Root account
 #---------------------------------------

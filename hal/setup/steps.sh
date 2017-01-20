@@ -428,6 +428,15 @@ configureBootloader()
     log "Configure bootloader...done"
 }
 
+# This step was needed since initramfs was not created automatically
+createInitramfs()
+{
+    log "Create initramfs..."
+    archChroot "mkinitcpio -p linux"
+    err "$?" "$FUNCNAME" "failed to create initramfs"
+    log "Create initramfs...done"
+}
+
 #---------------------------------------
 # Root account
 #---------------------------------------
