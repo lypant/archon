@@ -21,6 +21,7 @@ In order to set up a printer:
 - select HP LaserJet Professional P1102 USB 000000000QN207ARPR1a HPLIP
     (HP LaserJet Professional P1102)
 - select HP LaserJet Professional p1102 hpijs, 3.16.11, requires proprietary plugin
+- set media size to A4
 
 2017_01_05
 Create new machine setup "skynet"
