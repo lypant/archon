@@ -173,9 +173,9 @@ customize()
     #---------------------------------------
     # Printing
     #---------------------------------------
-    #installCups
-    #enableCupsService
-    #installPrinterDriver
+    installCups
+    enableCupsService
+    installPrinterDriver
 
     #---------------------------------------
     # Virtualbox

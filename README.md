@@ -14,11 +14,20 @@ curl -L https://github.com/lypant/archon/tarball/common | tar xz
 or with custom image containing additional scripts:
 ./github_download -b common
 
-2014_12_09
-Create new branch "kiss"
+2017_01_20
+In order to set up a printer:
+- launch web browser with http://localhost:631
+- administration -> add printer -> root user and password
+- select HP LaserJet Professional P1102 USB 000000000QN207ARPR1a HPLIP
+    (HP LaserJet Professional P1102)
+- select HP LaserJet Professional p1102 hpijs, 3.16.11, requires proprietary plugin
 
 2017_01_05
 Create new machine setup "skynet"
+
+2014_12_09
+Create new branch "kiss"
+
 
 NOTES:
 - fdisk does not return error code when provided partition parameters
