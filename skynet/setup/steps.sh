@@ -28,7 +28,7 @@ SYSTEM_HDD="sda"
 #-------------------
 # Swap partition
 #-------------------
-SWAP_PART_NB="1"
+SWAP_PART_NB="3"
 SWAP_PART_SIZE="+1G"
 
 #-------------------
@@ -41,7 +41,7 @@ BOOT_PART_FS="ext2"
 #-------------------
 # Root partition
 #-------------------
-ROOT_PART_NB="3"
+ROOT_PART_NB="5"
 ROOT_PART_SIZE=""
 ROOT_PART_FS="ext4"
 

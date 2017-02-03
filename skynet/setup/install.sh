@@ -37,25 +37,16 @@ install()
     #---------------------------------------
     # Disks, partitions and file systems
     #---------------------------------------
-    checkInitialPartitions
-    createSwapPartition
-    createBootPartition
-    createRootPartition
-    checkCreatedPartitions
-    setBootPartitionBootable
     createSwap
     activateSwap
-    createBootFileSystem
     createRootFileSystem
     mountRootPartition
-    mountBootPartition
 
     #---------------------------------------
     # Base system installation
     #---------------------------------------
     #rankMirrors
     downloadMirrorList
-    #installBaseSystem  # Installation finished OK, but no initramfs was created; after recreation, kernel panics during boot. Try LTS version.
     installBaseSystemLts
 
     #---------------------------------------
