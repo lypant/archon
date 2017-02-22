@@ -966,7 +966,7 @@ setDataPartition()
 {
     local mntDir="/mnt/data"
     local entry="LABEL=Data"
-    entry="$entry /mnt/data"
+    entry="$entry $mntDir"
     entry="$entry ext4"
     entry="$entry auto,nouser,noexec,nofail,ro"
     entry="$entry 0"    # dump backup utility: 0 - don't, 1 - do backup
@@ -980,6 +980,24 @@ setDataPartition()
     createLink "$mntDir" "/home/adam/Data"
     err "$?" "$FUNCNAME" "failed to create link"
     log "Set data partition...done"
+}
+
+setCdromMounting()
+{
+    local mntDir="/media/cd"
+    local entry="/dev/sr0"
+    entry="$entry $mntDir"
+    entry="$entry auto"
+    entry="$entry auto,user,nofail,ro"
+    entry="$entry 0"    # dump backup utility: 0 - don't, 1 - do backup
+    entry="$entry 0"    # fsck: 0- don't check, 1- highiest prio, 2- other prio
+
+    log "Set cdrom mounting..."
+    cmd "echo -e \"\n$entry\" >> /etc/fstab"
+    err "$?" "$FUNCNAME" "failed to add entry to fstab"
+    createDir "$mntDir"
+    err "$?" "$FUNCNAME" "failed to create mount dir"
+    log "Set cdrom mounting...done"
 }
 
 #---------------------------------------

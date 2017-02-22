@@ -126,6 +126,7 @@ customize()
     configureAutomountTools
     configureMtpTools # Packages will be installed in supplementation script
     #setDataPartition
+    setCdromMounting
     # TODO: Check Android device mounting
 
     #---------------------------------------

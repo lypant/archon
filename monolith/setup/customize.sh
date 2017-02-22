@@ -111,6 +111,7 @@ customize()
     installAutomountTools
     configureAutomountTools
     setDataPartition
+    setCdromMounting
 
     #---------------------------------------
     # Final steps
