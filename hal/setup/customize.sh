@@ -145,6 +145,7 @@ customize()
     installCmusColorThemeDotfile
     installTmuxConfDotfile
     copyUdiskieServiceDotfile           # Activate at supplementation stage
+    installRangerDotfile
 
     installXinitrcDotfile
     installXresourcesDotfile

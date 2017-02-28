@@ -1106,6 +1106,13 @@ copyUdiskieServiceDotfile()
     log "Copy udiskie service dotfile...done"
 }
 
+installRangerDotfile()
+{
+    log "Install ranger dotfile..."
+    installDotfile "rc.conf" ".config/ranger"
+    err "$?" "$FUNCNAME" "failed to install ranger rc.conf dotfile"
+    log "Install ranger dotfile...done"
+}
 
 installXinitrcDotfile()
 {
