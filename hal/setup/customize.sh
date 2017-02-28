@@ -68,6 +68,7 @@ customize()
     installCtags
 
     installMc
+    installRanger
     installTmux
     installCompressionTools
     installIsoTools

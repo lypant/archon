@@ -674,6 +674,13 @@ installMc()
     log "Install mc...done"
 }
 
+installRanger()
+{
+    log "Install ranger..."
+    installPackage ranger
+    log "Install ranger...done"
+}
+
 installTmux()
 {
     log "Install tmux..."
