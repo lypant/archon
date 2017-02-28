@@ -116,6 +116,7 @@ customize()
     # Sound
     #---------------------------------------
     installAlsa
+    setAlsaSoundCards
     disablePcSpeaker
     installCmus
 

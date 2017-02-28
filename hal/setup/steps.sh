@@ -866,6 +866,20 @@ initAlsa()
 
 }
 
+setAlsaSoundCards()
+{
+    local file ="/etc/modprobe.d/alsa-snd-cards.conf"
+    # Audiotrak Prodigy Cube Black Edition - USB sound card
+    local entry1="options snd_usb_audio index=0"
+    # Default mainboard sound card
+    local entry2="options snd_hda_intel index=1"
+
+    log "Set alsa sound cards..."
+    cmd "echo $entry1 > $file"
+    cmd "echo $entry2 > $file"
+    log "Set alsa sound cards...done"
+}
+
 # Deprecated - not needed on HAL HW nor on VM
 #unmuteAlsa()
 #{

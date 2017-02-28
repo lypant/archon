@@ -11,19 +11,19 @@
 #-------------------
 # Decrease
 #-------------------
-"amixer -q sset Master 5%-"
+"amixer -q sset PCM 5%-"
     XF86AudioLowerVolume
 
 #-------------------
 # Increase
 #-------------------
-"amixer -q sset Master 5%+"
+"amixer -q sset PCM 5%+"
     XF86AudioRaiseVolume
 
 #-------------------
 # Mute/unmute
 #-------------------
-"amixer -q sset Master toggle"
+"amixer -q sset PCM toggle"
     XF86AudioMute
 
 #---------------------------------------
