@@ -868,7 +868,7 @@ initAlsa()
 
 setAlsaSoundCards()
 {
-    local file ="/etc/modprobe.d/alsa-snd-cards.conf"
+    local file="/etc/modprobe.d/alsa-snd-cards.conf"
     # Audiotrak Prodigy Cube Black Edition - USB sound card
     local entry1="options snd_usb_audio index=0"
     # Default mainboard sound card
