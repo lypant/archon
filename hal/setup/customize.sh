@@ -144,6 +144,7 @@ customize()
     installMcSolarizedDotfile
     installGitconfigDotfile
     installCmusColorThemeDotfile
+    installCmusAutosaveDotfile
     installTmuxConfDotfile
     copyUdiskieServiceDotfile           # Activate at supplementation stage
     installRangerDotfile

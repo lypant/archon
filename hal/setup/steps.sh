@@ -1090,6 +1090,14 @@ installCmusColorThemeDotfile()
     log "Install cmus solarized.theme dotfile...done"
 }
 
+installCmusAutosaveDotfile()
+{
+    log "Install cmus autosave dotfile..."
+    installDotfile "autosave" ".cmus"
+    err "$?" "$FUNCNAME" "failed to install cmus autosave dotfile"
+    log "Install cmus autosave dotfile...done"
+}
+
 installTmuxConfDotfile()
 {
     log "Install .tmux.conf dotfile..."
