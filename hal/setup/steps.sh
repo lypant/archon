@@ -1129,6 +1129,14 @@ installRangerDotfile()
     log "Install ranger dotfile...done"
 }
 
+installRifleDotfile()
+{
+    log "Install rifle dotfile..."
+    installDotfile "rifle.conf" ".config/ranger"
+    err "$?" "$FUNCNAME" "failed to install rifle.conf dotfile"
+    log "Install rifle dotfile...done"
+}
+
 installXinitrcDotfile()
 {
     log "Install .xinitrc dotfile..."

@@ -148,6 +148,7 @@ customize()
     installTmuxConfDotfile
     copyUdiskieServiceDotfile           # Activate at supplementation stage
     installRangerDotfile
+    installRifleDotfile
 
     installXinitrcDotfile
     installXresourcesDotfile
