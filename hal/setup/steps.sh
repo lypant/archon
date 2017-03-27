@@ -718,13 +718,6 @@ installXorg()
     log "Install Xorg...done"
 }
 
-removeMesaLibgl()
-{
-    log "Remove mesa-libgl..."
-    removePackage "mesa-libgl"
-    log "Remove mesa-libgl...done"
-}
-
 installPackagesRequiredByI3Shell()
 {
     log "Install packages required by i3-shell.sh..."

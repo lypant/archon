@@ -81,7 +81,6 @@ customize()
     # Xorg
     #-------------------
     installXorg
-    removeMesaLibgl
     installPackagesRequiredByI3Shell
 
     #-------------------
