@@ -206,3 +206,5 @@ nmap <leader>l :set list!<CR>
 " Remove trailing whitespaces from the current file
 nnoremap <leader>w :%s/\s\+$//<CR>:let @/=''<CR>
 
+" Allow fancy fonts for airline
+let g:airline_powerline_fonts=1

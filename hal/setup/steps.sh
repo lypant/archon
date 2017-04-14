@@ -667,6 +667,20 @@ installCtags()
     log "Install ctags...done"
 }
 
+installVimAirline()
+{
+    log "Install vim airline..."
+    installPackage vim-airline
+    log "Install vim airline...done"
+}
+
+installVimFugitive()
+{
+    log "Install vim fugitive..."
+    installPackage vim-fugitive
+    log "Install vim fugitive...done"
+}
+
 installMc()
 {
     log "Install mc..."

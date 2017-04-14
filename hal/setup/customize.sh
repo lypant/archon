@@ -66,6 +66,8 @@ customize()
     installNerdCommenter
     installTagbar
     installCtags
+    installVimAirline
+    installVimFugitive
 
     installMc
     installRanger
