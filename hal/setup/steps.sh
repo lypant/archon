@@ -728,7 +728,7 @@ installIsoTools()
 installXorg()
 {
     log "Install Xorg..."
-    installPackage "xorg-server xorg-server-utils xorg-xinit"
+    installPackage "xorg-server xorg-apps xorg-xinit"
     log "Install Xorg...done"
 }
 
