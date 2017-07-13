@@ -106,7 +106,8 @@ customize()
     installI3
     installDmenu
     installRxvtUnicode
-    installFirefox
+    #installFirefox     # no ALSA support anymore; don't want to switch to PA
+    installChromium
     installFlashplugin
     installThunderbird
     installVlc

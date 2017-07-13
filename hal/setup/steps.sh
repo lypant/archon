@@ -806,6 +806,13 @@ installFirefox()
     log "Install firefox...done"
 }
 
+installChromium()
+{
+    log "Install chromium..."
+    installPackage "chromium"
+    log "Install chromium...done"
+}
+
 installFlashplugin()
 {
     log "Install flashplugin..."
