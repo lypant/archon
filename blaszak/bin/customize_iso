@@ -1,0 +1,235 @@
+#!/usr/bin/bash
+#-------------------------------------------------------------------------------
+# FILE:         customize_iso
+#
+# USAGE:        Run 'customize_iso -h' for more details
+#
+# DESCRIPTION:  Creates ISO based on provided Arch Linux ISO,
+#               adding provided custom content
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# Settings adjustable using command line options
+#-------------------------------------------------------------------------------
+
+ORIGINAL_ISO=                           # To be provided by user
+NEW_ISO=                                # To be provided by user
+WORKSPACE="/tmp/${0##*/}"               # Use name of the script for dir name
+CUSTOM_SRC="/home/adam/archon/blaszak/bin"
+CUSTOM_DST="root"
+
+#-------------------------------------------------------------------------------
+# Functions
+#-------------------------------------------------------------------------------
+
+usage()
+{
+cat << EOF
+Creates ISO based on provided Arch Linux ISO, adding provided custom content
+Requires squashfs-tools and cdrkit packages
+
+Usage: ${0##*/} [-h] [-o ORIG_ISO] [-n NEW_ISO] [-w WORKSPACE] [-s SRC] [-d DST]
+    -h display this help and exit
+    -o ORIG_ISO original ISO file (${ORIGINAL_ISO:-"unset"})
+    -n NEW_ISO ISO file to be created (${NEW_ISO:-"unset"})
+    -w WORKSPACE dir for temporary files (${WORKSPACE:-"unset"})
+    -s SRC source dir with ISO customization content (${CUSTOM_SRC:-"unset"})
+    -d DST dir where customization content will be available after booting ISO \
+(${CUSTOM_DST:-"unset"})
+EOF
+}
+
+checkOptions()
+{
+    if [[ -z "$ORIGINAL_ISO" ]]; then
+        echo "Unset parameter ORIG_ISO, use option -o"
+        echo
+        usage
+        exit 1
+    fi
+
+    if [[ -z "$NEW_ISO" ]]; then
+        echo "Unset parameter NEW_ISO, use option -n"
+        echo
+        usage
+        exit 1
+    fi
+}
+
+query()
+{
+    echo "Original iso: $ORIGINAL_ISO"
+    echo "New iso:      $NEW_ISO"
+    echo "Workspace:    $WORKSPACE"
+    echo "Custom src:   $CUSTOM_SRC"
+    echo "Custom dst:   $CUSTOM_DST"
+    echo "ISO ver:      $ISO_VERSION"
+
+    read -p "Create new iso? [y/N]?" response
+    case $response in
+        [Yy]*)
+            time { createCustomIso ; }
+            ;;
+        *)
+            echo "Cancelled"
+            exit 0
+            ;;
+    esac
+}
+
+createCustomIso()
+{
+    echo "Create custom ISO..."
+
+    #----------------------------------------
+    # Extract original ISO contents
+    #----------------------------------------
+
+    echo "Create iso mount point..."
+    eval "sudo mkdir -p /mnt/customize_iso"
+
+    echo "Mount ISO..."
+    eval "sudo mount -t iso9660 -o loop $ORIGINAL_ISO /mnt/customize_iso"
+
+    echo "Create workspace directory..."
+    eval "mkdir -p $WORKSPACE"
+
+    echo "Copy ISO contents..."
+    eval "cp -a /mnt/customize_iso $WORKSPACE/iso_contents"
+
+    echo "Unmount ISO..."
+    eval "sudo umount /mnt/customize_iso"
+
+    echo "Remove ISO mount point..."
+    eval "sudo rmdir /mnt/customize_iso"
+
+    #----------------------------------------
+    # Prepare x86_64 file system
+    #----------------------------------------
+
+    echo "Unsquash x86_64 file system..."
+    eval "unsquashfs -u -d $WORKSPACE/x86_64_fs"\
+         "$WORKSPACE/iso_contents/arch/x86_64/airootfs.sfs"
+
+    echo "Copy custom x86_64 content..."
+    eval "sudo cp -R $CUSTOM_SRC/* $WORKSPACE/x86_64_fs/$CUSTOM_DST"
+
+    echo "Squash new x86_64 file system..."
+    eval "mksquashfs $WORKSPACE/x86_64_fs $WORKSPACE/airootfs.sfs -comp xz"
+
+    echo "Generate new x86_64 file system checksum..."
+    eval "md5sum $WORKSPACE/airootfs.sfs > $WORKSPACE/airootfs.md5"
+
+    echo "Remove original x86_64 file sytem files..."
+    eval "sudo rm $WORKSPACE/iso_contents/arch/x86_64/airootfs.sfs"
+    eval "sudo rm $WORKSPACE/iso_contents/arch/x86_64/airootfs.md5"
+
+    echo "Move new x86_64 file system files..."
+    eval "sudo mv $WORKSPACE/airootfs.sfs $WORKSPACE/iso_contents/arch/x86_64"
+    eval "sudo mv $WORKSPACE/airootfs.md5 $WORKSPACE/iso_contents/arch/x86_64"
+
+    #----------------------------------------
+    # Prepare i686 file system
+    #----------------------------------------
+
+    echo "Unsquash i686 file system..."
+    eval "unsquashfs -u -d $WORKSPACE/i686_fs"\
+         "$WORKSPACE/iso_contents/arch/i686/airootfs.sfs"
+
+    echo "Copy custom i686 content..."
+    eval "sudo cp -R $CUSTOM_SRC/* $WORKSPACE/i686_fs/$CUSTOM_DST"
+
+    echo "Squash new i686 file system..."
+    eval "mksquashfs $WORKSPACE/i686_fs $WORKSPACE/airootfs.sfs -comp xz"
+
+    echo "Generate new i686 file system checksum..."
+    eval "md5sum $WORKSPACE/airootfs.sfs > $WORKSPACE/airootfs.md5"
+
+    echo "Remove original i686 file sytem files..."
+    eval "sudo rm $WORKSPACE/iso_contents/arch/i686/airootfs.sfs"
+    eval "sudo rm $WORKSPACE/iso_contents/arch/i686/airootfs.md5"
+
+    echo "Move new i686 file system files..."
+    eval "sudo mv $WORKSPACE/airootfs.sfs $WORKSPACE/iso_contents/arch/i686"
+    eval "sudo mv $WORKSPACE/airootfs.md5 $WORKSPACE/iso_contents/arch/i686"
+
+    #----------------------------------------
+    # Generate new ISO
+    #----------------------------------------
+
+    echo "Generate new ISO..."
+    eval "cd $WORKSPACE/iso_contents"
+    eval "sudo genisoimage -l -r -J -V \"$ISO_VERSION\""\
+         "-b isolinux/isolinux.bin -no-emul-boot -boot-load-size 4"\
+         "-boot-info-table -c isolinux/boot.cat"\
+         "-o $NEW_ISO $WORKSPACE/iso_contents"
+
+    #----------------------------------------
+    # Remove workspace
+    #----------------------------------------
+
+    echo "Remove workspace..."
+    eval "sudo rm -rf $WORKSPACE"
+    echo "Remove workspace...done"
+
+    echo "Create custom ISO...done"
+}
+
+#-------------------------------------------------------------------------------
+# Execution
+#-------------------------------------------------------------------------------
+
+if [[ "$#" -eq "0" ]]; then
+    usage
+    exit 0
+fi
+
+while getopts ":ho:n:w:s:d:" opt; do
+    case $opt in
+        h)
+            usage
+            exit 0
+            ;;
+        o)
+            ORIGINAL_ISO="$OPTARG"
+            ;;
+        n)
+            NEW_ISO="$OPTARG"
+            ;;
+        w)
+            WORKSPACE="$OPTARG"
+            ;;
+        s)
+            CUSTOM_SRC="$OPTARG"
+            ;;
+        d)
+            CUSTOM_DST="$OPTARG"
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG"
+            exit 1
+            ;;
+        :)
+            echo "Option -$OPTARG requires an argument"
+            exit 1
+            ;;
+    esac
+done
+
+checkOptions
+
+#----------------------------------------
+# Dependent on command line options
+#----------------------------------------
+
+# Setup shell - detect unset variables
+set -o nounset
+# Setup shell - exit on error
+set -o errexit
+
+ORIGINAL_NAME="${ORIGINAL_ISO##*/}"
+ISO_YEAR="${ORIGINAL_NAME:10:4}"
+ISO_MONTH="${ORIGINAL_NAME:15:2}"
+ISO_VERSION="ARCH_$ISO_YEAR$ISO_MONTH"
+
+query

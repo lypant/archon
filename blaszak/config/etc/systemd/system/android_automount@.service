@@ -1,0 +1,8 @@
+[Unit]
+Description="Android device auto mount/unmount service"
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/home/adam/archon/blaszak/bin/android_mount mount %I
+ExecStop=/home/adam/archon/blaszak/bin/android_mount unmount %I

@@ -1,0 +1,20 @@
+#!/bin/bash
+#===============================================================================
+# FILE:         dmenu_passwd
+#
+# USAGE:        Export from .bashrc, .xinitrc, or similar:
+#               export SUDO_ASKPASS="/path/to/file/dmenu_passwd"
+#
+# DESCRIPTION:  Allows entering sudo passwords using dmenu
+#===============================================================================
+
+source /home/adam/archon/blaszak/colors/solarized/bash.conf
+
+nF="#$SOLARIZED_BASE03"
+nB="#$SOLARIZED_BASE03"
+sF="#$SOLARIZED_BASE2"
+sB="#$SOLARIZED_BASE03"
+fnt="-*-terminus-medium-r-*-*-16-*-*-*-*-*-*-*"
+
+dmenu -p "$1" -nf $nF -nb $nB -sf $sF -sb $sB -fn $fnt <&- && echo
+

@@ -1,0 +1,65 @@
+#!/bin/bash
+
+getCurrentTransfer()
+{
+    local interface="$1"    # e.g. enp4s0
+    local direction="$2"    # "rx" for received, "tx" for transmitted
+
+    local bytes_file="/sys/class/net/$interface/statistics/${direction}_bytes"
+    local tmp_dir="/tmp/get_current_transfer"
+    local prev_time_file="$tmp_dir/$interface.$direction.time"
+    local prev_bytes_file="$tmp_dir/$interface.$direction.bytes"
+
+    # Ensure tmp dir is created
+    mkdir -p $tmp_dir
+
+    # Get current values
+    local cur_time=$(date +%s)
+    local cur_bytes=$(cat "$bytes_file" 2>/dev/null)
+
+    # Get previous values
+    local prev_time=$(cat "$prev_time_file" 2>/dev/null)
+    prev_time=${prev_time:-0}
+    local prev_bytes=$(cat "$prev_bytes_file" 2>/dev/null)
+    prev_bytes=${prev_bytes:-0}
+
+    # Calculate deltas
+    local time_delta=$(echo "$cur_time-$prev_time" | bc)
+    local bytes_delta=$(echo "$cur_bytes-$prev_bytes" | bc)
+
+    # Check if at least one second elapsed to avoid division by zero
+    if [[ $time_delta -lt 1 || $bytes_delta -lt 0 ]]; then
+        echo "0 B"
+        exit
+    fi
+
+    # Calculate transfer in bytes
+    local transfer=$(echo "$bytes_delta/$time_delta" | bc)
+    local scale="B"
+
+    if [[ $transfer -ge 1024 ]];then
+        # More than KiB, rescale
+        transfer=$(echo "$transfer/1024" | bc)
+        scale="KiB"
+    fi
+    if [[ $transfer -ge 1024 ]];then
+        # More than MiB, rescale
+        transfer=$(echo "$transfer/1024" | bc)
+        scale="MiB"
+    fi
+    if [[ $transfer -ge 1024 ]];then
+        # More than GiB, rescale
+        transfer=$(echo "$transfer/1024" | bc)
+        scale="GiB"
+    fi
+
+    # Store current measurements
+    echo "$cur_time" > $prev_time_file
+    echo "$cur_bytes" > $prev_bytes_file
+
+    # Result
+    echo "$transfer $scale"
+}
+
+getCurrentTransfer "$1" "$2"
+
