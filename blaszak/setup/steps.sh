@@ -345,8 +345,12 @@ configureBootloader()
     local file="/boot/syslinux/syslinux.cfg"
 
     log "Configure bootloader..."
-    archChroot "syslinux-install_update -i -a -m"
-    err "$?" "$FUNCNAME" "failed to update syslinux"
+    archChroot "mkdir -p /boot/syslinux"
+    err "$?" "$FUNCNAME" "failed to create syslinux directory"
+    archChroot "cp /usr/lib/syslinux/bios/*.c32 /boot/syslinux"
+    err "$?" "$FUNCNAME" "failed to copy syslinux files"
+    archChroot "extlinux --install /boot/syslinux"
+    err "$?" "$FUNCNAME" "failed to install extlinux"
 
     archChroot "sed -i \\\"$subst\\\" $file"
     err "$?" "$FUNCNAME" "failed to replace parition path"
