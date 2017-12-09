@@ -32,7 +32,7 @@ install()
     log "Install..."
 
     updatePackageList
-    installArchlinuxKeyring
+    #installArchlinuxKeyring    # Causes problems with Arch32
 
     #---------------------------------------
     # Disks, partitions and file systems
@@ -45,8 +45,8 @@ install()
     #---------------------------------------
     # Base system installation
     #---------------------------------------
-    #rankMirrors
-    downloadMirrorList
+    rankMirrors
+    #downloadMirrorList # Arch32 will have different set of mirrors
     installBaseSystemLts
 
     #---------------------------------------
@@ -71,7 +71,6 @@ install()
     #---------------------------------------
     # Time
     #---------------------------------------
-    #setTimeZone        # Looks like timezone is already set
     setHardwareClock
 
     #---------------------------------------
