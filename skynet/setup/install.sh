@@ -71,7 +71,7 @@ install()
     #---------------------------------------
     # Time
     #---------------------------------------
-    setTimeZone
+    #setTimeZone        # Looks like timezone is already set
     setHardwareClock
 
     #---------------------------------------
