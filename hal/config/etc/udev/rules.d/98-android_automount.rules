@@ -2,3 +2,6 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="0bb4", ATTR{idProduct}=="0f63", MODE="0666"
 ENV{ID_MODEL_ID}=="0f63", ENV{ID_VENDOR_ID}=="0bb4", ACTION=="add", RUN+="/usr/bin/systemctl start 'android_automount@$env{ID_MODEL}.service'"
 ENV{ID_MODEL_ID}=="0f63", ENV{ID_VENDOR_ID}=="0bb4", ACTION=="remove", RUN+="/usr/bin/systemctl stop 'android_automount@$env{ID_MODEL}.service'"
 
+SUBSYSTEM=="usb", ATTR{idVendor}=="0b05", ATTR{idProduct}=="5600", MODE="0666"
+ENV{ID_MODEL_ID}=="0f63", ENV{ID_VENDOR_ID}=="0bb4", ACTION=="add", RUN+="/usr/bin/systemctl start 'android_automount@$env{ID_MODEL}.service'"
+ENV{ID_MODEL_ID}=="0f63", ENV{ID_VENDOR_ID}=="0bb4", ACTION=="remove", RUN+="/usr/bin/systemctl stop 'android_automount@$env{ID_MODEL}.service'"
